@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Collaborator{% endblock %}
+
+{% block body %}
+    <h1>Edit Collaborator</h1>
+
+    {{ include('collaborator/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_collaborator_index') }}">back to list</a>
+
+    {{ include('collaborator/_delete_form.html.twig') }}
+{% endblock %}

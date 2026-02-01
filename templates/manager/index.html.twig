@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manager index{% endblock %}
+
+{% block body %}
+    <h1>Manager index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>IdUser</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Levem</th>
+                <th>Department</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for manager in managers %}
+            <tr>
+                <td>{{ manager.idUser }}</td>
+                <td>{{ manager.name }}</td>
+                <td>{{ manager.email }}</td>
+                <td>{{ manager.password }}</td>
+                <td>{{ manager.levem }}</td>
+                <td>{{ manager.department }}</td>
+                <td>
+                    <a href="{{ path('app_manager_show', {'idUser': manager.idUser}) }}">show</a>
+                    <a href="{{ path('app_manager_edit', {'idUser': manager.idUser}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_manager_new') }}">Create new</a>
+{% endblock %}
