@@ -17,7 +17,8 @@ class CollaboratorType extends AbstractType
             ->add('email')
             ->add('password', PasswordType::class)
             ->add('post')
-            ->add('team');
+            ->add('team')
+            ->add('enterpriseCode');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

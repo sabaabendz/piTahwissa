@@ -83,6 +83,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
+        // This will be overridden in child classes
         return [];
     }
 

@@ -17,6 +17,9 @@ class Collaborator extends User
     #[ORM\Column(length: 255)]
     private ?string $team = null;
 
+    #[ORM\Column(length: 20)]
+    private ?string $enterpriseCode = null;
+
     
 
     public function getPost(): ?string
@@ -41,5 +44,22 @@ class Collaborator extends User
         $this->team = $team;
 
         return $this;
+    }
+
+    public function getEnterpriseCode(): ?string
+    {
+        return $this->enterpriseCode;
+    }
+
+    public function setEnterpriseCode(string $enterpriseCode): static
+    {
+        $this->enterpriseCode = $enterpriseCode;
+
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_COLLABORATOR'];
     }
 }

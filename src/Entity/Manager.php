@@ -12,21 +12,24 @@ class Manager extends User
 {
    
     #[ORM\Column(length: 255)]
-    private ?string $levem = null;
+    private ?string $level = null;
 
     #[ORM\Column(length: 255)]
     private ?string $department = null;
 
+    #[ORM\Column(length: 20, unique: true)]
+    private ?string $enterpriseCode = null;
+
     
 
-    public function getLevem(): ?string
+    public function getLevel(): ?string
     {
-        return $this->levem;
+        return $this->level;
     }
 
-    public function setLevem(string $levem): static
+    public function setLevel(string $level): static
     {
-        $this->levem = $levem;
+        $this->level = $level;
 
         return $this;
     }
@@ -41,5 +44,22 @@ class Manager extends User
         $this->department = $department;
 
         return $this;
+    }
+
+    public function getEnterpriseCode(): ?string
+    {
+        return $this->enterpriseCode;
+    }
+
+    public function setEnterpriseCode(string $enterpriseCode): static
+    {
+        $this->enterpriseCode = $enterpriseCode;
+
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_MANAGER'];
     }
 }
