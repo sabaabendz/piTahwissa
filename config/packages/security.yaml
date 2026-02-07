@@ -10,6 +10,11 @@ security:
                 class: App\Entity\User
                 property: email
 
+    # Role hierarchy: higher roles automatically include lower roles
+    role_hierarchy:
+        ROLE_MANAGER: ROLE_USER
+        ROLE_COLLABORATOR: ROLE_USER
+
     firewalls:
         dev:
             # Ensure dev tools and static assets are always allowed
@@ -26,12 +31,29 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: app_dashboard_index
+                username_parameter: _username
+                password_parameter: _password
+                enable_csrf: true
+                csrf_token_id: authenticate
+            logout:
+                path: app_logout
+                target: app_login
 
     # Note: Only the *first* matching rule is applied
     access_control:
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/forgot-password, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/manager/new, roles: PUBLIC_ACCESS }
         - { path: ^/api/collaborator/new, roles: PUBLIC_ACCESS }
+        - { path: ^/dashboard, roles: ROLE_USER }
+        - { path: ^/manager, roles: ROLE_MANAGER }
+        - { path: ^/collaborator, roles: ROLE_USER }
         - { path: ^/api/manager, roles: ROLE_MANAGER }
         - { path: ^/api/collaborator, roles: ROLE_COLLABORATOR }
 

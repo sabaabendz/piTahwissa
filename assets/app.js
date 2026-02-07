@@ -5,6 +5,14 @@ import './stimulus_bootstrap.js';
  * This file will be included onto the page via the importmap() Twig function,
  * which should already be in your base.html.twig.
  */
+
+// Import Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Import Bootstrap JavaScript (includes all Bootstrap JS features like modals, dropdowns, etc.)
+import 'bootstrap';
+
+// Import your custom styles
 import './styles/app.css';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+console.log('This log comes from assets/app.js - Bootstrap is now loaded! 🎉');

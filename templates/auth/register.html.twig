@@ -1,0 +1,289 @@
+{% extends 'base_auth.html.twig' %}
+
+{% block title %}Sign Up - SmartTask Manager{% endblock %}
+
+{% block body %}
+<section class="p-0 d-flex align-items-center position-relative overflow-hidden">
+	
+	<div class="container-fluid">
+		<div class="row">
+			<!-- left -->
+			<div class="col-12 col-lg-6 d-md-flex align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100">
+				<div class="p-3 p-lg-5">
+					<!-- Title -->
+					<div class="text-center">
+						<h2 class="fw-bold">Welcome to SmartTask Manager</h2>
+						<p class="mb-0 h6 fw-light">Intelligent Task & Meeting Management Platform</p>
+					</div>
+					<!-- SVG Image -->
+					<img src="{{ asset('assets/images/element/02.svg') }}" class="mt-5" alt="">
+					<!-- Info -->
+					<div class="d-sm-flex mt-5 align-items-center justify-content-center">
+						<ul class="avatar-group mb-2 mb-sm-0">
+							<li class="avatar avatar-sm"><img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/01.jpg') }}" alt="avatar"></li>
+							<li class="avatar avatar-sm"><img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/02.jpg') }}" alt="avatar"></li>
+							<li class="avatar avatar-sm"><img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/03.jpg') }}" alt="avatar"></li>
+							<li class="avatar avatar-sm"><img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/04.jpg') }}" alt="avatar"></li>
+						</ul>
+						<!-- Content -->
+						<p class="mb-0 h6 fw-light ms-0 ms-sm-3">Join our team of managers and collaborators!</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Right -->
+			<div class="col-12 col-lg-6 m-auto">
+				<div class="row my-5">
+					<div class="col-sm-10 col-xl-8 m-auto">
+						<!-- Title -->
+						<img src="{{ asset('assets/images/element/03.svg') }}" class="h-40px mb-2" alt="">
+						<h2>Sign up for your account!</h2>
+						<p class="lead mb-4">Nice to see you! Please select your role and fill in the form.</p>
+					
+						<!-- Error Message -->
+						{% if error %}
+							<div class="alert alert-danger alert-dismissible fade show" role="alert">
+								<i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+								<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+							</div>
+						{% endif %}
+
+						<!-- Flash Messages -->
+						{% for message in app.flashes('success') %}
+							<div class="alert alert-success alert-dismissible fade show" role="alert">
+								<i class="bi bi-check-circle me-2"></i>{{ message }}
+								<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+							</div>
+						{% endfor %}
+
+						<!-- Form START -->
+						<form method="post" id="registerForm" novalidate>
+							<!-- Role Selection -->
+							<div class="mb-4">
+								<label class="form-label">I am a: *</label>
+								<div class="d-flex gap-3">
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="role" id="roleManager" value="manager" required {{ selected_role == 'manager' ? 'checked' : '' }}>
+										<label class="form-check-label" for="roleManager">
+											<i class="bi bi-person-badge me-1"></i>Manager
+										</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="radio" name="role" id="roleCollaborator" value="collaborator" required {{ selected_role == 'collaborator' ? 'checked' : '' }}>
+										<label class="form-check-label" for="roleCollaborator">
+											<i class="bi bi-people me-1"></i>Collaborator
+										</label>
+									</div>
+								</div>
+								<small class="form-text text-muted">Managers create a new enterprise. Collaborators join an existing enterprise.</small>
+							</div>
+
+							{% if form %}
+								{{ form_start(form, {'attr': {'id': 'registrationForm'}}) }}
+								
+								<!-- Name -->
+								<div class="mb-4">
+									{{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
+									<div class="input-group input-group-lg">
+										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-person-fill"></i></span>
+										{{ form_widget(form.name, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'Full Name'}}) }}
+									</div>
+									{{ form_errors(form.name) }}
+								</div>
+
+								<!-- Email -->
+								<div class="mb-4">
+									{{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
+									<div class="input-group input-group-lg">
+										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-envelope-fill"></i></span>
+										{{ form_widget(form.email, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'E-mail'}}) }}
+									</div>
+									{{ form_errors(form.email) }}
+								</div>
+
+								<!-- Password -->
+								<div class="mb-4">
+									{{ form_label(form.password, null, {'label_attr': {'class': 'form-label'}}) }}
+									<div class="input-group input-group-lg">
+										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="fas fa-lock"></i></span>
+										{{ form_widget(form.password, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'Password'}}) }}
+									</div>
+									{{ form_errors(form.password) }}
+									{% if form.password.vars.help is defined %}
+										<div class="form-text">{{ form.password.vars.help }}</div>
+									{% endif %}
+								</div>
+
+								{% if form.level is defined %}
+									<!-- Manager-specific fields -->
+									<div id="managerFields">
+										<!-- Level -->
+										<div class="mb-4">
+											{{ form_label(form.level, null, {'label_attr': {'class': 'form-label'}}) }}
+											<div class="input-group input-group-lg">
+												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-award-fill"></i></span>
+												{{ form_widget(form.level, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'e.g., Senior, Junior'}}) }}
+											</div>
+											{{ form_errors(form.level) }}
+										</div>
+
+										<!-- Department -->
+										<div class="mb-4">
+											{{ form_label(form.department, null, {'label_attr': {'class': 'form-label'}}) }}
+											<div class="input-group input-group-lg">
+												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-building"></i></span>
+												{{ form_widget(form.department, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'e.g., IT, HR, Sales'}}) }}
+											</div>
+											{{ form_errors(form.department) }}
+										</div>
+									</div>
+								{% endif %}
+
+								{% if form.enterpriseCode is defined %}
+									<!-- Collaborator-specific fields -->
+									<div id="collaboratorFields">
+										<!-- Enterprise Code -->
+										<div class="mb-4">
+											{{ form_label(form.enterpriseCode, null, {'label_attr': {'class': 'form-label'}}) }}
+											<div class="input-group input-group-lg">
+												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-key-fill"></i></span>
+												{{ form_widget(form.enterpriseCode, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'Enter enterprise code'}}) }}
+											</div>
+											{{ form_errors(form.enterpriseCode) }}
+											<div class="form-text">Enter the enterprise code provided by your manager.</div>
+										</div>
+
+										<!-- Post -->
+										<div class="mb-4">
+											{{ form_label(form.post, null, {'label_attr': {'class': 'form-label'}}) }}
+											<div class="input-group input-group-lg">
+												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-briefcase-fill"></i></span>
+												{{ form_widget(form.post, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'e.g., Developer, Designer'}}) }}
+											</div>
+											{{ form_errors(form.post) }}
+										</div>
+
+										<!-- Team -->
+										<div class="mb-4">
+											{{ form_label(form.team, null, {'label_attr': {'class': 'form-label'}}) }}
+											<div class="input-group input-group-lg">
+												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-people-fill"></i></span>
+												{{ form_widget(form.team, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'e.g., Backend, Frontend'}}) }}
+											</div>
+											{{ form_errors(form.team) }}
+										</div>
+									</div>
+								{% endif %}
+
+								<!-- Check box -->
+								<div class="mb-4">
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="termsCheckbox" required>
+										<label class="form-check-label" for="termsCheckbox">By signing up, you agree to the <a href="#">terms of service</a></label>
+									</div>
+								</div>
+
+								<!-- Button -->
+								<div class="align-items-center mt-0">
+									<div class="d-grid">
+										<button class="btn btn-primary mb-0" type="submit">
+											<i class="bi bi-person-plus me-2"></i>Sign Up
+										</button>
+									</div>
+								</div>
+
+								{{ form_end(form) }}
+							{% else %}
+								<!-- Initial state: Show role selection only -->
+								<div class="alert alert-info">
+									<i class="bi bi-info-circle me-2"></i>Please select your role above to continue.
+								</div>
+							{% endif %}
+						</form>
+						<!-- Form END -->
+
+						<!-- Sign in link -->
+						<div class="mt-4 text-center">
+							<span>Already have an account? <a href="{{ path('app_login') }}">Sign in here</a></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roleManager = document.getElementById('roleManager');
+    const roleCollaborator = document.getElementById('roleCollaborator');
+    const registerForm = document.getElementById('registerForm');
+
+    // Handle role selection change - reload page with selected role
+    if (roleManager && roleCollaborator) {
+        roleManager.addEventListener('change', function() {
+            if (this.checked) {
+                // Submit form to reload with manager form
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ path('app_register') }}';
+                const roleInput = document.createElement('input');
+                roleInput.type = 'hidden';
+                roleInput.name = 'role';
+                roleInput.value = 'manager';
+                form.appendChild(roleInput);
+                // Add CSRF token if exists
+                const csrfToken = document.querySelector('input[name*="_token"]');
+                if (csrfToken) {
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = csrfToken.name;
+                    csrfInput.value = csrfToken.value;
+                    form.appendChild(csrfInput);
+                }
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+
+        roleCollaborator.addEventListener('change', function() {
+            if (this.checked) {
+                // Submit form to reload with collaborator form
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ path('app_register') }}';
+                const roleInput = document.createElement('input');
+                roleInput.type = 'hidden';
+                roleInput.name = 'role';
+                roleInput.value = 'collaborator';
+                form.appendChild(roleInput);
+                // Add CSRF token if exists
+                const csrfToken = document.querySelector('input[name*="_token"]');
+                if (csrfToken) {
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = csrfToken.name;
+                    csrfInput.value = csrfToken.value;
+                    form.appendChild(csrfInput);
+                }
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+
+    // Form validation
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            if (roleManager && roleCollaborator && !roleManager.checked && !roleCollaborator.checked) {
+                e.preventDefault();
+                alert('Please select a role (Manager or Collaborator).');
+                return false;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

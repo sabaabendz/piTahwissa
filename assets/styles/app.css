@@ -1,3 +1,5 @@
+/* Bootstrap CSS is imported via JavaScript in app.js */
+/* Your custom styles can go here */
 body {
-    background-color: skyblue;
+    /* Bootstrap classes are now available in your templates */
 }

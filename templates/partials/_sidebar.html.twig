@@ -1,0 +1,111 @@
+<!-- Sidebar START -->
+<nav class="navbar sidebar navbar-expand-xl navbar-dark bg-dark">
+
+	<!-- Navbar brand for xl START -->
+	<div class="d-flex align-items-center">
+		<a class="navbar-brand" href="{{ path('app_dashboard_index') }}">
+			<img class="navbar-brand-item" src="{{ asset('assets/images/logo-light.svg') }}" alt="SmartTask Manager">
+		</a>
+	</div>
+	<!-- Navbar brand for xl END -->
+	
+	<div class="offcanvas offcanvas-start flex-row custom-scrollbar h-100" data-bs-backdrop="true" tabindex="-1" id="offcanvasSidebar">
+		<div class="offcanvas-body sidebar-content d-flex flex-column bg-dark">
+
+			<!-- Sidebar menu START -->
+			<ul class="navbar-nav flex-column" id="navbar-sidebar">
+				
+				<!-- Menu item 1 -->
+				<li class="nav-item">
+					<a href="{{ path('app_dashboard_index') }}" class="nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}">
+						<i class="bi bi-house fa-fw me-2"></i>Dashboard
+					</a>
+				</li>
+				
+				<!-- Title -->
+				<li class="nav-item ms-2 my-2">User Management</li>
+
+				<!-- Menu item 2 - Managers -->
+				<li class="nav-item">
+					<a class="nav-link {{ app.request.get('_route') starts with 'app_manager' ? 'active' : '' }}" 
+					   data-bs-toggle="collapse" href="#collapseManagers" role="button" aria-expanded="false" aria-controls="collapseManagers">
+						<i class="fas fa-user-tie fa-fw me-2"></i>Managers
+					</a>
+					<!-- Submenu -->
+					<ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_manager' ? 'show' : '' }}" 
+					    id="collapseManagers" data-bs-parent="#navbar-sidebar">
+						<li class="nav-item">
+							<a class="nav-link {{ app.request.get('_route') == 'app_manager_index' ? 'active' : '' }}" 
+							   href="{{ path('app_manager_index') }}">All Managers</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link {{ app.request.get('_route') == 'app_manager_new' ? 'active' : '' }}" 
+							   href="{{ path('app_manager_new') }}">Add Manager</a>
+						</li>
+					</ul>
+				</li>
+
+				<!-- Menu item 3 - Collaborators -->
+				<li class="nav-item">
+					<a class="nav-link {{ app.request.get('_route') starts with 'app_collaborator' ? 'active' : '' }}" 
+					   data-bs-toggle="collapse" href="#collapseCollaborators" role="button" aria-expanded="false" aria-controls="collapseCollaborators">
+						<i class="fas fa-user-graduate fa-fw me-2"></i>Collaborators
+					</a>
+					<!-- Submenu -->
+					<ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_collaborator' ? 'show' : '' }}" 
+					    id="collapseCollaborators" data-bs-parent="#navbar-sidebar">
+						<li class="nav-item">
+							<a class="nav-link {{ app.request.get('_route') == 'app_collaborator_index' ? 'active' : '' }}" 
+							   href="{{ path('app_collaborator_index') }}">All Collaborators</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link {{ app.request.get('_route') == 'app_collaborator_new' ? 'active' : '' }}" 
+							   href="{{ path('app_collaborator_new') }}">Add Collaborator</a>
+						</li>
+					</ul>
+				</li>
+
+				<!-- Title -->
+				<li class="nav-item ms-2 my-2">Authentication</li>
+
+				<!-- Menu item 4 -->
+				<li class="nav-item">
+					<a class="nav-link" data-bs-toggle="collapse" href="#collapseauthentication" role="button" aria-expanded="false" aria-controls="collapseauthentication">
+						<i class="bi bi-lock fa-fw me-2"></i>Authentication
+					</a>
+					<!-- Submenu -->
+					<ul class="nav collapse flex-column" id="collapseauthentication" data-bs-parent="#navbar-sidebar">
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('app_register') }}">Sign Up</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('app_login') }}">Sign In</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('app_forgot_password') }}">Forgot Password</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<!-- Sidebar menu end -->
+
+			<!-- Sidebar footer START -->
+			<div class="px-3 mt-auto pt-3">
+				<div class="d-flex align-items-center justify-content-between text-primary-hover">
+					<a class="h5 mb-0 text-body" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
+						<i class="bi bi-gear-fill"></i>
+					</a>
+					<a class="h5 mb-0 text-body" href="{{ path('app_dashboard_index') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Home">
+						<i class="bi bi-globe"></i>
+					</a>
+					<a class="h5 mb-0 text-body" href="{{ path('app_logout') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Sign out">
+						<i class="bi bi-power"></i>
+					</a>
+				</div>
+			</div>
+			<!-- Sidebar footer END -->
+			
+		</div>
+	</div>
+</nav>
+<!-- Sidebar END -->

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Manager;
+use App\Form\ManagerType;
 use App\Repository\ManagerRepository;
 use App\Service\EnterpriseCodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,7 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/manager')]
 final class ManagerController extends AbstractController
 {
     public function __construct(
@@ -22,8 +22,24 @@ final class ManagerController extends AbstractController
     ) {
     }
 
-    #[Route(name: 'app_manager_index', methods: ['GET'])]
-    public function index(ManagerRepository $managerRepository): JsonResponse
+    /**
+     * Web route: List all managers
+     */
+    #[Route('/manager', name: 'app_manager_index', methods: ['GET'])]
+    public function index(ManagerRepository $managerRepository): Response
+    {
+        $managers = $managerRepository->findAll();
+
+        return $this->render('manager/index.html.twig', [
+            'managers' => $managers,
+        ]);
+    }
+
+    /**
+     * API route: List all managers (JSON)
+     */
+    #[Route('/api/manager', name: 'app_manager_api_index', methods: ['GET'])]
+    public function indexApi(ManagerRepository $managerRepository): JsonResponse
     {
         $managers = $managerRepository->findAll();
         $data = array_map(function (Manager $manager) {
@@ -40,8 +56,51 @@ final class ManagerController extends AbstractController
         return new JsonResponse($data);
     }
 
-    #[Route('/new', name: 'app_manager_new', methods: ['POST'])]
+    /**
+     * Web route: Create new manager (form)
+     */
+    #[Route('/manager/new', name: 'app_manager_new', methods: ['GET', 'POST'])]
     public function new(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        $manager = new Manager();
+        $form = $this->createForm(ManagerType::class, $manager, ['is_edit' => false]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Generate enterprise code
+            $enterpriseCode = $this->enterpriseCodeGenerator->generate();
+            $manager->setEnterpriseCode($enterpriseCode);
+
+            // Hash password from form
+            $plainPassword = $form->get('password')->getData();
+            $hashedPassword = $passwordHasher->hashPassword(
+                $manager,
+                $plainPassword
+            );
+            $manager->setPassword($hashedPassword);
+
+            $entityManager->persist($manager);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Manager created successfully!');
+
+            return $this->redirectToRoute('app_manager_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('manager/new.html.twig', [
+            'manager' => $manager,
+            'form' => $form,
+        ]);
+    }
+
+    /**
+     * API route: Create new manager (JSON)
+     */
+    #[Route('/api/manager/new', name: 'app_manager_api_new', methods: ['POST'])]
+    public function newApi(
         Request $request,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
@@ -90,14 +149,14 @@ final class ManagerController extends AbstractController
             );
         }
 
-        $hashedPassword = $passwordHasher->hashPassword(
-            $manager,
-            $manager->getPassword()
-        );
-        $manager->setPassword($hashedPassword);
+            $hashedPassword = $passwordHasher->hashPassword(
+                $manager,
+                $manager->getPassword()
+            );
+            $manager->setPassword($hashedPassword);
 
-        $entityManager->persist($manager);
-        $entityManager->flush();
+            $entityManager->persist($manager);
+            $entityManager->flush();
 
         return new JsonResponse([
             'message' => 'Manager created successfully',
@@ -112,8 +171,22 @@ final class ManagerController extends AbstractController
         ], Response::HTTP_CREATED);
     }
 
-    #[Route('/{idUser}', name: 'app_manager_show', methods: ['GET'])]
-    public function show(Manager $manager): JsonResponse
+    /**
+     * Web route: Show manager details
+     */
+    #[Route('/manager/{idUser}', name: 'app_manager_show', methods: ['GET'])]
+    public function show(Manager $manager): Response
+    {
+        return $this->render('manager/show.html.twig', [
+            'manager' => $manager,
+        ]);
+    }
+
+    /**
+     * API route: Show manager details (JSON)
+     */
+    #[Route('/api/manager/{idUser}', name: 'app_manager_api_show', methods: ['GET'])]
+    public function showApi(Manager $manager): JsonResponse
     {
         return new JsonResponse([
             'id' => $manager->getIdUser(),
@@ -122,6 +195,43 @@ final class ManagerController extends AbstractController
             'level' => $manager->getLevel(),
             'department' => $manager->getDepartment(),
             'enterprise_code' => $manager->getEnterpriseCode(),
+        ]);
+    }
+
+    /**
+     * Web route: Edit manager
+     */
+    #[Route('/manager/{idUser}/edit', name: 'app_manager_edit', methods: ['GET', 'POST'])]
+    public function edit(
+        Request $request,
+        Manager $manager,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        $form = $this->createForm(ManagerType::class, $manager, ['is_edit' => true]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Only hash password if a new one was provided
+            $plainPassword = $form->get('password')->getData();
+            if ($plainPassword) {
+                $hashedPassword = $passwordHasher->hashPassword(
+                    $manager,
+                    $plainPassword
+                );
+                $manager->setPassword($hashedPassword);
+            }
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Manager updated successfully!');
+
+            return $this->redirectToRoute('app_manager_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('manager/edit.html.twig', [
+            'manager' => $manager,
+            'form' => $form,
         ]);
     }
 }

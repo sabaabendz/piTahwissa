@@ -2,8 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\Manager;
+use App\Entity\Collaborator;
+use App\Form\ManagerType;
+use App\Form\CollaboratorType;
+use App\Repository\ManagerRepository;
 use App\Repository\UserRepository;
+use App\Service\EnterpriseCodeGenerator;
+use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,18 +17,45 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-#[Route('/api')]
 final class AuthController extends AbstractController
 {
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly JWTTokenManagerInterface $jwtManager
+        private readonly JWTTokenManagerInterface $jwtManager,
+        private readonly EnterpriseCodeGenerator $enterpriseCodeGenerator,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ManagerRepository $managerRepository
     ) {
     }
 
-    #[Route('/login', name: 'app_login', methods: ['POST'])]
+    /**
+     * Web login page
+     * GET: Display login form
+     * POST: Handled by Symfony Security (form_login)
+     */
+    #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
+    public function loginPage(AuthenticationUtils $authenticationUtils): Response
+    {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_dashboard_index');
+        }
+
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('auth/login.html.twig', [
+            'error' => $error,
+            'last_username' => $lastUsername,
+        ]);
+    }
+
+    /**
+     * API login endpoint
+     */
+    #[Route('/api/login', name: 'app_api_login', methods: ['POST'])]
     public function login(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -68,5 +101,103 @@ final class AuthController extends AbstractController
                 'name' => $user->getName(),
             ],
         ]);
+    }
+
+    /**
+     * Registration page
+     * GET: Display registration form
+     * POST: Handle form submission based on role (Manager or Collaborator)
+     */
+    #[Route('/register', name: 'app_register', methods: ['GET', 'POST'])]
+    public function register(Request $request): Response
+    {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_dashboard_index');
+        }
+
+        $role = $request->request->get('role');
+        $error = null;
+        $form = null;
+
+        // Handle POST: Process form based on role
+        if ($request->isMethod('POST')) {
+            if ($role === 'manager') {
+                $manager = new Manager();
+                $form = $this->createForm(ManagerType::class, $manager, ['is_edit' => false]);
+                $form->handleRequest($request);
+
+                // Check if form was actually submitted with data (not just role selection)
+                if ($form->isSubmitted() && $form->isValid()) {
+                    // Generate enterprise code
+                    $enterpriseCode = $this->enterpriseCodeGenerator->generate();
+                    $manager->setEnterpriseCode($enterpriseCode);
+
+                    // Hash password from form
+                    $plainPassword = $form->get('password')->getData();
+                    $hashedPassword = $this->passwordHasher->hashPassword($manager, $plainPassword);
+                    $manager->setPassword($hashedPassword);
+
+                    $this->entityManager->persist($manager);
+                    $this->entityManager->flush();
+
+                    $this->addFlash('success', 'Manager created successfully! Enterprise code: ' . $enterpriseCode);
+                    return $this->redirectToRoute('app_login');
+                }
+                // If form not valid or just role selection, show form with errors
+            } elseif ($role === 'collaborator') {
+                $collaborator = new Collaborator();
+                $form = $this->createForm(CollaboratorType::class, $collaborator, ['is_edit' => false]);
+                $form->handleRequest($request);
+
+                // Check if form was actually submitted with data (not just role selection)
+                if ($form->isSubmitted() && $form->isValid()) {
+                    // Validate enterprise code
+                    $enterpriseCode = $collaborator->getEnterpriseCode();
+                    $manager = $this->managerRepository->findOneBy(['enterpriseCode' => $enterpriseCode]);
+                    
+                    if (!$manager) {
+                        $error = 'Invalid enterprise code. Please check with your manager.';
+                    } else {
+                        // Hash password from form
+                        $plainPassword = $form->get('password')->getData();
+                        $hashedPassword = $this->passwordHasher->hashPassword($collaborator, $plainPassword);
+                        $collaborator->setPassword($hashedPassword);
+
+                        $this->entityManager->persist($collaborator);
+                        $this->entityManager->flush();
+
+                        $this->addFlash('success', 'Collaborator created successfully!');
+                        return $this->redirectToRoute('app_login');
+                    }
+                }
+                // If form not valid or just role selection, show form with errors
+            } else {
+                $error = 'Please select a role (Manager or Collaborator).';
+            }
+        }
+
+        return $this->render('auth/register.html.twig', [
+            'form' => $form,
+            'error' => $error,
+            'selected_role' => $role,
+        ]);
+    }
+
+    /**
+     * Forgot password page
+     */
+    #[Route('/forgot-password', name: 'app_forgot_password', methods: ['GET'])]
+    public function forgotPassword(): Response
+    {
+        return $this->render('auth/forgot_password.html.twig');
+    }
+
+    /**
+     * Logout
+     */
+    #[Route('/logout', name: 'app_logout', methods: ['GET', 'POST'])]
+    public function logout(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 }

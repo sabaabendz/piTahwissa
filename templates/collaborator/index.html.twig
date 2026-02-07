@@ -1,43 +1,125 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
-{% block title %}Collaborator index{% endblock %}
+{% block title %}Collaborators - SmartTask Manager{% endblock %}
 
 {% block body %}
-    <h1>Collaborator index</h1>
+	<!-- Title -->
+	<div class="row">
+		<div class="col-12">
+			<div class="d-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Collaborators</h1>
+				<a href="{{ path('app_collaborator_new') }}" class="btn btn-primary mb-0">
+					<i class="fas fa-plus me-2"></i>Add Collaborator
+				</a>
+			</div>
+		</div>
+	</div>
+		
+	<div class="card bg-transparent mt-4">
+		<!-- Card header START -->
+		<div class="card-header bg-transparent border-bottom px-0">
+			<!-- Search and select START -->
+			<div class="row g-3 align-items-center justify-content-between">
+				<!-- Search bar -->
+				<div class="col-md-8">
+					<form class="rounded position-relative">
+						<input class="form-control bg-transparent" type="search" placeholder="Search collaborators..." aria-label="Search">
+						<button class="bg-transparent p-2 position-absolute top-50 end-0 translate-middle-y border-0 text-primary-hover text-reset" type="submit">
+							<i class="fas fa-search fs-6"></i>
+						</button>
+					</form>
+				</div>
+			</div>
+			<!-- Search and select END -->
+		</div>
+		<!-- Card header END -->
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>IdUser</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Password</th>
-                <th>Post</th>
-                <th>Team</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for collaborator in collaborators %}
-            <tr>
-                <td>{{ collaborator.idUser }}</td>
-                <td>{{ collaborator.name }}</td>
-                <td>{{ collaborator.email }}</td>
-                <td>{{ collaborator.password }}</td>
-                <td>{{ collaborator.post }}</td>
-                <td>{{ collaborator.team }}</td>
-                <td>
-                    <a href="{{ path('app_collaborator_show', {'idUser': collaborator.idUser}) }}">show</a>
-                    <a href="{{ path('app_collaborator_edit', {'idUser': collaborator.idUser}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+		<!-- Card body START -->
+		<div class="card-body px-0">
+			<div class="row g-4">
+				{% for collaborator in collaborators %}
+					<!-- Card item START -->
+					<div class="col-md-6 col-xxl-4">
+						<div class="card bg-transparent border h-100"> 
+							<!-- Card header -->
+							<div class="card-header bg-transparent border-bottom d-flex justify-content-between">
+								<div class="d-sm-flex align-items-center">
+									<!-- Avatar -->
+									<div class="avatar avatar-md flex-shrink-0">
+										<div class="avatar-img rounded-circle bg-success bg-opacity-10">
+											<span class="text-success position-absolute top-50 start-50 translate-middle fw-bold">{{ collaborator.name|first|upper }}</span>
+										</div>
+									</div>
+									<!-- Info -->
+									<div class="ms-0 ms-sm-2 mt-2 mt-sm-0">
+										<h5 class="mb-0"><a href="{{ path('app_collaborator_show', {'idUser': collaborator.idUser}) }}">{{ collaborator.name }}</a></h5>
+										<span class="text-body small"><i class="bi bi-envelope-fill me-1"></i>{{ collaborator.email }}</span>
+									</div>
+								</div>
 
-    <a href="{{ path('app_collaborator_new') }}">Create new</a>
+								<!-- Edit dropdown -->
+								<div class="dropdown text-end">
+									<a href="#" class="btn btn-sm btn-light btn-round small mb-0" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+										<i class="bi bi-three-dots fa-fw"></i>
+									</a>
+									<ul class="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded">
+										<li><a class="dropdown-item" href="{{ path('app_collaborator_edit', {'idUser': collaborator.idUser}) }}"><i class="bi bi-pencil-square fa-fw me-2"></i>Edit</a></li>
+									</ul>
+								</div>
+							</div>
+
+							<div class="card-body">
+								<!-- Post -->
+								<div class="d-flex justify-content-between align-items-center mb-3">
+									<div class="d-flex align-items-center">
+										<div class="icon-md bg-purple bg-opacity-10 text-purple rounded-circle flex-shrink-0"><i class="fas fa-briefcase fa-fw"></i></div>
+										<h6 class="mb-0 ms-2 fw-light">Post</h6>
+									</div>
+									<span class="mb-0 fw-bold">{{ collaborator.post ?? 'N/A' }}</span>
+								</div>
+
+								<!-- Team -->
+								<div class="d-flex justify-content-between align-items-center mb-3">
+									<div class="d-flex align-items-center">
+										<div class="icon-md bg-info bg-opacity-10 text-info rounded-circle flex-shrink-0"><i class="fas fa-users fa-fw"></i></div>
+										<h6 class="mb-0 ms-2 fw-light">Team</h6>
+									</div>
+									<span class="mb-0 fw-bold">{{ collaborator.team ?? 'N/A' }}</span>
+								</div>
+								
+								<!-- Enterprise Code -->
+								<div class="d-flex justify-content-between align-items-center">
+									<div class="d-flex align-items-center">
+										<div class="icon-md bg-warning bg-opacity-10 text-warning rounded-circle flex-shrink-0"><i class="bi bi-key fa-fw"></i></div>
+										<h6 class="mb-0 ms-2 fw-light">Enterprise Code</h6>
+									</div>
+									<span class="mb-0 fw-bold text-primary">{{ collaborator.enterpriseCode }}</span>
+								</div>
+							</div>
+
+							<!-- Card footer -->
+							<div class="card-footer bg-transparent border-top">
+								<div class="d-sm-flex justify-content-between align-items-center">
+									<!-- Buttons -->
+									<div class="text-end text-primary-hover">
+										<a href="{{ path('app_collaborator_show', {'idUser': collaborator.idUser}) }}" class="btn btn-sm btn-primary mb-0">
+											<i class="bi bi-eye me-1"></i>View Details
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Card item END -->
+				{% else %}
+					<div class="col-12">
+						<div class="alert alert-info">
+							<i class="fas fa-info-circle me-2"></i>No collaborators found. <a href="{{ path('app_collaborator_new') }}">Create the first collaborator</a>.
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+		<!-- Card body END -->
+	</div>
 {% endblock %}
