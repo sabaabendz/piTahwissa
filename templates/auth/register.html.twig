@@ -248,12 +248,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        roleCollaborator.addEventListener('change', function() {
-            if (this.checked) {
-                // Submit form to reload with collaborator form
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '{{ path('app_register') }}';
+		roleCollaborator.addEventListener('change', function() {
+			if (this.checked) {
+				// Submit form to reload with collaborator form
+				const form = document.createElement('form');
+				form.method = 'POST';
+				form.action = registerPath;
                 const roleInput = document.createElement('input');
                 roleInput.type = 'hidden';
                 roleInput.name = 'role';

@@ -19,12 +19,31 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 final class CollaboratorController extends AbstractController
 {
     /**
-     * Web route: List all collaborators
+     * Web route: List all collaborators (filtered by enterprise_code for tenant isolation)
      */
     #[Route('/collaborator', name: 'app_collaborator_index', methods: ['GET'])]
     public function index(CollaboratorRepository $collaboratorRepository): Response
     {
-        $collaborators = $collaboratorRepository->findAll();
+        $user = $this->getUser();
+        
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to view collaborators.');
+        }
+
+        // Get enterprise code based on user type
+        $enterpriseCode = null;
+        if ($user instanceof Manager) {
+            $enterpriseCode = $user->getEnterpriseCode();
+        } elseif ($user instanceof Collaborator) {
+            $enterpriseCode = $user->getEnterpriseCode();
+        }
+
+        if (!$enterpriseCode) {
+            throw $this->createAccessDeniedException('No enterprise code found for your account.');
+        }
+
+        // Filter collaborators by enterprise code (tenant isolation)
+        $collaborators = $collaboratorRepository->findByEnterpriseCode($enterpriseCode);
 
         return $this->render('collaborator/index.html.twig', [
             'collaborators' => $collaborators,
@@ -32,12 +51,38 @@ final class CollaboratorController extends AbstractController
     }
 
     /**
-     * API route: List all collaborators (JSON)
+     * API route: List all collaborators (JSON) - filtered by enterprise_code for tenant isolation
      */
     #[Route('/api/collaborator', name: 'app_collaborator_api_index', methods: ['GET'])]
     public function indexApi(CollaboratorRepository $collaboratorRepository): JsonResponse
     {
-        $collaborators = $collaboratorRepository->findAll();
+        $user = $this->getUser();
+        
+        if (!$user) {
+            return new JsonResponse(
+                ['error' => 'Authentication required'],
+                Response::HTTP_UNAUTHORIZED
+            );
+        }
+
+        // Get enterprise code based on user type
+        $enterpriseCode = null;
+        if ($user instanceof Manager) {
+            $enterpriseCode = $user->getEnterpriseCode();
+        } elseif ($user instanceof Collaborator) {
+            $enterpriseCode = $user->getEnterpriseCode();
+        }
+
+        if (!$enterpriseCode) {
+            return new JsonResponse(
+                ['error' => 'No enterprise code found for your account'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        // Filter collaborators by enterprise code (tenant isolation)
+        $collaborators = $collaboratorRepository->findByEnterpriseCode($enterpriseCode);
+        
         $data = array_map(function (Collaborator $collaborator) {
             return [
                 'id' => $collaborator->getIdUser(),
@@ -193,22 +238,66 @@ final class CollaboratorController extends AbstractController
     }
 
     /**
-     * Web route: Show collaborator details
+     * Web route: Show collaborator details (with tenant isolation)
      */
     #[Route('/collaborator/{idUser}', name: 'app_collaborator_show', methods: ['GET'])]
     public function show(Collaborator $collaborator): Response
     {
+        $user = $this->getUser();
+        
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to view collaborator details.');
+        }
+
+        // Get enterprise code based on user type
+        $userEnterpriseCode = null;
+        if ($user instanceof Manager) {
+            $userEnterpriseCode = $user->getEnterpriseCode();
+        } elseif ($user instanceof Collaborator) {
+            $userEnterpriseCode = $user->getEnterpriseCode();
+        }
+
+        // Tenant isolation: Ensure the collaborator belongs to the same enterprise
+        if (!$userEnterpriseCode || $collaborator->getEnterpriseCode() !== $userEnterpriseCode) {
+            throw $this->createAccessDeniedException('You do not have access to this collaborator.');
+        }
+
         return $this->render('collaborator/show.html.twig', [
             'collaborator' => $collaborator,
         ]);
     }
 
     /**
-     * API route: Show collaborator details (JSON)
+     * API route: Show collaborator details (JSON) - with tenant isolation
      */
     #[Route('/api/collaborator/{idUser}', name: 'app_collaborator_api_show', methods: ['GET'])]
     public function showApi(Collaborator $collaborator): JsonResponse
     {
+        $user = $this->getUser();
+        
+        if (!$user) {
+            return new JsonResponse(
+                ['error' => 'Authentication required'],
+                Response::HTTP_UNAUTHORIZED
+            );
+        }
+
+        // Get enterprise code based on user type
+        $userEnterpriseCode = null;
+        if ($user instanceof Manager) {
+            $userEnterpriseCode = $user->getEnterpriseCode();
+        } elseif ($user instanceof Collaborator) {
+            $userEnterpriseCode = $user->getEnterpriseCode();
+        }
+
+        // Tenant isolation: Ensure the collaborator belongs to the same enterprise
+        if (!$userEnterpriseCode || $collaborator->getEnterpriseCode() !== $userEnterpriseCode) {
+            return new JsonResponse(
+                ['error' => 'You do not have access to this collaborator'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
         return new JsonResponse([
             'id' => $collaborator->getIdUser(),
             'name' => $collaborator->getName(),
@@ -220,7 +309,7 @@ final class CollaboratorController extends AbstractController
     }
 
     /**
-     * Web route: Edit collaborator
+     * Web route: Edit collaborator (with tenant isolation)
      */
     #[Route('/collaborator/{idUser}/edit', name: 'app_collaborator_edit', methods: ['GET', 'POST'])]
     public function edit(
@@ -229,6 +318,25 @@ final class CollaboratorController extends AbstractController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
+        $user = $this->getUser();
+        
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to edit collaborators.');
+        }
+
+        // Get enterprise code based on user type
+        $userEnterpriseCode = null;
+        if ($user instanceof Manager) {
+            $userEnterpriseCode = $user->getEnterpriseCode();
+        } elseif ($user instanceof Collaborator) {
+            $userEnterpriseCode = $user->getEnterpriseCode();
+        }
+
+        // Tenant isolation: Ensure the collaborator belongs to the same enterprise
+        if (!$userEnterpriseCode || $collaborator->getEnterpriseCode() !== $userEnterpriseCode) {
+            throw $this->createAccessDeniedException('You do not have access to edit this collaborator.');
+        }
+
         $form = $this->createForm(CollaboratorType::class, $collaborator, ['is_edit' => true]);
         $form->handleRequest($request);
 

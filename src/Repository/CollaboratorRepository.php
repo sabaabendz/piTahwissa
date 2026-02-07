@@ -16,28 +16,19 @@ class CollaboratorRepository extends ServiceEntityRepository
         parent::__construct($registry, Collaborator::class);
     }
 
-    //    /**
-    //     * @return Collaborator[] Returns an array of Collaborator objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Collaborator
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Find all collaborators by enterprise code (tenant isolation)
+     * 
+     * @param string $enterpriseCode
+     * @return Collaborator[]
+     */
+    public function findByEnterpriseCode(string $enterpriseCode): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.enterpriseCode = :enterpriseCode')
+            ->setParameter('enterpriseCode', $enterpriseCode)
+            ->orderBy('c.idUser', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
