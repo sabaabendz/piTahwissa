@@ -1,0 +1,31 @@
+{% extends 'baseback.html.twig' %}
+
+{% block title %}{{ tache.libelle }} - Backoffice{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">{{ tache.libelle }}</h1>
+        <form method="post" action="{{ path('app_admin_tache_delete', { id: tache.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer cette tâche ?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin_delete' ~ tache.id) }}">
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <p class="mb-1"><strong>Projet</strong><br><a href="{{ path('app_admin_projet_show', { id: tache.projet.id }) }}">{{ tache.projet.nom }}</a></p>
+                <p class="mb-1"><strong>Priorité</strong><br><span class="badge bg-{{ tache.priorite == 'haute' ? 'danger' : (tache.priorite == 'moyenne' ? 'warning' : 'secondary') }}">{{ tache.priorite|capitalize }}</span></p>
+                <p class="mb-1"><strong>Date limite</strong><br>{{ tache.dateLimite ? tache.dateLimite|date('d/m/Y') : '-' }}</p>
+                <p class="mb-0"><strong>État</strong><br>{% if tache.etat == 'a_faire' %}<span class="badge bg-secondary">À faire</span>{% elseif tache.etat == 'en_cours' %}<span class="badge bg-info">En cours</span>{% else %}<span class="badge bg-success">Terminé</span>{% endif %}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <a href="{{ path('app_admin_tache_index') }}" class="btn btn-outline-secondary">Retour à la liste</a>
+        <a href="{{ path('app_admin_projet_show', { id: tache.projet.id }) }}" class="btn btn-outline-primary mt-2 d-block">Voir le projet</a>
+    </div>
+</div>
+{% endblock %}
