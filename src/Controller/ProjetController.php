@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[IsGranted('ROLE_USER')]
 #[Route('/projet')]
 class ProjetController extends AbstractController
 {

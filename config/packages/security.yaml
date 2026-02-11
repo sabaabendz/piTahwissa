@@ -49,6 +49,8 @@ security:
         - { path: ^/forgot-password, roles: PUBLIC_ACCESS }
         - { path: ^/connect/google, roles: PUBLIC_ACCESS }
         - { path: ^/dashboard, roles: ROLE_USER }
+        - { path: ^/projet, roles: ROLE_USER }
+        - { path: ^/tache, roles: ROLE_USER }
         - { path: ^/manager, roles: ROLE_MANAGER }
         - { path: ^/collaborator, roles: ROLE_USER }
 

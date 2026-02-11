@@ -66,26 +66,48 @@
 				</li>
 
 				<!-- Title -->
-				<li class="nav-item ms-2 my-2">Authentication</li>
+				<li class="nav-item ms-2 my-2">Project Management</li>
 
-				<!-- Menu item 4 -->
+				<!-- Menu item - Projects -->
 				<li class="nav-item">
-					<a class="nav-link" data-bs-toggle="collapse" href="#collapseauthentication" role="button" aria-expanded="false" aria-controls="collapseauthentication">
-						<i class="bi bi-lock fa-fw me-2"></i>Authentication
+					<a class="nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" 
+					   data-bs-toggle="collapse" href="#collapseProjects" role="button" aria-expanded="false" aria-controls="collapseProjects">
+						<i class="fas fa-project-diagram fa-fw me-2"></i>Projects
 					</a>
-					<!-- Submenu -->
-					<ul class="nav collapse flex-column" id="collapseauthentication" data-bs-parent="#navbar-sidebar">
+					<ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_projet' ? 'show' : '' }}" 
+					    id="collapseProjects" data-bs-parent="#navbar-sidebar">
 						<li class="nav-item">
-							<a class="nav-link" href="{{ path('app_register') }}">Sign Up</a>
+							<a class="nav-link {{ app.request.get('_route') == 'app_projet_index' ? 'active' : '' }}" 
+							   href="{{ path('app_projet_index') }}">All Projects</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{{ path('app_login') }}">Sign In</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{ path('app_forgot_password') }}">Forgot Password</a>
+							<a class="nav-link {{ app.request.get('_route') == 'app_projet_new' ? 'active' : '' }}" 
+							   href="{{ path('app_projet_new') }}">Add Project</a>
 						</li>
 					</ul>
 				</li>
+
+				<!-- Menu item - Tasks -->
+				<li class="nav-item">
+					<a class="nav-link {{ app.request.get('_route') starts with 'app_tache' ? 'active' : '' }}" 
+					   data-bs-toggle="collapse" href="#collapseTasks" role="button" aria-expanded="false" aria-controls="collapseTasks">
+						<i class="fas fa-tasks fa-fw me-2"></i>Tasks
+					</a>
+					<ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_tache' ? 'show' : '' }}" 
+					    id="collapseTasks" data-bs-parent="#navbar-sidebar">
+						<li class="nav-item">
+							<a class="nav-link {{ app.request.get('_route') == 'app_tache_index' ? 'active' : '' }}" 
+							   href="{{ path('app_tache_index') }}">All Tasks</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link {{ app.request.get('_route') == 'app_tache_new' ? 'active' : '' }}" 
+							   href="{{ path('app_tache_new') }}">Add Task</a>
+						</li>
+					</ul>
+				</li>
+
+				<!-- Title -->
+				<li class="nav-item ms-2 my-2">Authentication</li>
 			</ul>
 			<!-- Sidebar menu end -->
 

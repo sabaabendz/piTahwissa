@@ -16,7 +16,7 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // If authenticated, render the home page (or dashboard)
-        return $this->render('front/home.html.twig');
+        // If authenticated, redirect to the unified dashboard
+        return $this->redirectToRoute('app_dashboard_index');
     }
 }

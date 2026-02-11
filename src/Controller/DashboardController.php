@@ -13,16 +13,21 @@ final class DashboardController extends AbstractController
     #[Route('/dashboard', name: 'app_dashboard_index', methods: ['GET'])]
     public function index(
         ManagerRepository $managerRepository,
-        CollaboratorRepository $collaboratorRepository
+        CollaboratorRepository $collaboratorRepository,
+        \App\Repository\ProjetRepository $projetRepository,
+        \App\Repository\TacheRepository $tacheRepository
     ): Response {
         $managersCount = $managerRepository->count([]);
         $collaboratorsCount = $collaboratorRepository->count([]);
+        $projectsCount = $projetRepository->count([]);
+        $tasksCount = $tacheRepository->count([]);
 
         $response = $this->render('dashboard/index.html.twig', [
             'managers_count' => $managersCount,
             'collaborators_count' => $collaboratorsCount,
-            'tasks_count' => 0, // Placeholder until Task entity is created
-            'meetings_count' => 0, // Placeholder until Meeting entity is created
+            'projects_count' => $projectsCount,
+            'tasks_count' => $tasksCount,
+            'meetings_count' => 0, // Placeholder
         ]);
 
         // Prevent browser from caching protected pages

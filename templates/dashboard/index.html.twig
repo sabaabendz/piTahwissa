@@ -42,17 +42,32 @@
 			</div>
 		</div>
 
-		<!-- Counter item - Tasks -->
+		<!-- Counter item - Projects -->
 		<div class="col-md-6 col-xxl-3">
 			<div class="card card-body bg-primary bg-opacity-10 p-4 h-100">
 				<div class="d-flex justify-content-between align-items-center">
 					<!-- Digit -->
 					<div>
-						<h2 class="purecounter mb-0 fw-bold" data-purecounter-start="0" data-purecounter-end="0" data-purecounter-delay="200">0</h2>
-						<span class="mb-0 h6 fw-light">Active Tasks</span>
+						<h2 class="purecounter mb-0 fw-bold" data-purecounter-start="0" data-purecounter-end="{{ projects_count }}" data-purecounter-delay="200">0</h2>
+						<span class="mb-0 h6 fw-light">Total Projects</span>
 					</div>
 					<!-- Icon -->
-					<div class="icon-lg rounded-circle bg-primary text-white mb-0"><i class="fas fa-tasks fa-fw"></i></div>
+					<div class="icon-lg rounded-circle bg-primary text-white mb-0"><i class="fas fa-project-diagram fa-fw"></i></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Counter item - Tasks -->
+		<div class="col-md-6 col-xxl-3">
+			<div class="card card-body bg-info bg-opacity-10 p-4 h-100">
+				<div class="d-flex justify-content-between align-items-center">
+					<!-- Digit -->
+					<div>
+						<h2 class="purecounter mb-0 fw-bold" data-purecounter-start="0" data-purecounter-end="{{ tasks_count }}" data-purecounter-delay="200">0</h2>
+						<span class="mb-0 h6 fw-light">Total Tasks</span>
+					</div>
+					<!-- Icon -->
+					<div class="icon-lg rounded-circle bg-info text-white mb-0"><i class="fas fa-tasks fa-fw"></i></div>
 				</div>
 			</div>
 		</div>
@@ -84,23 +99,23 @@
 				<div class="card-body p-4">
 					<div class="row g-3">
 						<div class="col-md-3">
-							<a href="{{ path('app_manager_new') }}" class="btn btn-primary w-100">
-								<i class="fas fa-user-plus me-2"></i>Add Manager
+							<a href="{{ path('app_manager_new') }}" class="btn btn-outline-warning w-100">
+								<i class="fas fa-user-tie me-2"></i>New Manager
 							</a>
 						</div>
 						<div class="col-md-3">
-							<a href="{{ path('app_collaborator_new') }}" class="btn btn-success w-100">
-								<i class="fas fa-user-plus me-2"></i>Add Collaborator
+							<a href="{{ path('app_collaborator_new') }}" class="btn btn-outline-purple w-100">
+								<i class="fas fa-user-graduate me-2"></i>New Collaborator
 							</a>
 						</div>
 						<div class="col-md-3">
-							<a href="{{ path('app_manager_index') }}" class="btn btn-info w-100">
-								<i class="fas fa-users me-2"></i>View Managers
+							<a href="{{ path('app_projet_new') }}" class="btn btn-primary w-100">
+								<i class="fas fa-project-diagram me-2"></i>New Project
 							</a>
 						</div>
 						<div class="col-md-3">
-							<a href="{{ path('app_collaborator_index') }}" class="btn btn-warning w-100">
-								<i class="fas fa-users me-2"></i>View Collaborators
+							<a href="{{ path('app_tache_new') }}" class="btn btn-info w-100">
+								<i class="fas fa-tasks me-2"></i>New Task
 							</a>
 						</div>
 					</div>
