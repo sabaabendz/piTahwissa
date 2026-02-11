@@ -24,20 +24,6 @@ security:
             pattern: ^/api/login$
             stateless: true
             security: false
-        login_check:
-            pattern: ^/api/login_check$
-            stateless: true
-            provider: app_user_provider
-            json_login:
-                username_path: email
-                password_path: password
-                check_path: /api/login_check
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        api:
-            pattern: ^/api
-            stateless: true
-            jwt: ~
         main:
             lazy: true
             provider: app_user_provider
@@ -62,15 +48,9 @@ security:
         - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/forgot-password, roles: PUBLIC_ACCESS }
         - { path: ^/connect/google, roles: PUBLIC_ACCESS }
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
-        - { path: ^/api/manager/new, roles: PUBLIC_ACCESS }
-        - { path: ^/api/collaborator/new, roles: PUBLIC_ACCESS }
         - { path: ^/dashboard, roles: ROLE_USER }
         - { path: ^/manager, roles: ROLE_MANAGER }
         - { path: ^/collaborator, roles: ROLE_USER }
-        - { path: ^/api/manager, roles: ROLE_MANAGER }
-        - { path: ^/api/collaborator, roles: ROLE_COLLABORATOR }
 
 when@test:
     security:

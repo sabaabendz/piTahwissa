@@ -24,6 +24,8 @@ final class ManagerController extends AbstractController
 
     /**
      * Web route: List all managers
+     * NOTE: This lists ALL managers globally. Intended for Super Admin or Debugging use only.
+     * In a multi-tenant environment, normal users should not see this.
      */
     #[Route('/manager', name: 'app_manager_index', methods: ['GET'])]
     public function index(ManagerRepository $managerRepository): Response
@@ -35,26 +37,7 @@ final class ManagerController extends AbstractController
         ]);
     }
 
-    /**
-     * API route: List all managers (JSON)
-     */
-    #[Route('/api/manager', name: 'app_manager_api_index', methods: ['GET'])]
-    public function indexApi(ManagerRepository $managerRepository): JsonResponse
-    {
-        $managers = $managerRepository->findAll();
-        $data = array_map(function (Manager $manager) {
-            return [
-                'id' => $manager->getIdUser(),
-                'name' => $manager->getName(),
-                'email' => $manager->getEmail(),
-                'level' => $manager->getLevel(),
-                'department' => $manager->getDepartment(),
-                'enterprise_code' => $manager->getEnterpriseCode(),
-            ];
-        }, $managers);
 
-        return new JsonResponse($data);
-    }
 
     /**
      * Web route: Create new manager (form)
@@ -96,80 +79,7 @@ final class ManagerController extends AbstractController
         ]);
     }
 
-    /**
-     * API route: Create new manager (JSON)
-     */
-    #[Route('/api/manager/new', name: 'app_manager_api_new', methods: ['POST'])]
-    public function newApi(
-        Request $request,
-        EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher,
-        ValidatorInterface $validator
-    ): JsonResponse {
-        $data = json_decode($request->getContent(), true);
 
-        if (!$data) {
-            return new JsonResponse(
-                ['error' => 'Invalid JSON'],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-
-        $manager = new Manager();
-        $manager->setName($data['name'] ?? '');
-        $manager->setEmail($data['email'] ?? '');
-        $manager->setPassword($data['password'] ?? '');
-        $manager->setLevel($data['level'] ?? '');
-        $manager->setDepartment($data['department'] ?? '');
-
-        // Generate enterprise code
-        $enterpriseCode = $this->enterpriseCodeGenerator->generate();
-        $manager->setEnterpriseCode($enterpriseCode);
-
-        // Validate entity
-        $errors = $validator->validate($manager);
-        if (count($errors) > 0) {
-            $errorMessages = [];
-            foreach ($errors as $error) {
-                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
-            }
-            return new JsonResponse(
-                ['errors' => $errorMessages],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-
-        // Check if email already exists
-        $existingManager = $entityManager->getRepository(Manager::class)
-            ->findOneBy(['email' => $manager->getEmail()]);
-        if ($existingManager) {
-            return new JsonResponse(
-                ['error' => 'Email already exists'],
-                Response::HTTP_CONFLICT
-            );
-        }
-
-            $hashedPassword = $passwordHasher->hashPassword(
-                $manager,
-                $manager->getPassword()
-            );
-            $manager->setPassword($hashedPassword);
-
-            $entityManager->persist($manager);
-            $entityManager->flush();
-
-        return new JsonResponse([
-            'message' => 'Manager created successfully',
-            'manager' => [
-                'id' => $manager->getIdUser(),
-                'name' => $manager->getName(),
-                'email' => $manager->getEmail(),
-                'level' => $manager->getLevel(),
-                'department' => $manager->getDepartment(),
-                'enterprise_code' => $manager->getEnterpriseCode(),
-            ],
-        ], Response::HTTP_CREATED);
-    }
 
     /**
      * Web route: Show manager details
@@ -182,21 +92,7 @@ final class ManagerController extends AbstractController
         ]);
     }
 
-    /**
-     * API route: Show manager details (JSON)
-     */
-    #[Route('/api/manager/{idUser}', name: 'app_manager_api_show', methods: ['GET'])]
-    public function showApi(Manager $manager): JsonResponse
-    {
-        return new JsonResponse([
-            'id' => $manager->getIdUser(),
-            'name' => $manager->getName(),
-            'email' => $manager->getEmail(),
-            'level' => $manager->getLevel(),
-            'department' => $manager->getDepartment(),
-            'enterprise_code' => $manager->getEnterpriseCode(),
-        ]);
-    }
+
 
     /**
      * Web route: Edit manager
