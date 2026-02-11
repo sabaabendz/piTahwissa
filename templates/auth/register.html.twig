@@ -58,18 +58,26 @@
 
 						<!-- Form START -->
 						<form method="post" id="registerForm" novalidate>
+							<!-- Google Sign Up -->
+							<div class="mb-4" id="googleSignUpContainer" style="display: none;">
+								<a href="{{ path('connect_google_start') }}" id="googleSignUpBtn" class="btn btn-outline-secondary btn-lg w-100" type="button">
+									<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" class="me-2"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 6.168-2.172l-2.908-2.258c-.806.54-1.837.86-3.26.86-2.51 0-4.656-1.696-5.424-4.07H.638v2.331C2.33 15.98 5.5 18 9 18z"/><path fill="#FBBC05" d="M3.576 10.711c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.638C.232 6.46 0 7.988 0 9.5s.232 3.04.638 4.54l2.938-2.258 3.04 2.318z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.5 0 2.33 2.02.638 4.96l2.938 2.258C4.344 5.276 6.49 3.58 9 3.58z"/></svg>
+									Continue with Google
+								</a>
+								<div class="text-center my-3"><span class="text-muted">— or —</span></div>
+							</div>
 							<!-- Role Selection -->
 							<div class="mb-4">
 								<label class="form-label">I am a: *</label>
 								<div class="d-flex gap-3">
 									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="role" id="roleManager" value="manager" required {{ selected_role == 'manager' ? 'checked' : '' }}>
+										<input class="form-check-input" type="radio" name="role" id="roleManager" value="manager" {{ selected_role == 'manager' ? 'checked' : '' }}>
 										<label class="form-check-label" for="roleManager">
 											<i class="bi bi-person-badge me-1"></i>Manager
 										</label>
 									</div>
 									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="role" id="roleCollaborator" value="collaborator" required {{ selected_role == 'collaborator' ? 'checked' : '' }}>
+										<input class="form-check-input" type="radio" name="role" id="roleCollaborator" value="collaborator" {{ selected_role == 'collaborator' ? 'checked' : '' }}>
 										<label class="form-check-label" for="roleCollaborator">
 											<i class="bi bi-people me-1"></i>Collaborator
 										</label>
@@ -79,8 +87,8 @@
 							</div>
 
 							{% if form %}
-								{{ form_start(form, {'attr': {'id': 'registrationForm'}}) }}
-								
+								{{ form_start(form, {'attr': {'id': 'registrationForm', 'novalidate': 'novalidate'}}) }}
+								<input type="hidden" name="role" value="{{ selected_role }}">
 								<!-- Name -->
 								<div class="mb-4">
 									{{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
@@ -178,7 +186,7 @@
 								<!-- Check box -->
 								<div class="mb-4">
 									<div class="form-check">
-										<input type="checkbox" class="form-check-input" id="termsCheckbox" required>
+										<input type="checkbox" class="form-check-input" id="termsCheckbox" name="terms" value="1">
 										<label class="form-check-label" for="termsCheckbox">By signing up, you agree to the <a href="#">terms of service</a></label>
 									</div>
 								</div>
@@ -219,70 +227,57 @@
 document.addEventListener('DOMContentLoaded', function() {
     const roleManager = document.getElementById('roleManager');
     const roleCollaborator = document.getElementById('roleCollaborator');
-    const registerForm = document.getElementById('registerForm');
 
-    // Handle role selection change - reload page with selected role
-    if (roleManager && roleCollaborator) {
-        roleManager.addEventListener('change', function() {
-            if (this.checked) {
-                // Submit form to reload with manager form
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '{{ path('app_register') }}';
-                const roleInput = document.createElement('input');
-                roleInput.type = 'hidden';
-                roleInput.name = 'role';
-                roleInput.value = 'manager';
-                form.appendChild(roleInput);
-                // Add CSRF token if exists
-                const csrfToken = document.querySelector('input[name*="_token"]');
-                if (csrfToken) {
-                    const csrfInput = document.createElement('input');
-                    csrfInput.type = 'hidden';
-                    csrfInput.name = csrfToken.name;
-                    csrfInput.value = csrfToken.value;
-                    form.appendChild(csrfInput);
-                }
-                document.body.appendChild(form);
-                form.submit();
-            }
-        });
-
-		roleCollaborator.addEventListener('change', function() {
-			if (this.checked) {
-				// Submit form to reload with collaborator form
-				const form = document.createElement('form');
-				form.method = 'POST';
-				form.action = registerPath;
-                const roleInput = document.createElement('input');
-                roleInput.type = 'hidden';
-                roleInput.name = 'role';
-                roleInput.value = 'collaborator';
-                form.appendChild(roleInput);
-                // Add CSRF token if exists
-                const csrfToken = document.querySelector('input[name*="_token"]');
-                if (csrfToken) {
-                    const csrfInput = document.createElement('input');
-                    csrfInput.type = 'hidden';
-                    csrfInput.name = csrfToken.name;
-                    csrfInput.value = csrfToken.value;
-                    form.appendChild(csrfInput);
-                }
-                document.body.appendChild(form);
-                form.submit();
-            }
-        });
+    // Handle role selection functions
+    function updateGoogleLink(role) {
+        const googleBtn = document.getElementById('googleSignUpBtn');
+        const googleContainer = document.getElementById('googleSignUpContainer');
+        if (googleBtn && googleContainer) {
+            const baseUrl = '{{ path('connect_google_start') }}';
+            googleBtn.href = baseUrl + '?role=' + role;
+            googleContainer.style.display = 'block';
+        }
     }
 
-    // Form validation
-    if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
-            if (roleManager && roleCollaborator && !roleManager.checked && !roleCollaborator.checked) {
-                e.preventDefault();
-                alert('Please select a role (Manager or Collaborator).');
-                return false;
+    if (roleManager && roleCollaborator) {
+        // Initial check
+        if (roleManager.checked) updateGoogleLink('manager');
+        if (roleCollaborator.checked) updateGoogleLink('collaborator');
+
+        roleManager.addEventListener('change', function() {
+            if (this.checked) {
+                updateGoogleLink('manager');
+                submitForm('manager');
             }
         });
+
+        roleCollaborator.addEventListener('change', function() {
+            if (this.checked) {
+                updateGoogleLink('collaborator');
+                submitForm('collaborator');
+            }
+        });
+
+        function submitForm(role) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ path('app_register') }}';
+            const roleInput = document.createElement('input');
+            roleInput.type = 'hidden';
+            roleInput.name = 'role';
+            roleInput.value = role;
+            form.appendChild(roleInput);
+            const csrfToken = document.querySelector('input[name*="_token"]');
+            if (csrfToken) {
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = csrfToken.name;
+                csrfInput.value = csrfToken.value;
+                form.appendChild(csrfInput);
+            }
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
 });
 </script>

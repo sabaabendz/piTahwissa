@@ -39,17 +39,36 @@ final class AuthController extends AbstractController
     #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
     public function loginPage(AuthenticationUtils $authenticationUtils): Response
     {
+        // Redirect authenticated users to dashboard
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_dashboard_index');
+            $response = $this->redirectToRoute('app_dashboard_index');
+            // Prevent caching of redirect
+            $response->setCache([
+                'must_revalidate' => true,
+                'no_cache' => true,
+                'no_store' => true,
+                'max_age' => 0,
+            ]);
+            return $response;
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('auth/login.html.twig', [
+        $response = $this->render('auth/login.html.twig', [
             'error' => $error,
             'last_username' => $lastUsername,
         ]);
+
+        // Prevent browser from caching the login page
+        $response->setCache([
+            'must_revalidate' => true,
+            'no_cache' => true,
+            'no_store' => true,
+            'max_age' => 0,
+        ]);
+
+        return $response;
     }
 
     /**
@@ -112,7 +131,15 @@ final class AuthController extends AbstractController
     public function register(Request $request): Response
     {
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_dashboard_index');
+            $response = $this->redirectToRoute('app_dashboard_index');
+            // Prevent caching of redirect
+            $response->setCache([
+                'must_revalidate' => true,
+                'no_cache' => true,
+                'no_store' => true,
+                'max_age' => 0,
+            ]);
+            return $response;
         }
 
         $role = $request->request->get('role');
@@ -128,7 +155,10 @@ final class AuthController extends AbstractController
 
                 // Check if form was actually submitted with data (not just role selection)
                 if ($form->isSubmitted() && $form->isValid()) {
-                    // Generate enterprise code
+                    if (!$request->request->getBoolean('terms')) {
+                        $error = 'You must agree to the terms of service.';
+                    } else {
+                        // Generate enterprise code
                     $enterpriseCode = $this->enterpriseCodeGenerator->generate();
                     $manager->setEnterpriseCode($enterpriseCode);
 
@@ -140,8 +170,9 @@ final class AuthController extends AbstractController
                     $this->entityManager->persist($manager);
                     $this->entityManager->flush();
 
-                    $this->addFlash('success', 'Manager created successfully! Enterprise code: ' . $enterpriseCode);
-                    return $this->redirectToRoute('app_login');
+                        $this->addFlash('success', 'Manager created successfully! Enterprise code: ' . $enterpriseCode);
+                        return $this->redirectToRoute('app_login');
+                    }
                 }
                 // If form not valid or just role selection, show form with errors
             } elseif ($role === 'collaborator') {
@@ -151,7 +182,10 @@ final class AuthController extends AbstractController
 
                 // Check if form was actually submitted with data (not just role selection)
                 if ($form->isSubmitted() && $form->isValid()) {
-                    // Validate enterprise code
+                    if (!$request->request->getBoolean('terms')) {
+                        $error = 'You must agree to the terms of service.';
+                    } else {
+                        // Validate enterprise code
                     $enterpriseCode = $collaborator->getEnterpriseCode();
                     $manager = $this->managerRepository->findOneBy(['enterpriseCode' => $enterpriseCode]);
                     
@@ -169,6 +203,7 @@ final class AuthController extends AbstractController
                         $this->addFlash('success', 'Collaborator created successfully!');
                         return $this->redirectToRoute('app_login');
                     }
+                    }
                 }
                 // If form not valid or just role selection, show form with errors
             } else {
@@ -176,11 +211,21 @@ final class AuthController extends AbstractController
             }
         }
 
-        return $this->render('auth/register.html.twig', [
+        $response = $this->render('auth/register.html.twig', [
             'form' => $form,
             'error' => $error,
             'selected_role' => $role,
         ]);
+
+        // Prevent browser from caching the register page
+        $response->setCache([
+            'must_revalidate' => true,
+            'no_cache' => true,
+            'no_store' => true,
+            'max_age' => 0,
+        ]);
+
+        return $response;
     }
 
     /**
@@ -189,7 +234,17 @@ final class AuthController extends AbstractController
     #[Route('/forgot-password', name: 'app_forgot_password', methods: ['GET'])]
     public function forgotPassword(): Response
     {
-        return $this->render('auth/forgot_password.html.twig');
+        $response = $this->render('auth/forgot_password.html.twig');
+
+        // Prevent browser from caching the forgot password page
+        $response->setCache([
+            'must_revalidate' => true,
+            'no_cache' => true,
+            'no_store' => true,
+            'max_age' => 0,
+        ]);
+
+        return $response;
     }
 
     /**

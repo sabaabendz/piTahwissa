@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Get JWT Token</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            word-break: break-all;
+        }
+        .token {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 3px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Get JWT Token</h1>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Get Token</button>
+    </form>
+    
+    <div id="result" class="result" style="display: none;">
+        <h3>Token Retrieved:</h3>
+        <div class="token" id="token"></div>
+        <button onclick="copyToken()" style="margin-top: 10px; width: auto;">Copy Token</button>
+    </div>
+    
+    <div id="error" class="error"></div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+            const resultDiv = document.getElementById('result');
+            const tokenDiv = document.getElementById('token');
+            
+            errorDiv.textContent = '';
+            resultDiv.style.display = 'none';
+            
+            try {
+                // Try /api/login_check first (Lexik JWT standard endpoint)
+                const response = await fetch('/api/login_check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const responseData = await response.json();
+                
+                if (response.ok) {
+                    // Lexik JWT returns { "token": "..." }
+                    const token = responseData.token;
+                    if (token) {
+                        tokenDiv.textContent = token;
+                        resultDiv.style.display = 'block';
+                        localStorage.setItem('jwt_token', token);
+                        console.log('Token stored in localStorage:', token);
+                    } else {
+                        tokenDiv.textContent = JSON.stringify(responseData, null, 2);
+                        resultDiv.style.display = 'block';
+                    }
+                } else {
+                    // If login_check fails, try /api/login (custom endpoint)
+                    console.log('login_check failed, trying /api/login...');
+                    const response2 = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const responseData2 = await response2.json();
+                    
+                    if (response2.ok) {
+                        const token = responseData2.token;
+                        if (token) {
+                            tokenDiv.textContent = token;
+                            resultDiv.style.display = 'block';
+                            localStorage.setItem('jwt_token', token);
+                            console.log('Token stored in localStorage:', token);
+                        } else {
+                            tokenDiv.textContent = JSON.stringify(responseData2, null, 2);
+                            resultDiv.style.display = 'block';
+                        }
+                    } else {
+                        errorDiv.textContent = 'Error: ' + (responseData2.error || responseData.message || 'Invalid credentials');
+                        console.error('Login failed:', responseData2);
+                    }
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Error: ' + error.message;
+                console.error('Request failed:', error);
+            }
+        });
+        
+        function copyToken() {
+            const token = document.getElementById('token').textContent;
+            navigator.clipboard.writeText(token).then(() => {
+                alert('Token copied to clipboard!');
+            });
+        }
+        
+        // Check if token exists in localStorage
+        window.addEventListener('load', function() {
+            const storedToken = localStorage.getItem('jwt_token');
+            if (storedToken) {
+                document.getElementById('token').textContent = storedToken;
+                document.getElementById('result').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -22,10 +22,12 @@ class ManagerType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
+                'constraints' => [new NotBlank(['message' => 'Name is required.']), new Length(['min' => 2, 'max' => 255])],
             ])
             ->add('email', EmailType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
+                'constraints' => [new NotBlank(['message' => 'Email is required.']), new Length(['max' => 255])],
             ])
             ->add('password', PasswordType::class, [
                 'mapped' => false,
@@ -50,10 +52,12 @@ class ManagerType extends AbstractType
             ->add('level', TextType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
+                'constraints' => [new NotBlank(['message' => 'Level is required.']), new Length(['max' => 255])],
             ])
             ->add('department', TextType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
+                'constraints' => [new NotBlank(['message' => 'Department is required.']), new Length(['max' => 255])],
             ]);
     }
 

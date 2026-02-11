@@ -22,10 +22,12 @@ class CollaboratorType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
+                'constraints' => [new NotBlank(['message' => 'Name is required.']), new Length(['min' => 2, 'max' => 255])],
             ])
             ->add('email', EmailType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
+                'constraints' => [new NotBlank(['message' => 'Email is required.']), new Length(['max' => 255])],
             ])
             ->add('password', PasswordType::class, [
                 'mapped' => false,
@@ -50,10 +52,12 @@ class CollaboratorType extends AbstractType
             ->add('post', TextType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
+                'constraints' => [new NotBlank(['message' => 'Post is required.']), new Length(['max' => 255])],
             ])
             ->add('team', TextType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
+                'constraints' => [new NotBlank(['message' => 'Team is required.']), new Length(['max' => 255])],
             ])
             ->add('enterpriseCode', TextType::class, [
                 'attr' => [
@@ -61,6 +65,7 @@ class CollaboratorType extends AbstractType
                     'placeholder' => 'Enter enterprise code',
                 ],
                 'label_attr' => ['class' => 'form-label'],
+                'constraints' => [new NotBlank(['message' => 'Enterprise code is required.']), new Length(['max' => 20])],
             ]);
     }
 

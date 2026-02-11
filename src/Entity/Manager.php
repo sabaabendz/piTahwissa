@@ -4,17 +4,20 @@ namespace App\Entity;
 
 use App\Repository\ManagerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ManagerRepository::class)]
 #[ORM\Table(name: "manager")]
-
 class Manager extends User
 {
-   
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Level is required.')]
+    #[Assert\Length(max: 255)]
     private ?string $level = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Department is required.')]
+    #[Assert\Length(max: 255)]
     private ?string $department = null;
 
     #[ORM\Column(length: 20, unique: true)]
