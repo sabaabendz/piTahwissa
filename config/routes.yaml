@@ -9,3 +9,12 @@
 
 controllers:
     resource: routing.controllers
+
+web_profiler:
+    resource: routes/web_profiler.yaml
+
+framework:
+    resource: routes/framework.yaml
+
+security:
+    resource: routes/security.yaml
