@@ -1,0 +1,27 @@
+{% extends 'basefront.html.twig' %}
+
+{% block title %}Nouvelle tâche{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Nouvelle tâche</h1>
+        <div class="card shadow">
+            <div class="card-body">
+                {{ form_start(form) }}
+                {{ form_row(form.libelle) }}
+                {{ form_row(form.projet) }}
+                {{ form_row(form.priorite) }}
+                {{ form_row(form.dateLimite) }}
+                {{ form_row(form.etat) }}
+                {{ form_rest(form) }}
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                    <a href="{{ path('app_tache_index') }}" class="btn btn-secondary">Annuler</a>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

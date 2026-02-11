@@ -1,0 +1,72 @@
+{% extends 'baseback.html.twig' %}
+
+{% block title %}Projets - Backoffice{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12 mb-3">
+        <h1 class="h3 mb-2 mb-sm-0">Projets (consultation et suppression)</h1>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col-12">
+        <form method="get" action="{{ path('app_admin_projet_index') }}" class="row g-2">
+            <div class="col-auto">
+                <input type="text" name="search" value="{{ search ?? '' }}" class="form-control" placeholder="Rechercher (nom, description)">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                {% if projets is empty %}
+                    <p class="mb-0">Aucun projet.</p>
+                {% else %}
+                    {% set nextOrder = order == 'ASC' ? 'DESC' : 'ASC' %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'id', order: sortBy == 'id' ? nextOrder : 'ASC' }) }}">ID</a></th>
+                                    <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'nom', order: sortBy == 'nom' ? nextOrder : 'ASC' }) }}">Nom</a></th>
+                                    <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'dateDebut', order: sortBy == 'dateDebut' ? nextOrder : 'ASC' }) }}">Date début</a></th>
+                                    <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'dateEcheance', order: sortBy == 'dateEcheance' ? nextOrder : 'ASC' }) }}">Échéance</a></th>
+                                    <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'statut', order: sortBy == 'statut' ? nextOrder : 'ASC' }) }}">Statut</a></th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in projets %}
+                                    <tr>
+                                        <td>{{ p.id }}</td>
+                                        <td><a href="{{ path('app_admin_projet_show', { id: p.id }) }}">{{ p.nom }}</a></td>
+                                        <td>{{ p.dateDebut ? p.dateDebut|date('d/m/Y') : '-' }}</td>
+                                        <td>{{ p.dateEcheance ? p.dateEcheance|date('d/m/Y') : '-' }}</td>
+                                        <td>
+                                            {% if p.statut == 'en_attente' %}<span class="badge bg-secondary">En attente</span>
+                                            {% elseif p.statut == 'actif' %}<span class="badge bg-primary">Actif</span>
+                                            {% else %}<span class="badge bg-success">Terminé</span>{% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="{{ path('app_admin_projet_show', { id: p.id }) }}" class="btn btn-sm btn-light">Voir</a>
+                                            <form method="post" action="{{ path('app_admin_projet_delete', { id: p.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer ce projet ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('admin_delete' ~ p.id) }}">
+                                                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

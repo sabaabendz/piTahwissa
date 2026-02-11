@@ -1,0 +1,59 @@
+{% extends 'basefront.html.twig' %}
+
+{% block title %}Projets{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Projets</h1>
+        <a href="{{ path('app_projet_new') }}" class="btn btn-primary">Nouveau projet</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                {% if projets is empty %}
+                    <p class="mb-0">Aucun projet. <a href="{{ path('app_projet_new') }}">Créer un projet</a>.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Date début</th>
+                                    <th>Échéance</th>
+                                    <th>Statut</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in projets %}
+                                    <tr>
+                                        <td><a href="{{ path('app_projet_show', { id: p.id }) }}">{{ p.nom }}</a></td>
+                                        <td>{{ p.dateDebut ? p.dateDebut|date('d/m/Y') : '-' }}</td>
+                                        <td>{{ p.dateEcheance ? p.dateEcheance|date('d/m/Y') : '-' }}</td>
+                                        <td>
+                                            {% if p.statut == 'en_attente' %}<span class="badge bg-secondary">En attente</span>
+                                            {% elseif p.statut == 'actif' %}<span class="badge bg-primary">Actif</span>
+                                            {% else %}<span class="badge bg-success">Terminé</span>{% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="{{ path('app_projet_show', { id: p.id }) }}" class="btn btn-sm btn-light">Voir</a>
+                                            <a href="{{ path('app_projet_edit', { id: p.id }) }}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                            <form method="post" action="{{ path('app_projet_delete', { id: p.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer ce projet ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ p.id) }}">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% use "form_div_layout.html.twig" %}
+
+{% block form_row %}
+    {% set widget_attr = {} %}
+    {% if help is not empty %}
+        {% set widget_attr = { attr: { 'aria-describedby': id ~"_help" } } %}
+    {% endif %}
+    <div class="mb-3">
+        {{ form_label(form) }}
+        {{ form_widget(form, widget_attr) }}
+        {{ form_help(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block form_label %}
+    {% if label is not empty %}
+        <label class="form-label" for="{{ id }}">{{ label }}</label>
+    {% endif %}
+{% endblock %}

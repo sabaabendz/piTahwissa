@@ -1,20 +1,27 @@
-# Symfony / PHP
-/vendor/
-/var/
-/.env
+###> symfony/framework-bundle ###
 /.env.local
+/.env.local.php
 /.env.*.local
-/.phpunit.result.cache
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
 
-# Node / Webpack Encore
-/node_modules/
-/yarn-error.log
-/package-lock.json
-/.pnp
-.pnp.js
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
 
-# Build output
-/public/build/
+###> symfony/phpunit-bridge ###
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
 
 # IDE / Editor
 /.idea/
