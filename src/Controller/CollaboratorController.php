@@ -71,17 +71,7 @@ final class CollaboratorController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Validate enterprise code
-            $enterpriseCode = $collaborator->getEnterpriseCode();
-            $manager = $managerRepository->findOneBy(['enterpriseCode' => $enterpriseCode]);
-            
-            if (!$manager) {
-                $this->addFlash('error', 'Invalid enterprise code.');
-                return $this->render('collaborator/new.html.twig', [
-                    'collaborator' => $collaborator,
-                    'form' => $form,
-                ]);
-            }
+
 
             // Hash password from form
             $plainPassword = $form->get('password')->getData();

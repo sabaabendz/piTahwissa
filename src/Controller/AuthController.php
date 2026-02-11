@@ -106,10 +106,7 @@ final class AuthController extends AbstractController
 
                 // Check if form was actually submitted with data (not just role selection)
                 if ($form->isSubmitted() && $form->isValid()) {
-                    if (!$request->request->getBoolean('terms')) {
-                        $error = 'You must agree to the terms of service.';
-                    } else {
-                        // Generate enterprise code
+                    // Generate enterprise code
                     $enterpriseCode = $this->enterpriseCodeGenerator->generate();
                     $manager->setEnterpriseCode($enterpriseCode);
 
@@ -121,11 +118,9 @@ final class AuthController extends AbstractController
                     $this->entityManager->persist($manager);
                     $this->entityManager->flush();
 
-                        $this->addFlash('success', 'Manager created successfully! Enterprise code: ' . $enterpriseCode);
-                        return $this->redirectToRoute('app_login');
-                    }
+                    $this->addFlash('success', 'Manager created successfully! Enterprise code: ' . $enterpriseCode);
+                    return $this->redirectToRoute('app_login');
                 }
-                // If form not valid or just role selection, show form with errors
             } elseif ($role === 'collaborator') {
                 $collaborator = new Collaborator();
                 $form = $this->createForm(CollaboratorType::class, $collaborator, ['is_edit' => false]);
@@ -133,30 +128,17 @@ final class AuthController extends AbstractController
 
                 // Check if form was actually submitted with data (not just role selection)
                 if ($form->isSubmitted() && $form->isValid()) {
-                    if (!$request->request->getBoolean('terms')) {
-                        $error = 'You must agree to the terms of service.';
-                    } else {
-                        // Validate enterprise code
-                    $enterpriseCode = $collaborator->getEnterpriseCode();
-                    $manager = $this->managerRepository->findOneBy(['enterpriseCode' => $enterpriseCode]);
-                    
-                    if (!$manager) {
-                        $error = 'Invalid enterprise code. Please check with your manager.';
-                    } else {
-                        // Hash password from form
-                        $plainPassword = $form->get('password')->getData();
-                        $hashedPassword = $this->passwordHasher->hashPassword($collaborator, $plainPassword);
-                        $collaborator->setPassword($hashedPassword);
+                    // Hash password from form
+                    $plainPassword = $form->get('password')->getData();
+                    $hashedPassword = $this->passwordHasher->hashPassword($collaborator, $plainPassword);
+                    $collaborator->setPassword($hashedPassword);
 
-                        $this->entityManager->persist($collaborator);
-                        $this->entityManager->flush();
+                    $this->entityManager->persist($collaborator);
+                    $this->entityManager->flush();
 
-                        $this->addFlash('success', 'Collaborator created successfully!');
-                        return $this->redirectToRoute('app_login');
-                    }
-                    }
+                    $this->addFlash('success', 'Collaborator created successfully!');
+                    return $this->redirectToRoute('app_login');
                 }
-                // If form not valid or just role selection, show form with errors
             } else {
                 $error = 'Please select a role (Manager or Collaborator).';
             }

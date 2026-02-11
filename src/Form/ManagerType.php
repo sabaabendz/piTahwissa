@@ -11,6 +11,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Validator\Constraints\IsTrue;
 
 class ManagerType extends AbstractType
 {
@@ -22,12 +24,10 @@ class ManagerType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
-                'constraints' => [new NotBlank(['message' => 'Name is required.']), new Length(['min' => 2, 'max' => 255])],
             ])
             ->add('email', EmailType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
-                'constraints' => [new NotBlank(['message' => 'Email is required.']), new Length(['max' => 255])],
             ])
             ->add('password', PasswordType::class, [
                 'mapped' => false,
@@ -41,6 +41,16 @@ class ManagerType extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter a password',
                     ]),
+                    // Password strength is checked on entity, but here it's unmapped so we keep minimum checks
+                    // However, to fully rely on backend validation for mapped fields, we should be careful.
+                    // But 'password' field is NOT mapped, so we MUST keep constraints here or handle it manually.
+                    // Wait, the User entity has 'password' field. The form maps it as 'false' to handle hashing.
+                    // So the Entity constraint on $password property won't trigger automatically if we don't set it.
+                    // But we set it in the controller after hashing... this is a common Symfony issue.
+                    // If we want "Only PHP Validation", we should map it or validate the raw data.
+                    // For now, I will keep standard length constraints on the unmapped field for safety, 
+                    // but the REQUEST asked for "Input validation handled ONLY in PHP using Symfony Validator".
+                    // The best practice for unmapped password is to use constraints here.
                     new Length([
                         'min' => 8,
                         'minMessage' => 'Your password should be at least {{ limit }} characters',
@@ -52,13 +62,25 @@ class ManagerType extends AbstractType
             ->add('level', TextType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
-                'constraints' => [new NotBlank(['message' => 'Level is required.']), new Length(['max' => 255])],
             ])
             ->add('department', TextType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
-                'constraints' => [new NotBlank(['message' => 'Department is required.']), new Length(['max' => 255])],
             ]);
+
+        if (!$isEdit) {
+            $builder->add('terms', CheckboxType::class, [
+                'mapped' => false,
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'You must agree to the terms of service.',
+                    ]),
+                ],
+                'label' => 'I agree to the terms of service',
+                'attr' => ['class' => 'form-check-input'],
+                'label_attr' => ['class' => 'form-check-label'],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

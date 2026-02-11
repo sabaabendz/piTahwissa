@@ -24,7 +24,8 @@ class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationE
         private readonly ClientRegistry $clientRegistry,
         private readonly EntityManagerInterface $entityManager,
         private readonly RouterInterface $router,
-        private readonly \App\Service\EnterpriseCodeGenerator $enterpriseCodeGenerator
+        private readonly \App\Service\EnterpriseCodeGenerator $enterpriseCodeGenerator,
+        private readonly \Symfony\Component\Validator\Validator\ValidatorInterface $validator
     ) {
     }
 
@@ -103,6 +104,18 @@ class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationE
                 $user->setName($googleUser->getName() ?? $email);
                 $user->setGoogleId($googleId);
                 $user->setPassword(null);
+
+
+
+                // Validate user entity
+                $errors = $this->validator->validate($user);
+                if (count($errors) > 0) {
+                    $errorMessages = [];
+                    foreach ($errors as $error) {
+                        $errorMessages[] = $error->getMessage();
+                    }
+                    throw new AuthenticationException('Validation error: ' . implode(', ', $errorMessages));
+                }
 
                 $this->entityManager->persist($user);
                 try {

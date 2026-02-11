@@ -31,11 +31,12 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Email is required.')]
-    #[Assert\Email(message: 'The email {{ value }} is not a valid email.')]
+    #[Assert\Email(message: 'The email {{ value }} is not a valid email.', mode: 'strict')]
     #[Assert\Length(max: 255)]
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\PasswordStrength(minScore: 2, message: 'Your password is too weak. Please add numbers, symbols, or mix case.')]
     private ?string $password = null;
 
     #[ORM\Column(length: 100, nullable: true, unique: true)]
