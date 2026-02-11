@@ -10,7 +10,7 @@ use App\Repository\ManagerRepository;
 use App\Repository\UserRepository;
 use App\Service\EnterpriseCodeGenerator;
 use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +24,7 @@ final class AuthController extends AbstractController
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly JWTTokenManagerInterface $jwtManager,
+
         private readonly EnterpriseCodeGenerator $enterpriseCodeGenerator,
         private readonly EntityManagerInterface $entityManager,
         private readonly ManagerRepository $managerRepository
