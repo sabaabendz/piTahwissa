@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="900" prefWidth="1200"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.tahwissa.controllers.client.ClientVoyagesController"
+            style="-fx-font-family: 'Segoe UI';">
+
+    <!-- ═══════════════════════ TOP: HEADER ═══════════════════════ -->
+    <top>
+        <VBox style="-fx-background: linear-gradient(to right, #3B82F6, #4F46E5, #9333EA); -fx-padding: 0;">
+            <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 15 30;">
+                <Label text="🌍 TAHWISSA" style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;" />
+                <Label text="Discover Amazing Voyages" style="-fx-text-fill: #E0E7FF; -fx-font-size: 12;" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <Button text="📋 My Bookings (0)" style="-fx-background-color: #DBEAFE; -fx-text-fill: #1E40AF; -fx-padding: 8 14; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                <Button text="👤 Profile" style="-fx-background-color: #DBEAFE; -fx-text-fill: #1E40AF; -fx-padding: 8 14; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                <Button text="🚪 Logout" style="-fx-background-color: #FECACA; -fx-text-fill: #7F1D1D; -fx-padding: 8 14; -fx-border-radius: 4; -fx-background-radius: 4;" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ═══════════════════════ CENTER: MAIN CONTENT ═══════════════════════ -->
+    <center>
+        <ScrollPane style="-fx-border-color: transparent; -fx-background-color: #F9FAFB;">
+            <VBox spacing="30" style="-fx-padding: 30;">
+
+                <!-- Search Section -->
+                <VBox spacing="12" style="-fx-background-color: white; -fx-padding: 20; -fx-border-radius: 8; -fx-background-radius: 8; -fx-border-color: #E5E7EB;">
+                    <Label text="🔍 Find Your Perfect Voyage" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #1F2937;" />
+
+                    <HBox spacing="12">
+                        <TextField fx:id="searchField" prefWidth="250" promptText="Search by title or destination..." style="-fx-padding: 10; -fx-border-color: #E5E7EB; -fx-border-radius: 4;" />
+                        <ComboBox fx:id="categoryFilter" prefWidth="150" promptText="All Categories" style="-fx-padding: 8; -fx-border-color: #E5E7EB; -fx-border-radius: 4;" />
+                        <ComboBox fx:id="priceFilter" prefWidth="150" promptText="Price Range" style="-fx-padding: 8; -fx-border-color: #E5E7EB; -fx-border-radius: 4;" />
+                        <Button text="🔍 Search" style="-fx-background-color: #3B82F6; -fx-text-fill: white; -fx-padding: 10 20; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                        <Button text="Reset" style="-fx-background-color: #E5E7EB; -fx-text-fill: #475569; -fx-padding: 10 20; -fx-border-radius: 4; -fx-background-radius: 4;" />
+                    </HBox>
+                </VBox>
+
+                <!-- Available Voyages Title -->
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="🗺️ Available Voyages" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1F2937;" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="statsLabel" text="Total: 0 voyages" style="-fx-text-fill: #6B7280; -fx-font-weight: bold;" />
+                </HBox>
+
+                <!-- Voyages Container - Dynamically populated -->
+                <ScrollPane style="-fx-border-color: transparent;">
+                    <VBox fx:id="voyagesContainer" spacing="15" style="-fx-padding: 10;" />
+                </ScrollPane>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- ═══════════════════════ BOTTOM: FOOTER ═══════════════════════ -->
+    <bottom>
+        <HBox alignment="CENTER" style="-fx-background-color: #1F2937; -fx-padding: 15;">
+            <Label text="© 2026 Tahwissa - Explore the World" style="-fx-text-fill: #9CA3AF; -fx-font-size: 10;" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
