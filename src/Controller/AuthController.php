@@ -18,6 +18,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 final class AuthController extends AbstractController
 {
@@ -164,20 +167,86 @@ final class AuthController extends AbstractController
     /**
      * Forgot password page
      */
-    #[Route('/forgot-password', name: 'app_forgot_password', methods: ['GET'])]
-    public function forgotPassword(): Response
+    #[Route('/forgot-password', name: 'app_forgot_password', methods: ['GET', 'POST'])]
+    public function forgotPassword(Request $request, MailerInterface $mailer): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_dashboard_index');
+        }
+
+        if ($request->isMethod('POST')) {
+            $email = $request->request->get('email');
+            $user = $this->userRepository->findOneBy(['email' => $email]);
+
+            if ($user && $user->isEnabled()) {
+                // Generate token
+                $token = bin2hex(random_bytes(32));
+                $user->setResetToken($token);
+                $user->setResetTokenExpiresAt(new \DateTimeImmutable('+1 hour'));
+
+                $this->entityManager->flush();
+
+                // Send email
+                $templatedEmail = (new TemplatedEmail())
+                    ->from('no-reply@smarttask.com')
+                    ->to($user->getEmail())
+                    ->subject('Your password reset request')
+                    ->htmlTemplate('email/reset_password.html.twig')
+                    ->context([
+                        'user' => $user,
+                        'resetToken' => $token,
+                    ]);
+
+                $mailer->send($templatedEmail);
+            }
+
+            // Always show the same message for security
+            $this->addFlash('success', 'If an account exists for this email, you will receive a reset link shortly.');
+            return $this->redirectToRoute('app_forgot_password');
+        }
+
         $response = $this->render('auth/forgot_password.html.twig');
-
-        // Prevent browser from caching the forgot password page
-        $response->setCache([
-            'must_revalidate' => true,
-            'no_cache' => true,
-            'no_store' => true,
-            'max_age' => 0,
-        ]);
-
+        $response->setCache(['must_revalidate' => true, 'no_cache' => true, 'no_store' => true, 'max_age' => 0]);
         return $response;
+    }
+
+    /**
+     * Reset password page
+     */
+    #[Route('/reset-password/{token}', name: 'app_reset_password', methods: ['GET', 'POST'])]
+    public function resetPassword(string $token, Request $request): Response
+    {
+        $user = $this->userRepository->findOneBy(['resetToken' => $token]);
+
+        if (!$user || $user->isResetTokenExpired()) {
+            $this->addFlash('error', 'Invalid or expired reset token.');
+            return $this->redirectToRoute('app_forgot_password');
+        }
+
+        if ($request->isMethod('POST')) {
+            $password = $request->request->get('password');
+            $confirmPassword = $request->request->get('confirm_password');
+
+            if ($password !== $confirmPassword) {
+                $this->addFlash('error', 'Passwords do not match.');
+            } elseif (strlen($password) < 8) {
+                $this->addFlash('error', 'Password must be at least 8 characters long.');
+            } else {
+                $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
+                $user->setPassword($hashedPassword);
+                $user->setResetToken(null);
+                $user->setResetTokenExpiresAt(null);
+                
+                $this->entityManager->flush();
+
+                $this->addFlash('success', 'Password reset successfully. You can now login.');
+                return $this->redirectToRoute('app_login');
+            }
+        }
+
+        return $this->render('auth/reset_password.html.twig', [
+            'token' => $token
+        ]);
     }
 
     /**

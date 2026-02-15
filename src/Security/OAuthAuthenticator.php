@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use League\OAuth2\Client\Provider\GoogleUser;
+use League\OAuth2\Client\Provider\LinkedInResourceOwner;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,39 +18,55 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Service\EnterpriseCodeGenerator;
 
-class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationEntryPointInterface
+class OAuthAuthenticator extends OAuth2Authenticator implements AuthenticationEntryPointInterface
 {
     public function __construct(
         private readonly ClientRegistry $clientRegistry,
         private readonly EntityManagerInterface $entityManager,
         private readonly RouterInterface $router,
-        private readonly \App\Service\EnterpriseCodeGenerator $enterpriseCodeGenerator,
-        private readonly \Symfony\Component\Validator\Validator\ValidatorInterface $validator
+        private readonly EnterpriseCodeGenerator $enterpriseCodeGenerator,
+        private readonly ValidatorInterface $validator
     ) {
     }
 
     public function supports(Request $request): ?bool
     {
-        return $request->attributes->get('_route') === 'connect_google_check';
+        return in_array($request->attributes->get('_route'), ['connect_google_check', 'connect_linkedin_check']);
     }
 
     public function authenticate(Request $request): Passport
     {
-        $client = $this->clientRegistry->getClient('google');
+        $clientKey = $request->attributes->get('_route') === 'connect_google_check' ? 'google' : 'linkedin';
+        $client = $this->clientRegistry->getClient($clientKey);
         $accessToken = $this->fetchAccessToken($client);
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $request): User {
-                /** @var GoogleUser $googleUser */
-                $googleUser = $client->fetchUserFromToken($accessToken);
+            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $request, $clientKey): User {
+                $oauthUser = $client->fetchUserFromToken($accessToken);
 
-                $email = $googleUser->getEmail();
-                $googleId = $googleUser->getId();
+                $email = null;
+                $externalId = $oauthUser->getId();
+                $name = null;
 
-                // 1) Find existing user by Google ID
+                if ($oauthUser instanceof GoogleUser) {
+                    $email = $oauthUser->getEmail();
+                    $name = $oauthUser->getName();
+                } elseif ($oauthUser instanceof LinkedInResourceOwner) {
+                    $email = $oauthUser->getEmail();
+                    // LinkedInResourceOwner has getFirstName() and getLastName()
+                    $name = $oauthUser->getFirstName() . ' ' . $oauthUser->getLastName();
+                }
+
+                if (!$email) {
+                    throw new AuthenticationException('Email not provided by ' . ucfirst($clientKey));
+                }
+
+                // 1) Find existing user by specific OAuth ID
                 $existingUser = $this->entityManager->getRepository(User::class)
-                    ->findOneBy(['googleId' => $googleId]);
+                    ->findOneBy([$clientKey . 'Id' => $externalId]);
 
                 if ($existingUser) {
                     return $existingUser;
@@ -60,52 +77,37 @@ class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationE
                     ->findOneBy(['email' => $email]);
 
                 if ($existingUser) {
-                    $existingUser->setGoogleId($googleId);
+                    // Update the ID for this provider
+                    $setter = 'set' . ucfirst($clientKey) . 'Id';
+                    $existingUser->$setter($externalId);
                     $this->entityManager->persist($existingUser);
                     $this->entityManager->flush();
 
                     return $existingUser;
                 }
 
-                // 3) Create new user (registration via Google)
-                // Check for role in session
+                // 3) Create new user (registration via OAuth)
                 $session = $request->getSession();
-                $role = $session->get('_google_auth_role');
-                // Clear the role from session
-                $session->remove('_google_auth_role');
+                $role = $session->get('_oauth_auth_role');
+                $session->remove('_oauth_auth_role');
 
                 if ($role === 'manager') {
                     $user = new \App\Entity\Manager();
-                    // Role is hardcoded in Manager::getRoles()
-                    $user->setLevel('Owner'); // Default level
-                    $user->setDepartment('General'); // Default department
+                    $user->setLevel('Owner');
+                    $user->setDepartment('General');
                     $user->setEnterpriseCode($this->enterpriseCodeGenerator->generate());
-                } elseif ($role === 'collaborator') {
-                    $user = new \App\Entity\Collaborator();
-                    // Role is hardcoded in Collaborator::getRoles()
-                    $user->setPost('New Member'); // Default post
-                    $user->setTeam('General'); // Default team
-                    // Collaborator needs an enterprise code to join.
-                    // For now, we set a placeholder as they haven't entered one yet.
-                    // They will need to update this in their profile.
-                    // NOTE: 'P_' + uniqid() is 2+13 = 15 chars (fits in VARCHAR(20))
-                    $user->setEnterpriseCode('P_' . uniqid());
                 } else {
-                    // Fallback to basic user if no role selected (should be prevented by frontend)
-                    // But to be safe, we default to Collaborator structure as it's safer than Manager
                     $user = new \App\Entity\Collaborator();
-                    // Role is hardcoded in Collaborator::getRoles()
                     $user->setPost('New Member');
                     $user->setTeam('General');
                     $user->setEnterpriseCode('P_' . uniqid());
                 }
 
                 $user->setEmail($email);
-                $user->setName($googleUser->getName() ?? $email);
-                $user->setGoogleId($googleId);
+                $user->setName($name ?? $email);
+                $setter = 'set' . ucfirst($clientKey) . 'Id';
+                $user->$setter($externalId);
                 $user->setPassword(null);
-
-
 
                 // Validate user entity
                 $errors = $this->validator->validate($user);
@@ -121,7 +123,6 @@ class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationE
                 try {
                     $this->entityManager->flush();
                 } catch (\Exception $e) {
-                    // Log error and rethrow authenticaton exception
                     throw new AuthenticationException('Could not create user: ' . $e->getMessage());
                 }
 
@@ -132,15 +133,12 @@ class GoogleAuthenticator extends OAuth2Authenticator implements AuthenticationE
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $targetUrl = $this->router->generate('app_dashboard_index');
-
-        return new RedirectResponse($targetUrl);
+        return new RedirectResponse($this->router->generate('app_dashboard_index'));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $this->saveAuthenticationErrorToSession($request, $exception);
-
         return new RedirectResponse($this->router->generate('app_login'));
     }
 

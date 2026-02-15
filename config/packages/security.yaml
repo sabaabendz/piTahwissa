@@ -32,7 +32,7 @@ security:
             entry_point: form_login
             user_checker: App\Security\UserEnabledChecker
             custom_authenticators:
-                - App\Security\GoogleAuthenticator
+                - App\Security\OAuthAuthenticator
             form_login:
                 login_path: app_login
                 check_path: app_login
@@ -53,6 +53,7 @@ security:
         - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/forgot-password, roles: PUBLIC_ACCESS }
         - { path: ^/connect/google, roles: PUBLIC_ACCESS }
+        - { path: ^/connect/linkedin, roles: PUBLIC_ACCESS }
         - { path: ^/$, roles: PUBLIC_ACCESS }  # Homepage
         - { path: ^/users, roles: PUBLIC_ACCESS }  # FrontOffice user listing
         

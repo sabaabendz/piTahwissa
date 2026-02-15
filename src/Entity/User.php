@@ -42,11 +42,20 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true, unique: true)]
     private ?string $googleId = null;
 
+    #[ORM\Column(length: 100, nullable: true, unique: true)]
+    private ?string $linkedinId = null;
+
     #[ORM\Column(type: 'json', nullable: true)]
     private array $roles = [];
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
     private bool $isEnabled = true;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetToken = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $resetTokenExpiresAt = null;
 
    
 
@@ -110,6 +119,18 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getLinkedinId(): ?string
+    {
+        return $this->linkedinId;
+    }
+
+    public function setLinkedinId(?string $linkedinId): static
+    {
+        $this->linkedinId = $linkedinId;
+
+        return $this;
+    }
+
     public function getRoles(): array
     {
         // Ensure roles is always an array (handle NULL from database)
@@ -154,6 +175,35 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
         $this->isEnabled = $isEnabled;
 
         return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): static
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+    public function getResetTokenExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->resetTokenExpiresAt;
+    }
+
+    public function setResetTokenExpiresAt(?\DateTimeImmutable $resetTokenExpiresAt): static
+    {
+        $this->resetTokenExpiresAt = $resetTokenExpiresAt;
+
+        return $this;
+    }
+
+    public function isResetTokenExpired(): bool
+    {
+        return $this->resetTokenExpiresAt === null || $this->resetTokenExpiresAt < new \DateTimeImmutable();
     }
 
     public function eraseCredentials(): void
