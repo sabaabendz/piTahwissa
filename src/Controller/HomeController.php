@@ -11,12 +11,6 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home', methods: ['GET'])]
     public function index(): Response
     {
-        // If user is not authenticated, redirect to the login page
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        // If authenticated, redirect to the unified dashboard
-        return $this->redirectToRoute('app_dashboard_index');
+        return $this->render('frontoffice/home.html.twig');
     }
 }

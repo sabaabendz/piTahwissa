@@ -1,0 +1,84 @@
+{% extends 'frontoffice/base.html.twig' %}
+
+{% block title %}Modifier mon Profil - SmartTask Manager{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-6">
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Mon Profil</li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">Modifier mon Profil</h1>
+            <p class="text-muted">Gérez vos informations personnelles et votre sécurité.</p>
+        </div>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                    <div class="mb-4">
+                        {{ form_label(form.name) }}
+                        {{ form_widget(form.name) }}
+                        {{ form_errors(form.name) }}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.email) }}
+                        {{ form_widget(form.email) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+
+                    <hr class="my-4 text-muted opacity-25">
+
+                    <h5 class="mb-4 fw-bold"><i class="bi bi-shield-lock me-2"></i>Changer le mot de passe</h5>
+
+                    <div class="mb-4">
+                        {{ form_label(form.plainPassword.first) }}
+                        {{ form_widget(form.plainPassword.first) }}
+                        {{ form_errors(form.plainPassword.first) }}
+                        <div class="form-text mt-2">
+                            Laissez vide si vous ne souhaitez pas modifier votre mot de passe actuel.
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.plainPassword.second) }}
+                        {{ form_widget(form.plainPassword.second) }}
+                        {{ form_errors(form.plainPassword.second) }}
+                    </div>
+
+                    <div class="d-grid gap-2 mt-5">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="bi bi-check2-circle me-2"></i>Enregistrer les modifications
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <a href="{{ path('app_dashboard_index') }}" class="text-muted text-decoration-none small">
+                <i class="bi bi-arrow-left me-1"></i> Retour au tableau de bord
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-error-icon { display: none; }
+    .invalid-feedback { display: block; }
+    .form-control.is-invalid { border-color: #dc3545; }
+</style>
+{% endblock %}

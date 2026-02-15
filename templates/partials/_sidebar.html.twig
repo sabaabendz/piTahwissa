@@ -65,6 +65,18 @@
 					</ul>
 				</li>
 
+				{% if is_granted('ROLE_ADMIN') %}
+					<!-- Title -->
+					<li class="nav-item ms-2 my-2">Admin</li>
+
+					<!-- Menu item - User Management -->
+					<li class="nav-item">
+						<a href="{{ path('app_admin_users_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_admin_users' ? 'active' : '' }}">
+							<i class="bi bi-people-fill fa-fw me-2"></i>User Management
+						</a>
+					</li>
+				{% endif %}
+
 				<!-- Title -->
 				<li class="nav-item ms-2 my-2">Project Management</li>
 

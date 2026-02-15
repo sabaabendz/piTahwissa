@@ -1,0 +1,110 @@
+{% if users is defined %}
+    {% for user in users %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="avatar-lg bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 60px; height: 60px;">
+                            {{ user.name|first|upper }}
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="mb-0 fw-bold">{{ user.name }}</h5>
+                            <span class="text-muted small"><i class="bi bi-envelope me-1"></i>{{ user.email }}</span>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush border-0">
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span class="text-muted"><i class="bi bi-person me-2"></i>Type</span>
+                            <span class="badge bg-secondary rounded-pill">
+                                {% if user.roles is defined %}
+                                    {% if 'ROLE_MANAGER' in user.roles %}Manager{% elseif 'ROLE_COLLABORATOR' in user.roles %}Collaborateur{% else %}Utilisateur{% endif %}
+                                {% else %}
+                                    Utilisateur
+                                {% endif %}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="text-muted">Aucun utilisateur trouvé</h5>
+        </div>
+    {% endfor %}
+{% elseif managers is defined %}
+    {% for manager in managers %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="avatar-lg bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 60px; height: 60px;">
+                            {{ manager.name|first|upper }}
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="mb-0 fw-bold">{{ manager.name }}</h5>
+                            <span class="text-muted small"><i class="bi bi-envelope me-1"></i>{{ manager.email }}</span>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush border-0">
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span class="text-muted"><i class="bi bi-briefcase me-2"></i>Rôle</span>
+                            <span class="badge bg-primary rounded-pill">Manager</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span class="text-muted"><i class="bi bi-layer-forward me-2"></i>Niveau</span>
+                            <span class="fw-medium">{{ manager.level ?? 'N/A' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span class="text-muted"><i class="bi bi-building me-2"></i>Département</span>
+                            <span class="fw-medium">{{ manager.department ?? 'N/A' }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="text-muted">Aucun manager trouvé</h5>
+        </div>
+    {% endfor %}
+{% elseif collaborators is defined %}
+    {% for collaborator in collaborators %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="avatar-lg bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 60px; height: 60px;">
+                            {{ collaborator.name|first|upper }}
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="mb-0 fw-bold">{{ collaborator.name }}</h5>
+                            <span class="text-muted small"><i class="bi bi-envelope me-1"></i>{{ collaborator.email }}</span>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush border-0">
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span class="text-muted"><i class="bi bi-briefcase me-2"></i>Rôle</span>
+                            <span class="badge bg-success rounded-pill">Collaborateur</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span class="text-muted"><i class="bi bi-person-badge me-2"></i>Poste</span>
+                            <span class="fw-medium">{{ collaborator.post ?? 'N/A' }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span class="text-muted"><i class="bi bi-people me-2"></i>Équipe</span>
+                            <span class="fw-medium">{{ collaborator.team ?? 'N/A' }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+            <h5 class="text-muted">Aucun collaborateur trouvé</h5>
+        </div>
+    {% endfor %}
+{% endif %}

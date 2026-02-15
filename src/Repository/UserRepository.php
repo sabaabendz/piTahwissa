@@ -31,13 +31,13 @@ class UserRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function searchByTerm(string $term): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.name LIKE :term OR u.email LIKE :term')
+            ->setParameter('term', '%' . $term . '%')
+            ->orderBy('u.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

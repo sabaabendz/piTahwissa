@@ -31,13 +31,13 @@ class ManagerRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Manager
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function searchByTerm(string $term): array
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.name LIKE :term OR m.email LIKE :term OR m.department LIKE :term OR m.level LIKE :term')
+            ->setParameter('term', '%' . $term . '%')
+            ->orderBy('m.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

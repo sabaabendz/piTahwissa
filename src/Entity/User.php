@@ -42,6 +42,12 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true, unique: true)]
     private ?string $googleId = null;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private array $roles = [];
+
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $isEnabled = true;
+
    
 
     public function getIdUser(): ?int
@@ -106,7 +112,48 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        return ['ROLE_USER'];
+        // Ensure roles is always an array (handle NULL from database)
+        $roles = $this->roles ?? [];
+        
+        // Guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function addRole(string $role): static
+    {
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole(string $role): static
+    {
+        $this->roles = array_values(array_diff($this->roles, [$role]));
+
+        return $this;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->isEnabled;
+    }
+
+    public function setEnabled(bool $isEnabled): static
+    {
+        $this->isEnabled = $isEnabled;
+
+        return $this;
     }
 
     public function eraseCredentials(): void

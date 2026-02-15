@@ -63,6 +63,12 @@ class Manager extends User
 
     public function getRoles(): array
     {
-        return ['ROLE_MANAGER'];
+        // Get roles from parent (includes JSON roles field + ROLE_USER)
+        $roles = parent::getRoles();
+        
+        // Add ROLE_MANAGER as default for Manager entities
+        $roles[] = 'ROLE_MANAGER';
+        
+        return array_unique($roles);
     }
 }

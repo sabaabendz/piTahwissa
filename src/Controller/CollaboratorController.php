@@ -35,10 +35,6 @@ final class CollaboratorController extends AbstractController
             throw $this->createAccessDeniedException('You must be logged in to view collaborators.');
         }
 
-        if (!$user) {
-            throw $this->createAccessDeniedException('You must be logged in to view collaborators.');
-        }
-
         // Get enterprise code based on user type
         $enterpriseCode = $this->securityHelper->getEnterpriseCode($user);
 
