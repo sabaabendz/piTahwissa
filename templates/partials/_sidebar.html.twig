@@ -1,7 +1,10 @@
 <nav class="navbar sidebar navbar-expand-xl navbar-dark bg-dark">
     <div class="d-flex align-items-center">
         <a class="navbar-brand" href="{{ path('app_dashboard_index') }}">
-            <img class="navbar-brand-item" src="{{ asset('assets/images/logo-light.svg') }}" alt="SmartTask Manager">
+            <span class="navbar-brand-text">
+                <i class="bi bi-rocket-takeoff brand-icon"></i>
+                <span class="brand-name">SmartTask</span><span class="brand-dot">.</span>
+            </span>
         </a>
     </div>
     
@@ -23,42 +26,6 @@
                         <a href="{{ path('app_admin_users_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_admin_users' ? 'active' : '' }}">
                             <i class="bi bi-people-fill fa-fw me-2"></i>User Management
                         </a>
-                    </li>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link {{ app.request.get('_route') starts with 'app_manager' ? 'active' : '' }}" 
-                           data-bs-toggle="collapse" href="#collapseManagers" role="button" aria-expanded="false">
-                            <i class="fas fa-user-tie fa-fw me-2"></i>Managers
-                        </a>
-                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_manager' ? 'show' : '' }}" 
-                            id="collapseManagers" data-bs-parent="#navbar-sidebar">
-                            <li class="nav-item">
-                                <a class="nav-link {{ app.request.get('_route') == 'app_manager_index' ? 'active' : '' }}" 
-                                   href="{{ path('app_manager_index') }}">All Managers</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ app.request.get('_route') == 'app_manager_new' ? 'active' : '' }}" 
-                                   href="{{ path('app_manager_new') }}">Add Manager</a>
-                            </li>
-                        </ul>
-                    </li>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link {{ app.request.get('_route') starts with 'app_collaborator' and app.request.get('_route') != 'app_collaborator_network' ? 'active' : '' }}" 
-                           data-bs-toggle="collapse" href="#collapseCollaborators" role="button" aria-expanded="false">
-                            <i class="fas fa-user-graduate fa-fw me-2"></i>Collaborators
-                        </a>
-                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_collaborator' and app.request.get('_route') != 'app_collaborator_network' ? 'show' : '' }}" 
-                            id="collapseCollaborators" data-bs-parent="#navbar-sidebar">
-                            <li class="nav-item">
-                                <a class="nav-link {{ app.request.get('_route') == 'app_collaborator_index' ? 'active' : '' }}" 
-                                   href="{{ path('app_collaborator_index') }}">All Collaborators</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ app.request.get('_route') == 'app_collaborator_new' ? 'active' : '' }}" 
-                                   href="{{ path('app_collaborator_new') }}">Add Collaborator</a>
-                            </li>
-                        </ul>
                     </li>
                     
                 {% elseif is_granted('ROLE_MANAGER') %}
@@ -140,19 +107,33 @@
                     </li>
                     
                 {% endif %}
+
+                <li class="nav-item ms-2 my-2">Directory</li>
+                <li class="nav-item">
+                    <a href="{{ path('app_front_users') }}" class="nav-link {{ app.request.get('_route') == 'app_front_users' ? 'active' : '' }}">
+                        <i class="bi bi-people fa-fw me-2"></i>All Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('app_front_managers') }}" class="nav-link {{ app.request.get('_route') == 'app_front_managers' ? 'active' : '' }}">
+                        <i class="fas fa-user-tie fa-fw me-2"></i>All Managers
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('app_front_collaborators') }}" class="nav-link {{ app.request.get('_route') == 'app_front_collaborators' ? 'active' : '' }}">
+                        <i class="fas fa-user-graduate fa-fw me-2"></i>All Collaborators
+                    </a>
+                </li>
                 
             </ul>
             
             <div class="px-3 mt-auto pt-3">
-                <div class="d-flex align-items-center justify-content-between text-primary-hover">
-                    <a class="h5 mb-0 text-body" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
-                        <i class="bi bi-gear-fill"></i>
-                    </a>
+                <div class="d-flex align-items-center justify-content-center text-primary-hover">
                     <a class="h5 mb-0 text-body" href="{{ path('app_dashboard_index') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Home">
-                        <i class="bi bi-globe"></i>
+                        <i class="bi bi-globe me-3"></i>
                     </a>
-                    <a class="h5 mb-0 text-body" href="{{ path('app_logout') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Sign out">
-                        <i class="bi bi-power"></i>
+                    <a class="h5 mb-0 text-body" href="{{ path('app_front_profile_edit') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Profile">
+                        <i class="bi bi-person-fill"></i>
                     </a>
                 </div>
             </div>
