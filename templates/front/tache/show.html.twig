@@ -7,11 +7,13 @@
     <div class="col-12 d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">{{ tache.libelle }}</h1>
         <div>
-            <a href="{{ path('app_tache_edit', { id: tache.id }) }}" class="btn btn-primary">Modifier</a>
-            <form method="post" action="{{ path('app_tache_delete', { id: tache.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer cette tâche ?');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache.id) }}">
-                <button type="submit" class="btn btn-danger">Supprimer</button>
-            </form>
+            {% if is_granted('ROLE_MANAGER') %}
+                <a href="{{ path('app_tache_edit', { id: tache.id }) }}" class="btn btn-primary">Modifier</a>
+                <form method="post" action="{{ path('app_tache_delete', { id: tache.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer cette tâche ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache.id) }}">
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+            {% endif %}
         </div>
     </div>
 </div>

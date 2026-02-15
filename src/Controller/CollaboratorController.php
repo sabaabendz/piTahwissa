@@ -96,13 +96,18 @@ final class CollaboratorController extends AbstractController
     /**
      * Web route: Show collaborator details (with tenant isolation)
      */
-    #[Route('/collaborator/{idUser}', name: 'app_collaborator_show', methods: ['GET'])]
-    public function show(Collaborator $collaborator): Response
+    #[Route('/collaborator/{idUser}', name: 'app_collaborator_show', requirements: ['idUser' => '\d+'], methods: ['GET'])]
+    public function show(int $idUser, CollaboratorRepository $collaboratorRepository): Response
     {
         $user = $this->getUser();
         
         if (!$user) {
             throw $this->createAccessDeniedException('You must be logged in to view collaborator details.');
+        }
+
+        $collaborator = $collaboratorRepository->find($idUser);
+        if (!$collaborator) {
+            throw $this->createNotFoundException('Collaborator not found.');
         }
 
         // Tenant isolation: Ensure the collaborator belongs to the same enterprise
@@ -120,10 +125,11 @@ final class CollaboratorController extends AbstractController
     /**
      * Web route: Edit collaborator (with tenant isolation)
      */
-    #[Route('/collaborator/{idUser}/edit', name: 'app_collaborator_edit', methods: ['GET', 'POST'])]
+    #[Route('/collaborator/{idUser}/edit', name: 'app_collaborator_edit', requirements: ['idUser' => '\d+'], methods: ['GET', 'POST'])]
     public function edit(
         Request $request,
-        Collaborator $collaborator,
+        int $idUser,
+        CollaboratorRepository $collaboratorRepository,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher
     ): Response {
@@ -131,6 +137,11 @@ final class CollaboratorController extends AbstractController
         
         if (!$user) {
             throw $this->createAccessDeniedException('You must be logged in to edit collaborators.');
+        }
+
+        $collaborator = $collaboratorRepository->find($idUser);
+        if (!$collaborator) {
+            throw $this->createNotFoundException('Collaborator not found.');
         }
 
         // Tenant isolation: Ensure the collaborator belongs to the same enterprise

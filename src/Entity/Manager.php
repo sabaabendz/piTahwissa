@@ -66,8 +66,11 @@ class Manager extends User
         // Get roles from parent (includes JSON roles field + ROLE_USER)
         $roles = parent::getRoles();
         
-        // Add ROLE_MANAGER as default for Manager entities
-        $roles[] = 'ROLE_MANAGER';
+        // Only add ROLE_MANAGER if user is not an ADMIN
+        // This prevents ADMIN users created as Manager entity type from getting ROLE_MANAGER
+        if (!in_array('ROLE_ADMIN', $roles, true)) {
+            $roles[] = 'ROLE_MANAGER';
+        }
         
         return array_unique($roles);
     }

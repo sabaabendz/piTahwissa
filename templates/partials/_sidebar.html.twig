@@ -1,145 +1,162 @@
-<!-- Sidebar START -->
 <nav class="navbar sidebar navbar-expand-xl navbar-dark bg-dark">
-
-	<!-- Navbar brand for xl START -->
-	<div class="d-flex align-items-center">
-		<a class="navbar-brand" href="{{ path('app_dashboard_index') }}">
-			<img class="navbar-brand-item" src="{{ asset('assets/images/logo-light.svg') }}" alt="SmartTask Manager">
-		</a>
-	</div>
-	<!-- Navbar brand for xl END -->
-	
-	<div class="offcanvas offcanvas-start flex-row custom-scrollbar h-100" data-bs-backdrop="true" tabindex="-1" id="offcanvasSidebar">
-		<div class="offcanvas-body sidebar-content d-flex flex-column bg-dark">
-
-			<!-- Sidebar menu START -->
-			<ul class="navbar-nav flex-column" id="navbar-sidebar">
-				
-				<!-- Menu item 1 -->
-				<li class="nav-item">
-					<a href="{{ path('app_dashboard_index') }}" class="nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}">
-						<i class="bi bi-house fa-fw me-2"></i>Dashboard
-					</a>
-				</li>
-				
-				<!-- Title -->
-				<li class="nav-item ms-2 my-2">User Management</li>
-
-				<!-- Menu item 2 - Managers -->
-				<li class="nav-item">
-					<a class="nav-link {{ app.request.get('_route') starts with 'app_manager' ? 'active' : '' }}" 
-					   data-bs-toggle="collapse" href="#collapseManagers" role="button" aria-expanded="false" aria-controls="collapseManagers">
-						<i class="fas fa-user-tie fa-fw me-2"></i>Managers
-					</a>
-					<!-- Submenu -->
-					<ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_manager' ? 'show' : '' }}" 
-					    id="collapseManagers" data-bs-parent="#navbar-sidebar">
-						<li class="nav-item">
-							<a class="nav-link {{ app.request.get('_route') == 'app_manager_index' ? 'active' : '' }}" 
-							   href="{{ path('app_manager_index') }}">All Managers</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link {{ app.request.get('_route') == 'app_manager_new' ? 'active' : '' }}" 
-							   href="{{ path('app_manager_new') }}">Add Manager</a>
-						</li>
-					</ul>
-				</li>
-
-				<!-- Menu item 3 - Collaborators -->
-				<li class="nav-item">
-					<a class="nav-link {{ app.request.get('_route') starts with 'app_collaborator' ? 'active' : '' }}" 
-					   data-bs-toggle="collapse" href="#collapseCollaborators" role="button" aria-expanded="false" aria-controls="collapseCollaborators">
-						<i class="fas fa-user-graduate fa-fw me-2"></i>Collaborators
-					</a>
-					<!-- Submenu -->
-					<ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_collaborator' ? 'show' : '' }}" 
-					    id="collapseCollaborators" data-bs-parent="#navbar-sidebar">
-						<li class="nav-item">
-							<a class="nav-link {{ app.request.get('_route') == 'app_collaborator_index' ? 'active' : '' }}" 
-							   href="{{ path('app_collaborator_index') }}">All Collaborators</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link {{ app.request.get('_route') == 'app_collaborator_new' ? 'active' : '' }}" 
-							   href="{{ path('app_collaborator_new') }}">Add Collaborator</a>
-						</li>
-					</ul>
-				</li>
-
-				{% if is_granted('ROLE_ADMIN') %}
-					<!-- Title -->
-					<li class="nav-item ms-2 my-2">Admin</li>
-
-					<!-- Menu item - User Management -->
-					<li class="nav-item">
-						<a href="{{ path('app_admin_users_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_admin_users' ? 'active' : '' }}">
-							<i class="bi bi-people-fill fa-fw me-2"></i>User Management
-						</a>
-					</li>
-				{% endif %}
-
-				<!-- Title -->
-				<li class="nav-item ms-2 my-2">Project Management</li>
-
-				<!-- Menu item - Projects -->
-				<li class="nav-item">
-					<a class="nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" 
-					   data-bs-toggle="collapse" href="#collapseProjects" role="button" aria-expanded="false" aria-controls="collapseProjects">
-						<i class="fas fa-project-diagram fa-fw me-2"></i>Projects
-					</a>
-					<ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_projet' ? 'show' : '' }}" 
-					    id="collapseProjects" data-bs-parent="#navbar-sidebar">
-						<li class="nav-item">
-							<a class="nav-link {{ app.request.get('_route') == 'app_projet_index' ? 'active' : '' }}" 
-							   href="{{ path('app_projet_index') }}">All Projects</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link {{ app.request.get('_route') == 'app_projet_new' ? 'active' : '' }}" 
-							   href="{{ path('app_projet_new') }}">Add Project</a>
-						</li>
-					</ul>
-				</li>
-
-				<!-- Menu item - Tasks -->
-				<li class="nav-item">
-					<a class="nav-link {{ app.request.get('_route') starts with 'app_tache' ? 'active' : '' }}" 
-					   data-bs-toggle="collapse" href="#collapseTasks" role="button" aria-expanded="false" aria-controls="collapseTasks">
-						<i class="fas fa-tasks fa-fw me-2"></i>Tasks
-					</a>
-					<ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_tache' ? 'show' : '' }}" 
-					    id="collapseTasks" data-bs-parent="#navbar-sidebar">
-						<li class="nav-item">
-							<a class="nav-link {{ app.request.get('_route') == 'app_tache_index' ? 'active' : '' }}" 
-							   href="{{ path('app_tache_index') }}">All Tasks</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link {{ app.request.get('_route') == 'app_tache_new' ? 'active' : '' }}" 
-							   href="{{ path('app_tache_new') }}">Add Task</a>
-						</li>
-					</ul>
-				</li>
-
-				<!-- Title -->
-				<li class="nav-item ms-2 my-2">Authentication</li>
-			</ul>
-			<!-- Sidebar menu end -->
-
-			<!-- Sidebar footer START -->
-			<div class="px-3 mt-auto pt-3">
-				<div class="d-flex align-items-center justify-content-between text-primary-hover">
-					<a class="h5 mb-0 text-body" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
-						<i class="bi bi-gear-fill"></i>
-					</a>
-					<a class="h5 mb-0 text-body" href="{{ path('app_dashboard_index') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Home">
-						<i class="bi bi-globe"></i>
-					</a>
-					<a class="h5 mb-0 text-body" href="{{ path('app_logout') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Sign out">
-						<i class="bi bi-power"></i>
-					</a>
-				</div>
-			</div>
-			<!-- Sidebar footer END -->
-			
-		</div>
-	</div>
+    <div class="d-flex align-items-center">
+        <a class="navbar-brand" href="{{ path('app_dashboard_index') }}">
+            <img class="navbar-brand-item" src="{{ asset('assets/images/logo-light.svg') }}" alt="SmartTask Manager">
+        </a>
+    </div>
+    
+    <div class="offcanvas offcanvas-start flex-row custom-scrollbar h-100" data-bs-backdrop="true" tabindex="-1" id="offcanvasSidebar">
+        <div class="offcanvas-body sidebar-content d-flex flex-column bg-dark">
+            <ul class="navbar-nav flex-column" id="navbar-sidebar">
+                
+                <li class="nav-item">
+                    <a href="{{ path('app_dashboard_index') }}" class="nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}">
+                        <i class="bi bi-house fa-fw me-2"></i>Dashboard
+                    </a>
+                </li>
+                
+                {% if is_granted('ROLE_ADMIN') %}
+                    
+                    <li class="nav-item ms-2 my-2">Admin</li>
+                    
+                    <li class="nav-item">
+                        <a href="{{ path('app_admin_users_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_admin_users' ? 'active' : '' }}">
+                            <i class="bi bi-people-fill fa-fw me-2"></i>User Management
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_manager' ? 'active' : '' }}" 
+                           data-bs-toggle="collapse" href="#collapseManagers" role="button" aria-expanded="false">
+                            <i class="fas fa-user-tie fa-fw me-2"></i>Managers
+                        </a>
+                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_manager' ? 'show' : '' }}" 
+                            id="collapseManagers" data-bs-parent="#navbar-sidebar">
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') == 'app_manager_index' ? 'active' : '' }}" 
+                                   href="{{ path('app_manager_index') }}">All Managers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') == 'app_manager_new' ? 'active' : '' }}" 
+                                   href="{{ path('app_manager_new') }}">Add Manager</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_collaborator' and app.request.get('_route') != 'app_collaborator_network' ? 'active' : '' }}" 
+                           data-bs-toggle="collapse" href="#collapseCollaborators" role="button" aria-expanded="false">
+                            <i class="fas fa-user-graduate fa-fw me-2"></i>Collaborators
+                        </a>
+                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_collaborator' and app.request.get('_route') != 'app_collaborator_network' ? 'show' : '' }}" 
+                            id="collapseCollaborators" data-bs-parent="#navbar-sidebar">
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') == 'app_collaborator_index' ? 'active' : '' }}" 
+                                   href="{{ path('app_collaborator_index') }}">All Collaborators</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') == 'app_collaborator_new' ? 'active' : '' }}" 
+                                   href="{{ path('app_collaborator_new') }}">Add Collaborator</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                {% elseif is_granted('ROLE_MANAGER') %}
+                    
+                    <li class="nav-item ms-2 my-2">Team Management</li>
+                    
+                    <li class="nav-item">
+                        <a href="{{ path('app_collaborator_index') }}" class="nav-link {{ app.request.get('_route') == 'app_collaborator_index' ? 'active' : '' }}">
+                            <i class="fas fa-user-graduate fa-fw me-2"></i>My Collaborators
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="{{ path('app_collaborator_network') }}" class="nav-link {{ app.request.get('_route') == 'app_collaborator_network' ? 'active' : '' }}">
+                            <i class="bi bi-people fa-fw me-2"></i>My Team
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item ms-2 my-2">Project Management</li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" 
+                           data-bs-toggle="collapse" href="#collapseProjects" role="button" aria-expanded="false">
+                            <i class="fas fa-project-diagram fa-fw me-2"></i>Projects
+                        </a>
+                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_projet' ? 'show' : '' }}" 
+                            id="collapseProjects" data-bs-parent="#navbar-sidebar">
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') == 'app_projet_index' ? 'active' : '' }}" 
+                                   href="{{ path('app_projet_index') }}">All Projects</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') == 'app_projet_new' ? 'active' : '' }}" 
+                                   href="{{ path('app_projet_new') }}">Create Project</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_tache' ? 'active' : '' }}" 
+                           data-bs-toggle="collapse" href="#collapseTasks" role="button" aria-expanded="false">
+                            <i class="fas fa-tasks fa-fw me-2"></i>Tasks
+                        </a>
+                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_tache' ? 'show' : '' }}" 
+                            id="collapseTasks" data-bs-parent="#navbar-sidebar">
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') == 'app_tache_index' ? 'active' : '' }}" 
+                                   href="{{ path('app_tache_index') }}">All Tasks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') == 'app_tache_new' ? 'active' : '' }}" 
+                                   href="{{ path('app_tache_new') }}">Create Task</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                {% elseif is_granted('ROLE_COLLABORATOR') %}
+                    
+                    <li class="nav-item ms-2 my-2">My Team</li>
+                    
+                    <li class="nav-item">
+                        <a href="{{ path('app_collaborator_network') }}" class="nav-link {{ app.request.get('_route') == 'app_collaborator_network' ? 'active' : '' }}">
+                            <i class="bi bi-people fa-fw me-2"></i>My Team
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item ms-2 my-2">Project Management</li>
+                    
+                    <li class="nav-item">
+                        <a href="{{ path('app_projet_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}">
+                            <i class="fas fa-project-diagram fa-fw me-2"></i>Projects
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="{{ path('app_tache_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_tache' ? 'active' : '' }}">
+                            <i class="fas fa-tasks fa-fw me-2"></i>Tasks
+                        </a>
+                    </li>
+                    
+                {% endif %}
+                
+            </ul>
+            
+            <div class="px-3 mt-auto pt-3">
+                <div class="d-flex align-items-center justify-content-between text-primary-hover">
+                    <a class="h5 mb-0 text-body" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
+                        <i class="bi bi-gear-fill"></i>
+                    </a>
+                    <a class="h5 mb-0 text-body" href="{{ path('app_dashboard_index') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Home">
+                        <i class="bi bi-globe"></i>
+                    </a>
+                    <a class="h5 mb-0 text-body" href="{{ path('app_logout') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Sign out">
+                        <i class="bi bi-power"></i>
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
 </nav>
-<!-- Sidebar END -->

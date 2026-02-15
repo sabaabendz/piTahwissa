@@ -68,8 +68,11 @@ class Collaborator extends User
         // Get roles from parent (includes JSON roles field + ROLE_USER)
         $roles = parent::getRoles();
         
-        // Add ROLE_COLLABORATOR as default for Collaborator entities
-        $roles[] = 'ROLE_COLLABORATOR';
+        // Only add ROLE_COLLABORATOR if user is not an ADMIN
+        // This prevents ADMIN users created as Collaborator entity type from getting ROLE_COLLABORATOR
+        if (!in_array('ROLE_ADMIN', $roles, true)) {
+            $roles[] = 'ROLE_COLLABORATOR';
+        }
         
         return array_unique($roles);
     }

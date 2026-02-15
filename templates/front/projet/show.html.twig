@@ -7,11 +7,13 @@
     <div class="col-12 d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">{{ projet.nom }}</h1>
         <div>
-            <a href="{{ path('app_projet_edit', { id: projet.id }) }}" class="btn btn-primary">Modifier</a>
-            <form method="post" action="{{ path('app_projet_delete', { id: projet.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer ce projet ?');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.id) }}">
-                <button type="submit" class="btn btn-danger">Supprimer</button>
-            </form>
+            {% if is_granted('ROLE_MANAGER') %}
+                <a href="{{ path('app_projet_edit', { id: projet.id }) }}" class="btn btn-primary">Modifier</a>
+                <form method="post" action="{{ path('app_projet_delete', { id: projet.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer ce projet ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ projet.id) }}">
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -26,7 +28,9 @@
         <div class="card shadow">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Tâches du projet</h5>
-                <a href="{{ path('app_tache_new') }}?projet={{ projet.id }}" class="btn btn-sm btn-primary">Ajouter une tâche</a>
+                {% if is_granted('ROLE_MANAGER') %}
+                    <a href="{{ path('app_tache_new') }}?projet={{ projet.id }}" class="btn btn-sm btn-primary">Ajouter une tâche</a>
+                {% endif %}
             </div>
             <div class="card-body">
                 {% if projet.taches is empty %}

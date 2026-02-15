@@ -6,7 +6,9 @@
 <div class="row">
     <div class="col-12 d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Tâches</h1>
-        <a href="{{ path('app_tache_new') }}" class="btn btn-primary">Nouvelle tâche</a>
+        {% if is_granted('ROLE_MANAGER') %}
+            <a href="{{ path('app_tache_new') }}" class="btn btn-primary">Nouvelle tâche</a>
+        {% endif %}
     </div>
 </div>
 <div class="row">
@@ -14,7 +16,7 @@
         <div class="card shadow">
             <div class="card-body">
                 {% if taches is empty %}
-                    <p class="mb-0">Aucune tâche. <a href="{{ path('app_tache_new') }}">Créer une tâche</a> (liée à un projet).</p>
+                    <p class="mb-0">Aucune tâche.{% if is_granted('ROLE_MANAGER') %} <a href="{{ path('app_tache_new') }}">Créer une tâche</a> (liée à un projet).{% endif %}</p>
                 {% else %}
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -44,11 +46,13 @@
                                         </td>
                                         <td class="text-end">
                                             <a href="{{ path('app_tache_show', { id: t.id }) }}" class="btn btn-sm btn-light">Voir</a>
-                                            <a href="{{ path('app_tache_edit', { id: t.id }) }}" class="btn btn-sm btn-outline-primary">Modifier</a>
-                                            <form method="post" action="{{ path('app_tache_delete', { id: t.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer cette tâche ?');">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ t.id) }}">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
-                                            </form>
+                                            {% if is_granted('ROLE_MANAGER') %}
+                                                <a href="{{ path('app_tache_edit', { id: t.id }) }}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                                <form method="post" action="{{ path('app_tache_delete', { id: t.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer cette tâche ?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ t.id) }}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                                                </form>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}

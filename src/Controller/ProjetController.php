@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
 #[Route('/projet')]
@@ -23,6 +24,7 @@ class ProjetController extends AbstractController
     }
 
     #[Route('/new', name: 'app_projet_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_MANAGER', message: 'Only managers can create projects.')]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
         $projet = new Projet();
@@ -44,6 +46,7 @@ class ProjetController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_projet_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_MANAGER', message: 'Only managers can edit projects.')]
     public function edit(Request $request, Projet $projet, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(ProjetType::class, $projet);
@@ -57,6 +60,7 @@ class ProjetController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'app_projet_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted('ROLE_MANAGER', message: 'Only managers can delete projects.')]
     public function delete(Request $request, Projet $projet, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete' . $projet->getId(), (string) $request->request->get('_token'))) {

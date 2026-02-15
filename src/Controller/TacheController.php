@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
 #[Route('/tache')]
@@ -24,6 +25,7 @@ class TacheController extends AbstractController
     }
 
     #[Route('/new', name: 'app_tache_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_MANAGER', message: 'Only managers can create tasks.')]
     public function new(Request $request, EntityManagerInterface $em, ProjetRepository $projetRepository): Response
     {
         $tache = new Tache();
@@ -49,6 +51,7 @@ class TacheController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_tache_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_MANAGER', message: 'Only managers can edit tasks.')]
     public function edit(Request $request, Tache $tache, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(TacheType::class, $tache);
@@ -62,6 +65,7 @@ class TacheController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'app_tache_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted('ROLE_MANAGER', message: 'Only managers can delete tasks.')]
     public function delete(Request $request, Tache $tache, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete' . $tache->getId(), (string) $request->request->get('_token'))) {
