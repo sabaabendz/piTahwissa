@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.tahwissa.controller.RegisterController"
+           styleClass="login-container" stylesheets="@../css/styles.css">
+
+    <VBox alignment="CENTER" spacing="0">
+        <VBox.vgrow>
+            <Priority fx:constant="ALWAYS"/>
+        </VBox.vgrow>
+
+        <VBox styleClass="auth-box" alignment="TOP_CENTER" spacing="28" 
+              maxWidth="500" style="-fx-min-width: 400; -fx-pref-height: 750;">
+            
+            <!-- Header -->
+            <VBox alignment="CENTER" spacing="12">
+                <Label text="Créer un compte" styleClass="title-text" textAlignment="CENTER">
+                    <font>
+                        <Font size="42" name="System Bold"/>
+                    </font>
+                </Label>
+                <Label text="Rejoignez Tahwissa aujourd'hui" styleClass="subtitle-text" textAlignment="CENTER" wrapText="true"/>
+            </VBox>
+
+            <!-- Message Label -->
+            <Label fx:id="messageLabel" visible="false" wrapText="true" maxWidth="Infinity" textAlignment="CENTER" 
+                  style="-fx-padding: 12; -fx-background-radius: 10; -fx-border-radius: 10;"/>
+
+            <!-- Form -->
+            <VBox spacing="20" maxWidth="Infinity">
+                
+                <!-- Nom Input -->
+                <VBox spacing="8">
+                    <Label text="👤 Nom complet" styleClass="form-label"/>
+                    <TextField fx:id="txtNom" promptText="Jean Dupont" 
+                              styleClass="form-field" style="-fx-font-size: 14px;"/>
+                </VBox>
+
+                <!-- Email Input -->
+                <VBox spacing="8">
+                    <Label text="📧 Adresse email" styleClass="form-label"/>
+                    <TextField fx:id="txtEmail" promptText="jean@example.com" 
+                              styleClass="form-field" style="-fx-font-size: 14px;"/>
+                </VBox>
+
+                <!-- Password Input -->
+                <VBox spacing="8">
+                    <Label text="🔒 Mot de passe" styleClass="form-label"/>
+                    <PasswordField fx:id="txtPassword" promptText="Minimum 6 caractères" 
+                                  styleClass="form-field" style="-fx-font-size: 14px;"/>
+                </VBox>
+
+                <!-- Confirm Password Input -->
+                <VBox spacing="8">
+                    <Label text="✓ Confirmer le mot de passe" styleClass="form-label"/>
+                    <PasswordField fx:id="txtConfirmPassword" promptText="Retapez votre mot de passe" 
+                                  styleClass="form-field" style="-fx-font-size: 14px;"/>
+                </VBox>
+
+                <!-- Register Button -->
+                <Button fx:id="btnRegister" text="CRÉER UN COMPTE" maxWidth="Infinity" 
+                        styleClass="btn, btn-primary" onAction="#handleRegister"
+                        style="-fx-font-size: 15px; -fx-padding: 16px 24px; -fx-min-height: 50px;">
+                    <font>
+                        <Font size="14" name="System Bold"/>
+                    </font>
+                </Button>
+            </VBox>
+
+            <!-- Login Link -->
+            <Separator/>
+            
+            <VBox alignment="CENTER" spacing="12">
+                <Label text="Vous avez déjà un compte?" styleClass="subtitle-text" textAlignment="CENTER"/>
+                <Button text="SE CONNECTER" maxWidth="Infinity" 
+                       styleClass="btn, btn-secondary" onAction="#handleBackToLogin"
+                       style="-fx-font-size: 14px; -fx-padding: 14px 24px; -fx-min-height: 46px;">
+                    <font>
+                        <Font size="13" name="System Bold"/>
+                    </font>
+                </Button>
+            </VBox>
+        </VBox>
+    </VBox>
+</StackPane>

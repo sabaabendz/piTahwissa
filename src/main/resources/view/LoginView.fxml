@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.tahwissa.controller.LoginController"
+           styleClass="login-container" stylesheets="@../css/styles.css">
+
+    <VBox alignment="CENTER" spacing="0" style="-fx-padding: 0;">
+        <HBox.hgrow>
+            <Priority fx:constant="ALWAYS"/>
+        </HBox.hgrow>
+        <VBox.vgrow>
+            <Priority fx:constant="ALWAYS"/>
+        </VBox.vgrow>
+
+        <VBox styleClass="auth-box" alignment="CENTER" spacing="32" 
+              maxWidth="500" maxHeight="650" style="-fx-min-width: 400; -fx-min-height: 500;">
+            
+            <!-- Header -->
+            <VBox alignment="CENTER" spacing="12">
+                <Label text="Tahwissa" styleClass="title-text" textAlignment="CENTER">
+                    <font>
+                        <Font size="42" name="System Bold"/>
+                    </font>
+                </Label>
+                <Label text="Bienvenue! Connectez-vous à votre compte" styleClass="subtitle-text" textAlignment="CENTER" wrapText="true"/>
+            </VBox>
+
+            <!-- Message Label -->
+            <Label fx:id="messageLabel" visible="false" wrapText="true" maxWidth="Infinity" textAlignment="CENTER" style="-fx-padding: 12; -fx-background-radius: 10; -fx-border-radius: 10;"/>
+
+            <!-- Form -->
+            <VBox spacing="24" maxWidth="Infinity">
+                
+                <!-- Email Input -->
+                <VBox spacing="8">
+                    <Label text="📧 Adresse email" styleClass="form-label"/>
+                    <TextField fx:id="txtEmail" promptText="votre@email.com" 
+                              styleClass="form-field" style="-fx-font-size: 14px;"/>
+                </VBox>
+
+                <!-- Password Input -->
+                <VBox spacing="8">
+                    <Label text="🔒 Mot de passe" styleClass="form-label"/>
+                    <PasswordField fx:id="txtPassword" promptText="••••••••" 
+                                  styleClass="form-field" style="-fx-font-size: 14px;"/>
+                </VBox>
+
+                <!-- Remember & Forgot -->
+                <HBox spacing="0" alignment="CENTER_LEFT">
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Hyperlink text="Mot de passe oublié?" styleClass="hyperlink" style="-fx-font-size: 13px;"/>
+                </HBox>
+
+                <!-- Login Button -->
+                <Button fx:id="btnLogin" text="SE CONNECTER" maxWidth="Infinity" 
+                        styleClass="btn, btn-primary" onAction="#handleLogin"
+                        style="-fx-font-size: 15px; -fx-padding: 16px 24px; -fx-min-height: 50px;">
+                    <font>
+                        <Font size="14" name="System Bold"/>
+                    </font>
+                </Button>
+            </VBox>
+
+            <!-- Register Link -->
+            <Separator/>
+            
+            <VBox alignment="CENTER" spacing="12">
+                <Label text="Vous n'avez pas de compte?" styleClass="subtitle-text" textAlignment="CENTER"/>
+                <Button text="CRÉER UN COMPTE" maxWidth="Infinity" 
+                       styleClass="btn, btn-secondary" onAction="#handleRegister"
+                       style="-fx-font-size: 14px; -fx-padding: 14px 24px; -fx-min-height: 46px;">
+                    <font>
+                        <Font size="13" name="System Bold"/>
+                    </font>
+                </Button>
+            </VBox>
+        </VBox>
+    </VBox>
+</StackPane>

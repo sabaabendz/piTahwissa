@@ -1,0 +1,7 @@
+Admin:
+- Email: admin@tahwissa.com
+- Mot de passe: password
+
+Utilisateur:
+- Email: ahmed@example.com
+- Mot de passe: password

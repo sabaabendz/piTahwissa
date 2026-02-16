@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.tahwissa.controller.AdminDashboardController"
+            stylesheets="@../css/styles.css"
+            style="-fx-font-family: 'Segoe UI', sans-serif;">
+
+    <!-- Top Header -->
+    <top>
+        <HBox styleClass="header" alignment="CENTER_LEFT" spacing="24" 
+             style="-fx-padding: 16px 24px; -fx-background-color: -fx-surface; -fx-background-radius: 0; -fx-border-width: 0 0 1 0; -fx-border-color: -fx-border;">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label text="🎭" style="-fx-font-size: 28px;"/>
+                <VBox spacing="2">
+                    <Label text="Tahwissa" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -fx-purple;"/>
+                    <Label text="Espace Administrateur" style="-fx-font-size: 11px; -fx-text-fill: -fx-text-secondary; -fx-font-weight: 500;"/>
+                </VBox>
+            </HBox>
+            
+            <Region HBox.hgrow="ALWAYS"/>
+            
+            <VBox alignment="CENTER_RIGHT" spacing="0" style="-fx-text-alignment: right;">
+                <Label fx:id="lblUsername" style="-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: -fx-text-primary;"/>
+                <Label text="Administrateur" style="-fx-font-size: 11px; -fx-text-fill: -fx-text-secondary;"/>
+            </VBox>
+            <Separator orientation="VERTICAL" style="-fx-padding: 0 12px;"/>
+            <Button fx:id="btnLogout" text="Déconnexion" styleClass="btn, btn-danger" onAction="#handleLogout"
+                   style="-fx-min-width: 120px; -fx-padding: 8px 16px;"/>
+        </HBox>
+    </top>
+
+    <!-- Left Sidebar -->
+    <left>
+        <VBox styleClass="sidebar" spacing="0" prefWidth="280" 
+             style="-fx-padding: 0; -fx-background-color: #4C1D95;">
+            
+            <VBox styleClass="sidebar-header" alignment="CENTER" spacing="8"
+                 style="-fx-background-color: #6D28D9; -fx-text-fill: white; -fx-padding: 20px 16px; -fx-spacing: 8;">
+                <Label text="📊" style="-fx-font-size: 32px;"/>
+                <Label text="Tahwissa" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label text="Admin Panel" style="-fx-font-size: 12px; -fx-text-fill: #C4B5FD;"/>
+            </VBox>
+            
+            <Separator style="-fx-background-color: #5B21B6; -fx-padding: 0;"/>
+            
+            <Label text="GESTION" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #C4B5FD; -fx-padding: 12px 16px 8px 16px;"/>
+            
+            <Button fx:id="btnEvenements" text="📅 Événements" maxWidth="Infinity" 
+                    styleClass="nav-item, nav-item-active" onAction="#loadEvenements"
+                    style="-fx-text-alignment: LEFT;"/>
+            
+            <Button fx:id="btnReservations" text="🎟️ Réservations" maxWidth="Infinity" 
+                    styleClass="nav-item" onAction="#loadReservations"
+                    style="-fx-text-alignment: LEFT;"/>
+            
+            <Button fx:id="btnReclamations" text="📝 Réclamations" maxWidth="Infinity" 
+                    styleClass="nav-item" onAction="#loadReclamations"
+                    style="-fx-text-alignment: LEFT;"/>
+            
+            <Region VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </left>
+
+    <!-- Center Content Area -->
+    <center>
+        <StackPane fx:id="contentArea" style="-fx-background-color: -fx-background;"/>
+    </center>
+
+</BorderPane>
