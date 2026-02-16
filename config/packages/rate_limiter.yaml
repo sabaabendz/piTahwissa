@@ -1,0 +1,6 @@
+framework:
+    rate_limiter:
+        password_strength_limiter:
+            policy: 'fixed_window'
+            limit: 10
+            interval: '1 minute'
