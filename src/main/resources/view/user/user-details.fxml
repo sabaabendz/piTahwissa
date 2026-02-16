@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.UserDetailsController"
+            prefWidth="500.0" prefHeight="550.0"
+            style="-fx-background-color: transparent;">
+
+    <VBox spacing="20"
+          style="-fx-background-color: white;
+                 -fx-background-radius: 15;
+                 -fx-padding: 25;
+                 -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 20, 0, 0, 10);"
+          AnchorPane.bottomAnchor="20.0"
+          AnchorPane.leftAnchor="20.0"
+          AnchorPane.rightAnchor="20.0"
+          AnchorPane.topAnchor="20.0">
+
+        <!-- En-tête avec avatar -->
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <StackPane>
+                <Circle radius="40" fill="linear-gradient(to bottom, #3498DB, #2980B9)"/>
+                <Label fx:id="avatarIcon" text="👤"
+                       style="-fx-font-size: 40px; -fx-text-fill: white;"/>
+            </StackPane>
+
+            <VBox spacing="5">
+                <Label fx:id="fullNameLabel" text="John Doe"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                <Label fx:id="emailLabel" text="john.doe@email.com"
+                       style="-fx-font-size: 14px; -fx-text-fill: #7F8C8D;"/>
+                <HBox spacing="10" style="-fx-padding: 5 0 0 0;">
+                    <Label fx:id="roleBadge" text="ADMIN"
+                           style="-fx-background-color: #E74C3C;
+                                  -fx-text-fill: white;
+                                  -fx-padding: 3 15;
+                                  -fx-background-radius: 15;
+                                  -fx-font-size: 12px;
+                                  -fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="editBtn" text="✏️ Modifier"
+                    style="-fx-background-color: #F39C12;
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-background-radius: 20;
+                           -fx-padding: 8 20;
+                           -fx-cursor: hand;"
+                    onAction="#handleEdit"/>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Informations détaillées -->
+        <VBox spacing="15">
+            <Label text="Informations personnelles"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+
+            <GridPane hgap="20" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="30"/>
+                    <ColumnConstraints percentWidth="70"/>
+                </columnConstraints>
+
+                <!-- ID -->
+                <Label text="ID:"
+                       style="-fx-font-weight: bold; -fx-text-fill: #34495E;"
+                       GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="idLabel" text="1"
+                       style="-fx-text-fill: #2C3E50;"
+                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <!-- Téléphone -->
+                <Label text="Téléphone:"
+                       style="-fx-font-weight: bold; -fx-text-fill: #34495E;"
+                       GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="phoneLabel" text="+216 12 345 678"
+                       style="-fx-text-fill: #2C3E50;"
+                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <!-- Statut vérification -->
+                <Label text="Vérification:"
+                       style="-fx-font-weight: bold; -fx-text-fill: #34495E;"
+                       GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <Label fx:id="verifiedLabel" text="✓ Vérifié"
+                           style="-fx-background-color: #27AE60;
+                                  -fx-text-fill: white;
+                                  -fx-padding: 3 12;
+                                  -fx-background-radius: 12;"
+                           managed="true"/>
+                </HBox>
+
+                <!-- Statut compte -->
+                <Label text="Statut:"
+                       style="-fx-font-weight: bold; -fx-text-fill: #34495E;"
+                       GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Label fx:id="activeLabel" text="● Actif"
+                       style="-fx-text-fill: #27AE60; -fx-font-weight: bold;"
+                       GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <!-- Date création -->
+                <Label text="Membre depuis:"
+                       style="-fx-font-weight: bold; -fx-text-fill: #34495E;"
+                       GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Label fx:id="createdAtLabel" text="12/02/2026 14:30"
+                       style="-fx-text-fill: #2C3E50;"
+                       GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                <!-- Dernière mise à jour -->
+                <Label text="Dernière mise à jour:"
+                       style="-fx-font-weight: bold; -fx-text-fill: #34495E;"
+                       GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                <Label fx:id="updatedAtLabel" text="12/02/2026 15:45"
+                       style="-fx-text-fill: #2C3E50;"
+                       GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+            </GridPane>
+        </VBox>
+
+        <Separator/>
+
+        <!-- Localisation -->
+        <VBox spacing="10">
+            <Label text="Localisation"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+
+            <GridPane hgap="20" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="30"/>
+                    <ColumnConstraints percentWidth="70"/>
+                </columnConstraints>
+
+                <Label text="Ville:"
+                       style="-fx-font-weight: bold; -fx-text-fill: #34495E;"
+                       GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="cityLabel" text="Tunis"
+                       style="-fx-text-fill: #2C3E50;"
+                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="Pays:"
+                       style="-fx-font-weight: bold; -fx-text-fill: #34495E;"
+                       GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="countryLabel" text="Tunisie"
+                       style="-fx-text-fill: #2C3E50;"
+                       GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            </GridPane>
+        </VBox>
+
+        <Separator/>
+
+        <!-- Boutons d'action -->
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <Button fx:id="deleteBtn" text="🗑️ Supprimer"
+                    style="-fx-background-color: #E74C3C;
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-background-radius: 20;
+                           -fx-padding: 8 25;
+                           -fx-cursor: hand;"
+                    onAction="#handleDelete"/>
+            <Button fx:id="closeBtn" text="Fermer"
+                    style="-fx-background-color: #95A5A6;
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-background-radius: 20;
+                           -fx-padding: 8 25;
+                           -fx-cursor: hand;"
+                    onAction="#closeDialog"/>
+        </HBox>
+    </VBox>
+
+</AnchorPane>

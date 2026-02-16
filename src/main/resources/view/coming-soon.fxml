@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.String?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controller.ComingSoonController"
+           prefWidth="900" prefHeight="600"
+           style="-fx-background-color: linear-gradient(to bottom right, #9333EA, #4F46E5, #3B82F6);">
+
+    <stylesheets>
+        <String fx:value="@../styles/tahwisa.css"/>
+    </stylesheets>
+
+    <!-- ================ CONTENU PRINCIPAL ================ -->
+    <VBox alignment="CENTER" spacing="40" style="-fx-padding: 50;">
+
+        <!-- ================ LOGO ET ICÔNE ================ -->
+        <StackPane prefWidth="180" prefHeight="180">
+            <!-- Cercle de fond -->
+            <Circle radius="90" fill="rgba(255, 255, 255, 0.15)">
+                <effect>
+                    <DropShadow color="rgba(0, 0, 0, 0.3)" radius="20" offsetY="10"/>
+                </effect>
+            </Circle>
+
+            <!-- Cercle intérieur -->
+            <Circle radius="75" fill="rgba(255, 255, 255, 0.25)"/>
+
+            <!-- Icône principale -->
+            <VBox alignment="CENTER" spacing="5">
+                <Label text="🚀" style="-fx-font-size: 64px;"/>
+                <Label text="🌍" style="-fx-font-size: 48px; -fx-translate-y: -10;"/>
+            </VBox>
+        </StackPane>
+
+        <!-- ================ TITRE PRINCIPAL ================ -->
+        <VBox alignment="CENTER" spacing="15">
+            <Label text="Bientôt Disponible!"
+                   style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: white;">
+                <effect>
+                    <DropShadow color="rgba(0, 0, 0, 0.4)" radius="10" offsetY="3"/>
+                </effect>
+            </Label>
+
+            <Label text="We Are Coming Soon"
+                   style="-fx-font-size: 28px; -fx-text-fill: rgba(255, 255, 255, 0.9); -fx-font-style: italic;"/>
+        </VBox>
+
+        <!-- ================ DESCRIPTION ================ -->
+        <VBox alignment="CENTER" spacing="15" maxWidth="700">
+            <Label text="L'espace utilisateur Tahwissa est en cours de développement"
+                   wrapText="true" textAlignment="CENTER"
+                   style="-fx-font-size: 18px; -fx-text-fill: rgba(255, 255, 255, 0.95); -fx-font-weight: 500;"/>
+
+            <Label text="Nous travaillons activement sur de nouvelles fonctionnalités pour vous offrir la meilleure expérience de voyage possible."
+                   wrapText="true" textAlignment="CENTER"
+                   style="-fx-font-size: 15px; -fx-text-fill: rgba(255, 255, 255, 0.85); -fx-line-spacing: 5px;"/>
+        </VBox>
+
+        <!-- ================ FONCTIONNALITÉS À VENIR ================ -->
+        <HBox alignment="CENTER" spacing="30">
+            <!-- Feature 1 -->
+            <VBox alignment="CENTER" spacing="10" prefWidth="180"
+                  style="-fx-background-color: rgba(255, 255, 255, 0.15); -fx-background-radius: 15; -fx-padding: 20;">
+                <Label text="✈️" style="-fx-font-size: 36px;"/>
+                <Label text="Réservation" textAlignment="CENTER" wrapText="true"
+                       style="-fx-font-size: 14px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Label text="de vols" textAlignment="CENTER"
+                       style="-fx-font-size: 12px; -fx-text-fill: rgba(255, 255, 255, 0.9);"/>
+            </VBox>
+
+            <!-- Feature 2 -->
+            <VBox alignment="CENTER" spacing="10" prefWidth="180"
+                  style="-fx-background-color: rgba(255, 255, 255, 0.15); -fx-background-radius: 15; -fx-padding: 20;">
+                <Label text="🏨" style="-fx-font-size: 36px;"/>
+                <Label text="Hébergement" textAlignment="CENTER" wrapText="true"
+                       style="-fx-font-size: 14px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Label text="personnalisé" textAlignment="CENTER"
+                       style="-fx-font-size: 12px; -fx-text-fill: rgba(255, 255, 255, 0.9);"/>
+            </VBox>
+
+            <!-- Feature 3 -->
+            <VBox alignment="CENTER" spacing="10" prefWidth="180"
+                  style="-fx-background-color: rgba(255, 255, 255, 0.15); -fx-background-radius: 15; -fx-padding: 20;">
+                <Label text="🗺️" style="-fx-font-size: 36px;"/>
+                <Label text="Itinéraires" textAlignment="CENTER" wrapText="true"
+                       style="-fx-font-size: 14px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Label text="sur mesure" textAlignment="CENTER"
+                       style="-fx-font-size: 12px; -fx-text-fill: rgba(255, 255, 255, 0.9);"/>
+            </VBox>
+        </HBox>
+
+        <!-- ================ INFORMATIONS UTILISATEUR ================ -->
+        <VBox alignment="CENTER" spacing="10"
+              style="-fx-background-color: rgba(255, 255, 255, 0.2); -fx-background-radius: 20; -fx-padding: 25;">
+            <HBox alignment="CENTER" spacing="10">
+                <Label text="👤" style="-fx-font-size: 24px;"/>
+                <Label fx:id="userNameLabel" text="Bienvenue, Utilisateur!"
+                       style="-fx-font-size: 18px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            </HBox>
+            <Label fx:id="userEmailLabel" text="email@example.com"
+                   style="-fx-font-size: 14px; -fx-text-fill: rgba(255, 255, 255, 0.9);"/>
+            <Label text="Rôle: Voyageur"
+                   style="-fx-font-size: 13px; -fx-text-fill: rgba(255, 255, 255, 0.85); -fx-font-style: italic;"/>
+        </VBox>
+
+        <!-- ================ ACTIONS ================ -->
+        <HBox alignment="CENTER" spacing="20">
+            <!-- Bouton Retour -->
+            <Button fx:id="logoutBtn" text="🚪 Déconnexion" onAction="#handleLogout"
+                    style="-fx-background-color: rgba(255, 255, 255, 0.25); -fx-text-fill: white;
+                           -fx-font-size: 15px; -fx-font-weight: bold; -fx-padding: 12 30;
+                           -fx-background-radius: 25; -fx-border-color: white; -fx-border-width: 2;
+                           -fx-border-radius: 25; -fx-cursor: hand;">
+                <effect>
+                    <DropShadow color="rgba(0, 0, 0, 0.3)" radius="8" offsetY="3"/>
+                </effect>
+            </Button>
+
+            <!-- Bouton Notifications -->
+            <Button text="🔔 Être notifié du lancement"
+                    style="-fx-background-color: #e67e22; -fx-text-fill: white;
+                           -fx-font-size: 15px; -fx-font-weight: bold; -fx-padding: 12 30;
+                           -fx-background-radius: 25; -fx-cursor: hand;">
+                <effect>
+                    <DropShadow color="rgba(230, 126, 34, 0.5)" radius="10" offsetY="4"/>
+                </effect>
+            </Button>
+        </HBox>
+
+        <!-- ================ FOOTER ================ -->
+        <VBox alignment="CENTER" spacing="8">
+            <Label text="En attendant, notre équipe d'administration travaille pour vous"
+                   style="-fx-font-size: 12px; -fx-text-fill: rgba(255, 255, 255, 0.7);"/>
+            <Label text="📧 contact@tahwissa.com  |  📞 +216 XX XXX XXX"
+                   style="-fx-font-size: 12px; -fx-text-fill: rgba(255, 255, 255, 0.7);"/>
+        </VBox>
+
+    </VBox>
+
+    <!-- ================ ÉLÉMENTS DÉCORATIFS ================ -->
+    <!-- Cercle décoratif en haut à gauche -->
+    <Circle radius="100" fill="rgba(255, 255, 255, 0.08)"
+            translateX="-350" translateY="-200" StackPane.alignment="TOP_LEFT"/>
+
+    <!-- Cercle décoratif en bas à droite -->
+    <Circle radius="150" fill="rgba(255, 255, 255, 0.06)"
+            translateX="300" translateY="180" StackPane.alignment="BOTTOM_RIGHT"/>
+
+</StackPane>
+
+
+
