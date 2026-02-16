@@ -1,0 +1,9 @@
+# Tahwissa - Dépendances Python pour la Vérification Biométrique
+# ================================================================
+
+# OpenCV pour la détection faciale
+opencv-python==4.9.0.80
+
+# NumPy (dépendance d'OpenCV, installée automatiquement)
+numpy>=1.24.0
+

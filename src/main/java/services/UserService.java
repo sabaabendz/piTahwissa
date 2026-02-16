@@ -17,39 +17,55 @@ public class UserService implements IService<User> {
 
     @Override
     public void ajouter(User user) throws SQLException {
-        System.out.println("📝 Ajout de l'utilisateur: " + user.getFirstName() + " " + user.getLastName());
+        System.out.println("📝 UserService.ajouter() - Début");
+        System.out.println("   Utilisateur: " + user.getFirstName() + " " + user.getLastName());
+        System.out.println("   Email: " + user.getEmail());
+        System.out.println("   Phone: " + user.getPhone());
+        System.out.println("   City: " + user.getCity());
+        System.out.println("   Country: " + user.getCountry());
+        System.out.println("   Role: " + user.getRole() + " (ID: " + getRoleId(user.getRole()) + ")");
 
-        String sql = "INSERT INTO user (email, password, first_name, last_name, role_id) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO user (email, password, first_name, last_name, phone, city, country, role_id, is_verified, is_active) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, user.getEmail());
-        ps.setString(2, user.getPassword());
-        ps.setString(3, user.getFirstName());
-        ps.setString(4, user.getLastName());
+        System.out.println("📝 SQL: " + sql);
 
-        int roleId = getRoleId(user.getRole());
-        ps.setInt(5, roleId);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getEmail());
+            ps.setString(2, user.getPassword());
+            ps.setString(3, user.getFirstName());
+            ps.setString(4, user.getLastName());
+            ps.setString(5, user.getPhone());
+            ps.setString(6, user.getCity());
+            ps.setString(7, user.getCountry());
+            ps.setInt(8, getRoleId(user.getRole()));
+            ps.setBoolean(9, user.isVerified());
+            ps.setBoolean(10, user.isActive());
 
-        ps.executeUpdate();
-        ps.close();
-        System.out.println("✅ Utilisateur ajouté avec succès.");
+            System.out.println("🔄 Exécution de la requête SQL...");
+            int rowsAffected = ps.executeUpdate();
+            System.out.println("✅ Utilisateur ajouté avec succès! Lignes affectées: " + rowsAffected);
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur SQL lors de l'ajout:");
+            System.err.println("   Code: " + e.getErrorCode());
+            System.err.println("   SQLState: " + e.getSQLState());
+            System.err.println("   Message: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public void update(User user) throws SQLException {
         String sql = "UPDATE user SET email = ?, first_name = ?, last_name = ?, role_id = ? WHERE id = ?";
 
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, user.getEmail());
-        ps.setString(2, user.getFirstName());
-        ps.setString(3, user.getLastName());
-
-        int roleId = getRoleId(user.getRole());
-        ps.setInt(4, roleId);
-        ps.setInt(5, user.getId());
-
-        ps.executeUpdate();
-        ps.close();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getEmail());
+            ps.setString(2, user.getFirstName());
+            ps.setString(3, user.getLastName());
+            ps.setInt(4, getRoleId(user.getRole()));
+            ps.setInt(5, user.getId());
+            ps.executeUpdate();
+        }
         System.out.println("✏️  Utilisateur mis à jour.");
     }
 
@@ -57,10 +73,10 @@ public class UserService implements IService<User> {
     public void supprimer(int id) throws SQLException {
         String sql = "DELETE FROM user WHERE id = ?";
 
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setInt(1, id);
-        ps.executeUpdate();
-        ps.close();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
         System.out.println("🗑️  Utilisateur supprimé.");
     }
 
@@ -68,32 +84,30 @@ public class UserService implements IService<User> {
     public List<User> read() throws SQLException {
         String sql = "SELECT u.*, r.name as role_name FROM user u JOIN role r ON u.role_id = r.id";
 
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(sql);
-
         List<User> users = new ArrayList<>();
-        while (rs.next()) {
-            User user = new User();
-            user.setId(rs.getInt("id"));
-            user.setEmail(rs.getString("email"));
-            user.setPassword(rs.getString("password"));
-            user.setFirstName(rs.getString("first_name"));
-            user.setLastName(rs.getString("last_name"));
-            user.setPhone(rs.getString("phone"));
-            user.setRole(rs.getString("role_name"));
-            user.setVerified(rs.getBoolean("is_verified"));
-            user.setActive(rs.getBoolean("is_active"));
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(sql)) {
 
-            Timestamp createdAt = rs.getTimestamp("created_at");
-            if (createdAt != null) {
-                user.setCreatedAt(createdAt.toLocalDateTime());
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                user.setFirstName(rs.getString("first_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setPhone(rs.getString("phone"));
+                user.setRole(rs.getString("role_name"));
+                user.setVerified(rs.getBoolean("is_verified"));
+                user.setActive(rs.getBoolean("is_active"));
+
+                Timestamp createdAt = rs.getTimestamp("created_at");
+                if (createdAt != null) {
+                    user.setCreatedAt(createdAt.toLocalDateTime());
+                }
+
+                users.add(user);
             }
-
-            users.add(user);
         }
-
-        rs.close();
-        statement.close();
         System.out.println("📖 " + users.size() + " utilisateur(s) trouvé(s).");
         return users;
     }
@@ -102,33 +116,51 @@ public class UserService implements IService<User> {
         if (roleName == null) return 1;
 
         return switch (roleName.toUpperCase()) {
-            case "USER" -> 1;
-            case "AGENT" -> 2;
+            case "USER", "VOYAGEUR" -> 1;
+            case "AGENT", "GUIDE" -> 2;
             case "ADMIN" -> 3;
             default -> 1;
         };
     }
 
     public User findByEmail(String email) throws SQLException {
+        System.out.println("🔍 Recherche de l'utilisateur par email: " + email);
         String sql = "SELECT u.*, r.name as role_name FROM user u JOIN role r ON u.role_id = r.id WHERE u.email = ?";
 
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, email);
-        ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPassword(rs.getString("password"));
+                    user.setFirstName(rs.getString("first_name"));
+                    user.setLastName(rs.getString("last_name"));
+                    user.setPhone(rs.getString("phone"));
+                    user.setCity(rs.getString("city"));
+                    user.setCountry(rs.getString("country"));
+                    user.setRole(rs.getString("role_name"));
+                    user.setVerified(rs.getBoolean("is_verified"));
+                    user.setActive(rs.getBoolean("is_active"));
 
-        User user = null;
-        if (rs.next()) {
-            user = new User();
-            user.setId(rs.getInt("id"));
-            user.setEmail(rs.getString("email"));
-            user.setPassword(rs.getString("password"));
-            user.setFirstName(rs.getString("first_name"));
-            user.setLastName(rs.getString("last_name"));
-            user.setRole(rs.getString("role_name"));
+                    System.out.println("✅ Utilisateur trouvé: " + user.getFirstName() + " " + user.getLastName());
+                    System.out.println("   ID: " + user.getId());
+                    System.out.println("   Email: " + user.getEmail());
+                    System.out.println("   Rôle: " + user.getRole());
+                    System.out.println("   Vérifié: " + user.isVerified());
+                    System.out.println("   Actif: " + user.isActive());
+
+                    return user;
+                } else {
+                    System.out.println("❌ Aucun utilisateur trouvé avec l'email: " + email);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur SQL lors de la recherche:");
+            System.err.println("   Message: " + e.getMessage());
+            throw e;
         }
-
-        rs.close();
-        ps.close();
-        return user;
+        return null;
     }
 }

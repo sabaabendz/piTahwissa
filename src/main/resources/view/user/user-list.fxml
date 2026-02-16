@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.collections.FXCollections?>
@@ -8,7 +7,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controller.user.UserListController"
+            fx:controller="controller.UserListController"
             prefHeight="700.0" prefWidth="1000.0"
             style="-fx-background-color: #F8F9FA;">
 
@@ -26,6 +25,12 @@
                     </VBox>
                 </HBox>
                 <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="backToDashboardBtn" text="← Dashboard"
+                        style="-fx-background-color: #34495E; -fx-text-fill: white;
+                               -fx-font-weight: bold; -fx-font-size: 13px;
+                               -fx-background-radius: 20; -fx-padding: 10 20;
+                               -fx-cursor: hand;"
+                        prefHeight="40.0"/>
                 <Button fx:id="addUserBtn" text="➕ Nouvel Utilisateur"
                         style="-fx-background-color: #27AE60; -fx-text-fill: white;
                                -fx-font-weight: bold; -fx-font-size: 14px;

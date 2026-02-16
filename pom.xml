@@ -42,6 +42,29 @@
             <version>${javafx.version}</version>
         </dependency>
 
+        <!-- Gson for JSON parsing -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
     </dependencies>
 
+    <build>
+        <plugins>
+            <!-- JavaFX runtime plugin -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>${javafx.version}</version>
+                <configuration>
+                    <mainClass>main.Main</mainClass>
+                    <launcher>app</launcher>
+                    <jlinkZipName>app</jlinkZipName>
+                    <addModules>javafx.controls,javafx.fxml</addModules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

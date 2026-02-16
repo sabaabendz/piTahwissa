@@ -1,12 +1,16 @@
-package controller.user;
+package controller;
 
 import entities.User;
 import services.UserService;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 
 import java.sql.SQLException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class UserFormController {
 
@@ -37,13 +41,21 @@ public class UserFormController {
     @FXML
     public void initialize() {
         userService = new UserService();
-        errorLabel.setManaged(false);
-        errorLabel.setVisible(false);
+        if (errorLabel != null) {
+            errorLabel.setManaged(false);
+            errorLabel.setVisible(false);
+        }
 
-        // Valeur par défaut
-        roleField.setValue("USER");
-        countryField.setText("Tunisie");
-        activeCheckbox.setSelected(true);
+        if (roleField != null) {
+            roleField.setItems(FXCollections.observableArrayList("USER", "AGENT", "ADMIN"));
+            roleField.setValue("USER");
+        }
+        if (countryField != null) {
+            countryField.setText("Tunisie");
+        }
+        if (activeCheckbox != null) {
+            activeCheckbox.setSelected(true);
+        }
     }
 
     public void setUserListController(UserListController controller) {
@@ -52,10 +64,18 @@ public class UserFormController {
 
     public void initForAdd() {
         isEditMode = false;
-        formTitle.setText("Ajouter un utilisateur");
-        formSubtitle.setText("Remplissez les informations du nouvel utilisateur");
-        formIcon.setText("➕");
-        saveBtn.setText("Ajouter");
+        if (formTitle != null) {
+            formTitle.setText("Ajouter un utilisateur");
+        }
+        if (formSubtitle != null) {
+            formSubtitle.setText("Remplissez les informations du nouvel utilisateur");
+        }
+        if (formIcon != null) {
+            formIcon.setText("➕");
+        }
+        if (saveBtn != null) {
+            saveBtn.setText("Ajouter");
+        }
         clearForm();
     }
 
@@ -63,46 +83,199 @@ public class UserFormController {
         isEditMode = true;
         currentUser = user;
 
-        formTitle.setText("Modifier l'utilisateur");
-        formSubtitle.setText("Modifiez les informations de l'utilisateur");
-        formIcon.setText("✏️");
-        saveBtn.setText("Modifier");
+        if (formTitle != null) {
+            formTitle.setText("Modifier l'utilisateur");
+        }
+        if (formSubtitle != null) {
+            formSubtitle.setText("Modifiez les informations de l'utilisateur");
+        }
+        if (formIcon != null) {
+            formIcon.setText("✏️");
+        }
+        if (saveBtn != null) {
+            saveBtn.setText("Modifier");
+        }
 
-        userIdField.setText(String.valueOf(user.getId()));
-        emailField.setText(user.getEmail());
-        firstNameField.setText(user.getFirstName());
-        lastNameField.setText(user.getLastName());
-        phoneField.setText(user.getPhone());
-        roleField.setValue(user.getRole());
-        verifiedCheckbox.setSelected(user.isVerified());
-        activeCheckbox.setSelected(user.isActive());
-        cityField.setText(user.getCity());
-        countryField.setText(user.getCountry());
-        passwordField.setPromptText("Laisser vide pour conserver");
+        if (userIdField != null) {
+            userIdField.setText(String.valueOf(user.getId()));
+        }
+        if (emailField != null) {
+            emailField.setText(user.getEmail());
+        }
+        if (firstNameField != null) {
+            firstNameField.setText(user.getFirstName());
+        }
+        if (lastNameField != null) {
+            lastNameField.setText(user.getLastName());
+        }
+        if (phoneField != null) {
+            phoneField.setText(user.getPhone());
+        }
+        if (roleField != null) {
+            roleField.setValue(user.getRole());
+        }
+        if (verifiedCheckbox != null) {
+            verifiedCheckbox.setSelected(user.isVerified());
+        }
+        if (activeCheckbox != null) {
+            activeCheckbox.setSelected(user.isActive());
+        }
+        if (cityField != null) {
+            cityField.setText(user.getCity());
+        }
+        if (countryField != null) {
+            countryField.setText(user.getCountry());
+        }
+        if (passwordField != null) {
+            passwordField.setPromptText("Laisser vide pour conserver");
+        }
+    }
+
+    /**
+     * Vérifie que l'utilisateur est un humain via la webcam
+     * @return true si humain vérifié, false sinon
+     */
+    private boolean verifyHumanWithWebcam() {
+        try {
+            // Chemins Python (corrigés)
+            String pythonPath = "C:\\Users\\mohamed\\Downloads\\workshopA6\\workshopA6\\.venv\\Scripts\\python.exe";
+            String scriptPath = "C:\\Users\\mohamed\\Downloads\\workshopA6\\workshopA6\\scripts\\human_verification.py";
+
+            System.out.println("🔍 Vérification Python: " + pythonPath);
+
+            // Vérifier qu'OpenCV est disponible
+            Process testProcess = Runtime.getRuntime().exec(pythonPath + " -c \"import cv2; print('OK')\"");
+            int testCode = testProcess.waitFor();
+
+            if (testCode != 0) {
+                // Lire l'erreur
+                BufferedReader errorReader = new BufferedReader(
+                        new InputStreamReader(testProcess.getErrorStream())
+                );
+                String errorLine;
+                StringBuilder errorMsg = new StringBuilder();
+                while ((errorLine = errorReader.readLine()) != null) {
+                    errorMsg.append(errorLine).append("\n");
+                }
+
+                System.err.println("❌ OpenCV non disponible: " + errorMsg);
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erreur Python");
+                    alert.setHeaderText("OpenCV non installé");
+                    alert.setContentText("Le module OpenCV n'est pas disponible.\n" +
+                            "Exécutez: pip install opencv-python\n\n" +
+                            "Détails: " + errorMsg);
+                    alert.showAndWait();
+                });
+                return false;
+            }
+
+            // Afficher un message d'information
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Vérification biométrique");
+                alert.setHeaderText("Vérification d'humanité");
+                alert.setContentText("La webcam va s'activer pour vérifier que vous êtes un humain.\n" +
+                        "Placez-vous face à la caméra et suivez les instructions.\n\n" +
+                        "Appuyez sur ESPACE quand votre visage est détecté.");
+                alert.showAndWait();
+            });
+
+            // Exécuter le script Python en mode webcam (15 secondes max)
+            ProcessBuilder pb = new ProcessBuilder(
+                    pythonPath,
+                    scriptPath,
+                    "webcam",
+                    "15"
+            );
+
+            // Rediriger les flux d'erreur pour les voir dans la console
+            pb.redirectErrorStream(true);
+
+            Process process = pb.start();
+
+            // Lire la sortie du script
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream())
+            );
+
+            String jsonOutput = reader.readLine();
+            System.out.println("📤 Réponse du script: " + jsonOutput);
+
+            // Lire le reste de la sortie (logs Python)
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("🐍 Python: " + line);
+            }
+
+            // Attendre la fin du processus
+            int exitCode = process.waitFor();
+            System.out.println("🏁 Code de sortie Python: " + exitCode);
+
+            // Analyser le résultat
+            if (jsonOutput != null && jsonOutput.contains("\"success\": true")) {
+                return true;
+            } else {
+                // Afficher le message d'erreur
+                if (jsonOutput != null && jsonOutput.contains("\"message\":")) {
+                    String message = jsonOutput.split("\"message\": \"")[1].split("\"")[0];
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Échec de vérification");
+                        alert.setHeaderText("Vérification échouée");
+                        alert.setContentText(message);
+                        alert.showAndWait();
+                    });
+                }
+                return false;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur technique");
+                alert.setHeaderText("Erreur lors de la vérification");
+                alert.setContentText("Impossible de lancer la vérification: " + e.getMessage() +
+                        "\n\nVérifiez que votre webcam est connectée et que Python est installé.");
+                alert.showAndWait();
+            });
+            return false;
+        }
     }
 
     @FXML
     private void handleSave() {
-        // Validation
-        if (emailField.getText().trim().isEmpty()) {
+        // Validation des champs obligatoires
+        if (emailField == null || emailField.getText() == null || emailField.getText().trim().isEmpty()) {
             showError("L'email est obligatoire");
             return;
         }
-        if (firstNameField.getText().trim().isEmpty()) {
+        if (firstNameField == null || firstNameField.getText() == null || firstNameField.getText().trim().isEmpty()) {
             showError("Le prénom est obligatoire");
             return;
         }
-        if (lastNameField.getText().trim().isEmpty()) {
+        if (lastNameField == null || lastNameField.getText() == null || lastNameField.getText().trim().isEmpty()) {
             showError("Le nom est obligatoire");
             return;
         }
-        if (!isEditMode && passwordField.getText().trim().isEmpty()) {
+        if (!isEditMode && (passwordField == null || passwordField.getText() == null || passwordField.getText().trim().isEmpty())) {
             showError("Le mot de passe est obligatoire pour un nouvel utilisateur");
             return;
         }
-        if (roleField.getValue() == null) {
+        if (roleField == null || roleField.getValue() == null) {
             showError("Le rôle est obligatoire");
             return;
+        }
+
+        // 🔴 VÉRIFICATION HUMAINE - Seulement pour les nouveaux utilisateurs
+        if (!isEditMode) {
+            boolean isHuman = verifyHumanWithWebcam();
+            if (!isHuman) {
+                showError("Vérification humaine échouée. Inscription annulée.");
+                return;
+            }
         }
 
         try {
@@ -116,27 +289,51 @@ public class UserFormController {
                         roleField.getValue()
                 );
 
-                newUser.setPhone(phoneField.getText().trim());
-                newUser.setVerified(verifiedCheckbox.isSelected());
-                newUser.setActive(activeCheckbox.isSelected());
-                newUser.setCity(cityField.getText().trim());
-                newUser.setCountry(countryField.getText().trim());
+                if (phoneField != null && phoneField.getText() != null) {
+                    newUser.setPhone(phoneField.getText().trim());
+                }
+                if (verifiedCheckbox != null) {
+                    newUser.setVerified(verifiedCheckbox.isSelected());
+                }
+                if (activeCheckbox != null) {
+                    newUser.setActive(activeCheckbox.isSelected());
+                }
+                if (cityField != null && cityField.getText() != null) {
+                    newUser.setCity(cityField.getText().trim());
+                }
+                if (countryField != null && countryField.getText() != null) {
+                    newUser.setCountry(countryField.getText().trim());
+                }
 
                 userService.ajouter(newUser);
                 showSuccess("Utilisateur ajouté avec succès!");
             } else {
                 // Modification
+                if (currentUser == null) {
+                    showError("Utilisateur introuvable");
+                    return;
+                }
                 currentUser.setEmail(emailField.getText().trim());
                 currentUser.setFirstName(firstNameField.getText().trim());
                 currentUser.setLastName(lastNameField.getText().trim());
-                currentUser.setPhone(phoneField.getText().trim());
+                if (phoneField != null && phoneField.getText() != null) {
+                    currentUser.setPhone(phoneField.getText().trim());
+                }
                 currentUser.setRole(roleField.getValue());
-                currentUser.setVerified(verifiedCheckbox.isSelected());
-                currentUser.setActive(activeCheckbox.isSelected());
-                currentUser.setCity(cityField.getText().trim());
-                currentUser.setCountry(countryField.getText().trim());
+                if (verifiedCheckbox != null) {
+                    currentUser.setVerified(verifiedCheckbox.isSelected());
+                }
+                if (activeCheckbox != null) {
+                    currentUser.setActive(activeCheckbox.isSelected());
+                }
+                if (cityField != null && cityField.getText() != null) {
+                    currentUser.setCity(cityField.getText().trim());
+                }
+                if (countryField != null && countryField.getText() != null) {
+                    currentUser.setCountry(countryField.getText().trim());
+                }
 
-                if (!passwordField.getText().trim().isEmpty()) {
+                if (passwordField != null && passwordField.getText() != null && !passwordField.getText().trim().isEmpty()) {
                     currentUser.setPassword(passwordField.getText().trim());
                 }
 
@@ -162,27 +359,69 @@ public class UserFormController {
 
     @FXML
     private void closeForm() {
-        Stage stage = (Stage) saveBtn.getScene().getWindow();
-        stage.close();
+        Stage stage = resolveStage();
+        if (stage != null) {
+            stage.close();
+        }
+    }
+
+    private Stage resolveStage() {
+        if (saveBtn != null && saveBtn.getScene() != null) {
+            return (Stage) saveBtn.getScene().getWindow();
+        }
+        if (cancelBtn != null && cancelBtn.getScene() != null) {
+            return (Stage) cancelBtn.getScene().getWindow();
+        }
+        if (closeBtn != null && closeBtn.getScene() != null) {
+            return (Stage) closeBtn.getScene().getWindow();
+        }
+        return null;
     }
 
     private void clearForm() {
-        emailField.clear();
-        passwordField.clear();
-        firstNameField.clear();
-        lastNameField.clear();
-        phoneField.clear();
-        roleField.setValue("USER");
-        verifiedCheckbox.setSelected(false);
-        activeCheckbox.setSelected(true);
-        cityField.clear();
-        countryField.setText("Tunisie");
-        userIdField.clear();
-        errorLabel.setManaged(false);
-        errorLabel.setVisible(false);
+        if (emailField != null) {
+            emailField.clear();
+        }
+        if (passwordField != null) {
+            passwordField.clear();
+        }
+        if (firstNameField != null) {
+            firstNameField.clear();
+        }
+        if (lastNameField != null) {
+            lastNameField.clear();
+        }
+        if (phoneField != null) {
+            phoneField.clear();
+        }
+        if (roleField != null) {
+            roleField.setValue("USER");
+        }
+        if (verifiedCheckbox != null) {
+            verifiedCheckbox.setSelected(false);
+        }
+        if (activeCheckbox != null) {
+            activeCheckbox.setSelected(true);
+        }
+        if (cityField != null) {
+            cityField.clear();
+        }
+        if (countryField != null) {
+            countryField.setText("Tunisie");
+        }
+        if (userIdField != null) {
+            userIdField.clear();
+        }
+        if (errorLabel != null) {
+            errorLabel.setManaged(false);
+            errorLabel.setVisible(false);
+        }
     }
 
     private void showError(String message) {
+        if (errorLabel == null) {
+            return;
+        }
         errorLabel.setText("❌ " + message);
         errorLabel.setManaged(true);
         errorLabel.setVisible(true);

@@ -2,7 +2,7 @@ package controller;
 
 import entities.User;
 import services.UserService;
-
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -57,6 +57,16 @@ public class UserController {
         userList = FXCollections.observableArrayList();
         selectedUser = null;
 
+        // Init choix de rôles
+        if (roleFilter != null) {
+            roleFilter.setItems(FXCollections.observableArrayList("Tous les rôles", "USER", "AGENT", "ADMIN"));
+            roleFilter.setValue("Tous les rôles");
+        }
+        if (formRoleField != null) {
+            formRoleField.setItems(FXCollections.observableArrayList("USER", "AGENT", "ADMIN"));
+            formRoleField.setValue("USER");
+        }
+
         configureTable();
         loadUsers();
         configureListeners();
@@ -98,6 +108,7 @@ public class UserController {
             }
         });
 
+        actionsColumn.setCellValueFactory(param -> new ReadOnlyStringWrapper("actions"));
         actionsColumn.setCellFactory(column -> new TableCell<User, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -149,23 +160,22 @@ public class UserController {
     private void filterUsers() {
         if (userList == null) return;
 
-        String searchText = "";
-        if (searchField != null && searchField.getText() != null) {
-            searchText = searchField.getText().toLowerCase();
-        }
-
-        String selectedRole = "";
-        if (roleFilter != null && roleFilter.getValue() != null) {
-            selectedRole = roleFilter.getValue();
-        }
+        String searchText = (searchField != null && searchField.getText() != null)
+                ? searchField.getText().toLowerCase()
+                : "";
+        String selectedRole = (roleFilter != null && roleFilter.getValue() != null)
+                ? roleFilter.getValue()
+                : "";
 
         ObservableList<User> filtered = FXCollections.observableArrayList();
 
         for (User user : userList) {
+            String email = user.getEmail() != null ? user.getEmail().toLowerCase() : "";
+            String first = user.getFirstName() != null ? user.getFirstName().toLowerCase() : "";
+            String last = user.getLastName() != null ? user.getLastName().toLowerCase() : "";
+
             boolean matchSearch = searchText.isEmpty() ||
-                    user.getEmail().toLowerCase().contains(searchText) ||
-                    user.getFirstName().toLowerCase().contains(searchText) ||
-                    user.getLastName().toLowerCase().contains(searchText);
+                    email.contains(searchText) || first.contains(searchText) || last.contains(searchText);
 
             boolean matchRole = selectedRole.isEmpty() ||
                     selectedRole.equals("Tous les rôles") ||
@@ -394,3 +404,4 @@ public class UserController {
         alert.showAndWait();
     }
 }
+

@@ -1,4 +1,4 @@
-package controller.user;
+package controller;
 
 import entities.User;
 import services.UserService;
@@ -108,7 +108,7 @@ public class UserDetailsController {
             // Ouvrir le formulaire d'édition
             try {
                 javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                        getClass().getResource("/views/user/user-form.fxml")
+                        getClass().getResource("/view/user/user-form.fxml")
                 );
                 javafx.scene.Parent root = loader.load();
 

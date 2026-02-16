@@ -1,7 +1,8 @@
-package controller.user;
+package controller;
 
 import entities.User;
 import services.UserService;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -37,6 +38,7 @@ public class UserListController {
     @FXML private ChoiceBox<String> statusFilter;
     @FXML private Button searchBtn;
     @FXML private Button addUserBtn;
+    @FXML private Button backToDashboardBtn;
 
     @FXML private Label totalUsersLabel;
     @FXML private Label activeUsersLabel;
@@ -117,6 +119,7 @@ public class UserListController {
         });
 
         // Colonne des actions
+        actionsColumn.setCellValueFactory(param -> new ReadOnlyStringWrapper("actions"));
         actionsColumn.setCellFactory(column -> new TableCell<User, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -147,6 +150,8 @@ public class UserListController {
     }
 
     private void configureFilters() {
+        roleFilter.setItems(FXCollections.observableArrayList("Tous les rôles", "USER", "AGENT", "ADMIN"));
+        statusFilter.setItems(FXCollections.observableArrayList("Tous", "Actif", "Inactif"));
         roleFilter.setValue("Tous les rôles");
         statusFilter.setValue("Tous");
     }
@@ -158,6 +163,7 @@ public class UserListController {
         statusFilter.setOnAction(e -> filterUsers());
 
         addUserBtn.setOnAction(e -> openAddUserForm());
+        backToDashboardBtn.setOnAction(e -> goBackToDashboard());
     }
 
     private void loadUsers() {
@@ -173,17 +179,19 @@ public class UserListController {
     }
 
     private void filterUsers() {
-        String searchText = searchField.getText().toLowerCase();
+        String searchText = searchField.getText() != null ? searchField.getText().toLowerCase() : "";
         String selectedRole = roleFilter.getValue();
         String selectedStatus = statusFilter.getValue();
 
         ObservableList<User> filtered = FXCollections.observableArrayList();
 
         for (User user : userList) {
+            String email = user.getEmail() != null ? user.getEmail().toLowerCase() : "";
+            String first = user.getFirstName() != null ? user.getFirstName().toLowerCase() : "";
+            String last = user.getLastName() != null ? user.getLastName().toLowerCase() : "";
+
             boolean matchSearch = searchText.isEmpty() ||
-                    user.getEmail().toLowerCase().contains(searchText) ||
-                    user.getFirstName().toLowerCase().contains(searchText) ||
-                    user.getLastName().toLowerCase().contains(searchText);
+                    email.contains(searchText) || first.contains(searchText) || last.contains(searchText);
 
             boolean matchRole = selectedRole == null ||
                     selectedRole.equals("Tous les rôles") ||
@@ -225,7 +233,7 @@ public class UserListController {
     @FXML
     private void openAddUserForm() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/user/user-form.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/user/user-form.fxml"));
             Parent root = loader.load();
 
             UserFormController controller = loader.getController();
@@ -246,7 +254,7 @@ public class UserListController {
 
     private void editUser(User user) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/user/user-form.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/user/user-form.fxml"));
             Parent root = loader.load();
 
             UserFormController controller = loader.getController();
@@ -267,7 +275,7 @@ public class UserListController {
 
     private void showUserDetails(User user) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/user/user-details.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/user/user-details.fxml"));
             Parent root = loader.load();
 
             UserDetailsController controller = loader.getController();
@@ -309,6 +317,30 @@ public class UserListController {
         loadUsers();
     }
 
+    private void goBackToDashboard() {
+        try {
+            System.out.println("🔙 Retour au dashboard...");
+            System.out.println("🔍 Vérification de la session avant retour...");
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
+            Parent root = loader.load();
+
+            // Le DashboardController va automatiquement charger le rôle depuis SessionManager
+            // dans sa méthode initialize()
+
+            Stage stage = (Stage) backToDashboardBtn.getScene().getWindow();
+            stage.setScene(new Scene(root, 1080, 720));
+            stage.setTitle("Tahwissa - Dashboard");
+            stage.show();
+
+            System.out.println("✅ Dashboard affiché - Le rôle sera chargé automatiquement depuis la session");
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors du retour au dashboard: " + e.getMessage());
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de retourner au dashboard: " + e.getMessage());
+        }
+    }
+
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -316,4 +348,4 @@ public class UserListController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-} // <-- IMPORTANT: CETTE ACCOLADE FERMANTE ÉTAIT MANQUANTE !
+}
