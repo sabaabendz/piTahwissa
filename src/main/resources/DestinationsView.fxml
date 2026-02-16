@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.tahwisa.controllers.DestinationViewController"
+      spacing="20" styleClass="content-area">
+
+    <!-- TOP BAR -->
+    <HBox styleClass="top-bar" spacing="15" alignment="CENTER_LEFT">
+        <Label text="📍 Gestion des Destinations" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <TextField fx:id="txtSearch" promptText="🔍 Rechercher..." styleClass="search-field"/>
+
+        <Button text="+ Créer" styleClass="btn-primary" onAction="#showCreateForm"/>
+        <Button text="↻ Actualiser" styleClass="btn-secondary" onAction="#refreshTable"/>
+    </HBox>
+
+    <!-- STATISTICS CARDS -->
+    <HBox spacing="15">
+        <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Total Destinations" styleClass="stat-label"/>
+            <Label fx:id="lblTotalDestinations" text="0" styleClass="stat-value"/>
+        </VBox>
+
+        <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Points d'Intérêt" styleClass="stat-label"/>
+            <Label fx:id="lblTotalPoints" text="0" styleClass="stat-value"/>
+        </VBox>
+
+        <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Pays Couverts" styleClass="stat-label"/>
+            <Label fx:id="lblTotalPays" text="0" styleClass="stat-value"/>
+        </VBox>
+    </HBox>
+
+    <!-- TABLE CARD -->
+    <VBox styleClass="card" VBox.vgrow="ALWAYS">
+        <!-- Card Header -->
+        <HBox styleClass="card-header" spacing="10" alignment="CENTER_LEFT">
+            <Label text="Liste des Destinations" styleClass="card-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblTableCount" text="0 destination(s)" styleClass="card-subtitle"/>
+        </HBox>
+
+        <!-- Table -->
+        <TableView fx:id="tableDestinations" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
+                <TableColumn fx:id="colNom" text="Nom" prefWidth="180"/>
+                <TableColumn fx:id="colPays" text="Pays" prefWidth="130"/>
+                <TableColumn fx:id="colVille" text="Ville" prefWidth="130"/>
+                <TableColumn fx:id="colDescription" text="Description" prefWidth="250"/>
+                <TableColumn fx:id="colLatitude" text="Latitude" prefWidth="100"/>
+                <TableColumn fx:id="colLongitude" text="Longitude" prefWidth="100"/>
+                <TableColumn fx:id="colActions" text="Actions" prefWidth="120"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>
