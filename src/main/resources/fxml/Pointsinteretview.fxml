@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="tn.esprit.tahwisa.controllers.DestinationViewController"
+      fx:controller="tn.esprit.tahwisa.controllers.PointInteretViewController"
       spacing="0">
 
     <!-- TOP BAR BLANC -->
@@ -14,11 +14,21 @@
                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);"
           spacing="12" alignment="CENTER_LEFT">
 
-        <!-- Titre avec icône -->
-        <Label text="📍  Gestion des Destinations"
+        <Label text="🏖️  Gestion des Points d'Intérêt"
                style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
 
         <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Filtre par type -->
+        <ComboBox fx:id="cmbTypeFilter" promptText="Filtrer par type..."
+                  onAction="#handleTypeFilter"
+                  style="-fx-background-color: #F3F4F6;
+                         -fx-border-color: #E5E7EB;
+                         -fx-border-radius: 6px;
+                         -fx-background-radius: 6px;
+                         -fx-font-size: 13px;
+                         -fx-pref-height: 36px;
+                         -fx-pref-width: 180px;"/>
 
         <!-- Barre de recherche -->
         <HBox style="-fx-background-color: #F3F4F6;
@@ -34,7 +44,7 @@
                        style="-fx-background-color: transparent;
                               -fx-border-color: transparent;
                               -fx-font-size: 13px;
-                              -fx-pref-width: 220px;
+                              -fx-pref-width: 200px;
                               -fx-pref-height: 34px;"/>
         </HBox>
 
@@ -67,74 +77,72 @@
 
         <!-- STAT CARDS -->
         <HBox spacing="15">
-            <!-- Card 1 -->
             <VBox HBox.hgrow="ALWAYS" spacing="10" alignment="CENTER"
-                  style="-fx-background-color: white;
-                         -fx-background-radius: 10px;
+                  style="-fx-background-color: white; -fx-background-radius: 10px;
                          -fx-padding: 22px;
                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
-                <Label text="Total Destinations"
-                       style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
-                <Label fx:id="lblTotalDestinations" text="0"
-                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
-            </VBox>
-
-            <!-- Card 2 -->
-            <VBox HBox.hgrow="ALWAYS" spacing="10" alignment="CENTER"
-                  style="-fx-background-color: white;
-                         -fx-background-radius: 10px;
-                         -fx-padding: 22px;
-                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
-                <Label text="Points d'Intérêt"
+                <Label text="Total Points d'Intérêt"
                        style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
                 <Label fx:id="lblTotalPoints" text="0"
                        style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
             </VBox>
-
-            <!-- Card 3 -->
             <VBox HBox.hgrow="ALWAYS" spacing="10" alignment="CENTER"
-                  style="-fx-background-color: white;
-                         -fx-background-radius: 10px;
+                  style="-fx-background-color: white; -fx-background-radius: 10px;
                          -fx-padding: 22px;
                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
-                <Label text="Pays Couverts"
+                <Label text="Monuments"
                        style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
-                <Label fx:id="lblTotalPays" text="0"
-                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+                <Label fx:id="lblMonuments" text="0"
+                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #4F46E5;"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="10" alignment="CENTER"
+                  style="-fx-background-color: white; -fx-background-radius: 10px;
+                         -fx-padding: 22px;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
+                <Label text="Plages"
+                       style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
+                <Label fx:id="lblPlages" text="0"
+                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #3B82F6;"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS" spacing="10" alignment="CENTER"
+                  style="-fx-background-color: white; -fx-background-radius: 10px;
+                         -fx-padding: 22px;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
+                <Label text="Musées"
+                       style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
+                <Label fx:id="lblMusees" text="0"
+                       style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #9333EA;"/>
             </VBox>
         </HBox>
 
         <!-- TABLE CARD -->
         <VBox VBox.vgrow="ALWAYS"
-              style="-fx-background-color: white;
-                     -fx-background-radius: 10px;
+              style="-fx-background-color: white; -fx-background-radius: 10px;
                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
 
-            <!-- Card Header -->
             <HBox style="-fx-padding: 16px 20px;
                          -fx-border-color: transparent transparent #F3F4F6 transparent;
                          -fx-border-width: 0 0 1px 0;"
                   alignment="CENTER_LEFT">
-                <Label text="Liste des Destinations"
+                <Label text="Liste des Points d'Intérêt"
                        style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="lblTableCount" text="0 destination(s)"
+                <Label fx:id="lblTableCount" text="0 point(s)"
                        style="-fx-font-size: 12px; -fx-text-fill: #9CA3AF;"/>
             </HBox>
 
-            <!-- TableView -->
-            <TableView fx:id="tableDestinations" VBox.vgrow="ALWAYS"
+            <TableView fx:id="tablePointsInteret" VBox.vgrow="ALWAYS"
                        style="-fx-background-color: white; -fx-border-color: transparent;">
                 <columns>
                     <TableColumn fx:id="colId" text="ID" prefWidth="65"/>
                     <TableColumn fx:id="colNom" text="NOM" prefWidth="200"/>
-                    <TableColumn fx:id="colPays" text="PAYS" prefWidth="160"/>
-                    <TableColumn fx:id="colVille" text="VILLE" prefWidth="160"/>
-                    <TableColumn fx:id="colDescription" text="DESCRIPTION" prefWidth="300"/>
+                    <TableColumn fx:id="colType" text="TYPE" prefWidth="130"/>
+                    <TableColumn fx:id="colDestination" text="DESTINATION" prefWidth="180"/>
+                    <TableColumn fx:id="colDescription" text="DESCRIPTION" prefWidth="250"/>
                     <TableColumn fx:id="colActions" text="ACTIONS" prefWidth="130"/>
                 </columns>
                 <placeholder>
-                    <Label text="Aucune destination trouvée"
+                    <Label text="Aucun point d'intérêt trouvé"
                            style="-fx-text-fill: #9CA3AF; -fx-font-size: 14px;"/>
                 </placeholder>
             </TableView>

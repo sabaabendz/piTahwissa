@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.tahwisa.controllers.CreatePointInteretController"
+      spacing="0">
+
+    <!-- TOP BAR -->
+    <HBox style="-fx-background-color: white;
+                 -fx-padding: 12px 20px;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);"
+          spacing="10" alignment="CENTER_LEFT">
+        <Button text="☰  Liste" onAction="#returnToList"
+                style="-fx-background-color: white; -fx-text-fill: #4B5563;
+                       -fx-font-size: 13px; -fx-padding: 8px 16px;
+                       -fx-background-radius: 6px; -fx-cursor: hand;
+                       -fx-border-color: #D1D5DB; -fx-border-width: 1px;
+                       -fx-border-radius: 6px;"/>
+        <Button text="+ Créer"
+                style="-fx-background-color: #3B82F6; -fx-text-fill: white;
+                       -fx-font-size: 13px; -fx-font-weight: bold;
+                       -fx-padding: 9px 20px; -fx-background-radius: 6px;
+                       -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- CONTENU -->
+    <VBox spacing="20" VBox.vgrow="ALWAYS"
+          style="-fx-padding: 20px 80px; -fx-background-color: #F3F4F6;">
+
+        <!-- FORM CARD -->
+        <VBox VBox.vgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-background-radius: 10px;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
+
+            <!-- Card Header gradient -->
+            <VBox style="-fx-background-color: linear-gradient(to right, #EEF2FF, #F5F3FF);
+                         -fx-padding: 20px; -fx-background-radius: 10px 10px 0 0;
+                         -fx-border-color: transparent transparent #E5E7EB transparent;
+                         -fx-border-width: 0 0 1px 0;">
+                <Label fx:id="lblFormTitle" text="Créer un nouveau Point d'Intérêt"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+                <Label text="Remplissez tous les champs requis"
+                       style="-fx-font-size: 12px; -fx-text-fill: #6B7280;"/>
+            </VBox>
+
+            <!-- Formulaire -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background-color: white; -fx-background: white;">
+                <VBox spacing="20" style="-fx-padding: 25px;">
+
+                    <!-- Nom -->
+                    <VBox spacing="6">
+                        <Label text="Nom du Point d'Intérêt *"
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                        <TextField fx:id="txtNom" promptText="Ex: Plage de Sidi Mahrez"
+                                   style="-fx-background-color: white; -fx-border-color: #D1D5DB;
+                                          -fx-border-width: 1px; -fx-border-radius: 6px;
+                                          -fx-background-radius: 6px; -fx-padding: 8px 12px;
+                                          -fx-font-size: 13px; -fx-pref-height: 38px;"/>
+                        <Label fx:id="errNom" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"
+                               managed="false" visible="false"/>
+                    </VBox>
+
+                    <!-- Type + Destination -->
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Type *"
+                                   style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                            <ComboBox fx:id="cmbType" promptText="Sélectionner un type..."
+                                      maxWidth="Infinity"
+                                      style="-fx-background-color: white; -fx-border-color: #D1D5DB;
+                                             -fx-border-radius: 6px; -fx-background-radius: 6px;
+                                             -fx-font-size: 13px; -fx-pref-height: 38px;"/>
+                            <Label fx:id="errType" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"
+                                   managed="false" visible="false"/>
+                        </VBox>
+
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Destination *"
+                                   style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                            <ComboBox fx:id="cmbDestination" promptText="Sélectionner une destination..."
+                                      maxWidth="Infinity"
+                                      style="-fx-background-color: white; -fx-border-color: #D1D5DB;
+                                             -fx-border-radius: 6px; -fx-background-radius: 6px;
+                                             -fx-font-size: 13px; -fx-pref-height: 38px;"/>
+                            <Label fx:id="errDestination" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"
+                                   managed="false" visible="false"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Description -->
+                    <VBox spacing="6">
+                        <Label text="Description"
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                        <TextArea fx:id="txtDescription" promptText="Description du point d'intérêt..."
+                                  prefRowCount="3" wrapText="true"
+                                  style="-fx-border-color: #D1D5DB; -fx-border-radius: 6px;
+                                         -fx-background-radius: 6px; -fx-font-size: 13px;"/>
+                    </VBox>
+
+                    <!-- Image URL -->
+                    <VBox spacing="6">
+                        <Label text="URL de l'image"
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                        <TextField fx:id="txtImageUrl" promptText="Ex: plage_mahrez.jpg"
+                                   style="-fx-background-color: white; -fx-border-color: #D1D5DB;
+                                          -fx-border-width: 1px; -fx-border-radius: 6px;
+                                          -fx-background-radius: 6px; -fx-padding: 8px 12px;
+                                          -fx-font-size: 13px; -fx-pref-height: 38px;"/>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+
+            <!-- Card Footer -->
+            <HBox style="-fx-background-color: #F9FAFB; -fx-padding: 12px 20px;
+                         -fx-border-color: #E5E7EB transparent transparent transparent;
+                         -fx-border-width: 1px 0 0 0; -fx-background-radius: 0 0 10px 10px;"
+                  spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Annuler" onAction="#returnToList"
+                        style="-fx-background-color: white; -fx-text-fill: #4B5563;
+                               -fx-font-size: 13px; -fx-padding: 8px 20px;
+                               -fx-background-radius: 6px; -fx-cursor: hand;
+                               -fx-border-color: #D1D5DB; -fx-border-width: 1px;
+                               -fx-border-radius: 6px;"/>
+                <Button fx:id="btnSave" text="💾  Enregistrer" onAction="#savePointInteret"
+                        style="-fx-background-color: #3B82F6; -fx-text-fill: white;
+                               -fx-font-size: 13px; -fx-font-weight: bold;
+                               -fx-padding: 9px 24px; -fx-background-radius: 6px;
+                               -fx-cursor: hand;"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</VBox>

@@ -3,22 +3,22 @@ package tn.esprit.tahwisa.models;
 import java.sql.Timestamp;
 
 public class PointInteret {
+
     private int idPointInteret;
     private String nom;
-    private String type; // monument, plage, musée, restaurant, etc.
+    private String type;
     private String description;
     private String imageUrl;
     private int destinationId;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-    // Pour jointure (optionnel)
-    private Destination destination;
+    // ==================== CONSTRUCTEURS ====================
 
     // Constructeur vide
     public PointInteret() {}
 
-    // Constructeur pour l'ajout (sans ID)
+    // Constructeur pour CRÉATION (sans ID, sans timestamps)
     public PointInteret(String nom, String type, String description,
                         String imageUrl, int destinationId) {
         this.nom = nom;
@@ -28,7 +28,7 @@ public class PointInteret {
         this.destinationId = destinationId;
     }
 
-    // Constructeur complet
+    // Constructeur complet (pour lecture depuis BDD)
     public PointInteret(int idPointInteret, String nom, String type,
                         String description, String imageUrl, int destinationId,
                         Timestamp createdAt, Timestamp updatedAt) {
@@ -42,7 +42,8 @@ public class PointInteret {
         this.updatedAt = updatedAt;
     }
 
-    // Getters et Setters
+    // ==================== GETTERS / SETTERS ====================
+
     public int getIdPointInteret() { return idPointInteret; }
     public void setIdPointInteret(int idPointInteret) { this.idPointInteret = idPointInteret; }
 
@@ -67,16 +68,8 @@ public class PointInteret {
     public Timestamp getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
 
-    public Destination getDestination() { return destination; }
-    public void setDestination(Destination destination) { this.destination = destination; }
-
     @Override
     public String toString() {
-        return "PointInteret{" +
-                "id=" + idPointInteret +
-                ", nom='" + nom + '\'' +
-                ", type='" + type + '\'' +
-                ", destinationId=" + destinationId +
-                '}';
+        return "PointInteret{id=" + idPointInteret + ", nom='" + nom + "', type='" + type + "'}";
     }
 }

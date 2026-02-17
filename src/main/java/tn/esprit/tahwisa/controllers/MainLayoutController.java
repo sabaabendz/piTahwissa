@@ -17,27 +17,47 @@ import java.util.ResourceBundle;
 public class MainLayoutController implements Initializable {
 
     @FXML private StackPane contentArea;
+    @FXML private Button btnReservations;
     @FXML private Button btnDestinations;
     @FXML private Button btnPointsInteret;
+    @FXML private Button btnTransports;
+    @FXML private Button btnEvenements;
+    @FXML private Button btnParametres;
     @FXML private Label lblStatus;
     @FXML private Label lblDate;
+    @FXML private Label lblMode;
+
+    private Button[] allButtons;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        allButtons = new Button[]{
+                btnReservations, btnDestinations, btnPointsInteret,
+                btnTransports, btnEvenements, btnParametres
+        };
+
         updateDateTime();
         showDestinations();
     }
 
     @FXML
-    private void showDestinations() {
-        loadView("/fxml/DestinationsView.fxml");
+    public void showDestinations() {
+        loadView("/DestinationsView.fxml");
         setActiveButton(btnDestinations);
+        updateMode("Mode: Liste");
     }
 
     @FXML
-    private void showPointsInteret() {
-        loadView("/fxml/PointsInteretView.fxml");
+    public void showReservations() {
+        // À implémenter ultérieurement
+        System.out.println("Affichage des réservations");
+    }
+
+    @FXML
+    public void showPointsInteret() {
+        loadView("/fxml/Pointsinteretview.fxml");
         setActiveButton(btnPointsInteret);
+        updateMode("Mode: Liste");
     }
 
     private void loadView(String fxmlPath) {
@@ -53,13 +73,23 @@ public class MainLayoutController implements Initializable {
     }
 
     private void setActiveButton(Button activeBtn) {
-        btnDestinations.getStyleClass().remove("active");
-        btnPointsInteret.getStyleClass().remove("active");
-        activeBtn.getStyleClass().add("active");
+        for (Button btn : allButtons) {
+            if (btn != null) {
+                btn.getStyleClass().remove("active");
+            }
+        }
+
+        if (activeBtn != null) {
+            activeBtn.getStyleClass().add("active");
+        }
+    }
+
+    private void updateMode(String mode) {
+        if (lblMode != null) lblMode.setText(mode);
     }
 
     private void updateDateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        lblDate.setText(LocalDateTime.now().format(formatter));
+        if (lblDate != null) lblDate.setText(LocalDateTime.now().format(formatter));
     }
 }

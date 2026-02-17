@@ -19,17 +19,27 @@ public class MainApp extends Application {
             MyConnection.getInstance();
             System.out.println("✅ Connexion à la base de données réussie !");
 
-            // ✅ Vérifier que le FXML existe
+            // ✅ Charger le layout principal
             URL fxmlLocation = getClass().getResource("/fxml/MainLayout.fxml");
 
             if (fxmlLocation == null) {
-                throw new RuntimeException("❌ Fichier FXML introuvable ! Vérifie le dossier resources.");
+                throw new RuntimeException("❌ Fichier MainLayout.fxml introuvable !");
             }
 
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
 
             Scene scene = new Scene(root, 1400, 800);
+
+            // ✅ FORCER le chargement du CSS (solution définitive)
+            URL cssLocation = getClass().getResource("/css/styles.css");
+
+            if (cssLocation == null) {
+                throw new RuntimeException("❌ Fichier styles.css introuvable !");
+            }
+
+            scene.getStylesheets().clear(); // évite ancien CSS
+            scene.getStylesheets().add(cssLocation.toExternalForm());
 
             primaryStage.setTitle("Tahwissa - Système de Gestion de Voyage");
             primaryStage.setScene(scene);

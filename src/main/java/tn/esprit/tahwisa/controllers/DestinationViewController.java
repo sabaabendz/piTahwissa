@@ -59,17 +59,73 @@ public class DestinationViewController implements Initializable {
         colVille.setCellValueFactory(new PropertyValueFactory<>("ville"));
         colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
 
+        // Colonne Actions - Boutons identiques à l'image
         colActions.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("✏️");
-            private final Button btnDelete = new Button("🗑️");
-            private final HBox box = new HBox(5, btnEdit, btnDelete);
+
+            private final Button btnEdit = new Button("✎");
+            private final Button btnDelete = new Button("🗑");
+            private final HBox box = new HBox(6, btnEdit, btnDelete);
 
             {
-                btnEdit.getStyleClass().add("icon-button");
-                btnDelete.getStyleClass().add("icon-button");
+                // Style bouton MODIFIER (bleu clair comme l'image)
+                String editStyle = "-fx-background-color: #DBEAFE;" +
+                        "-fx-text-fill: #2563EB;" +
+                        "-fx-font-size: 15px;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-background-radius: 6px;" +
+                        "-fx-min-width: 34px;" +
+                        "-fx-min-height: 30px;" +
+                        "-fx-padding: 3px 8px;";
 
-                btnEdit.setOnAction(e -> editDestination(getTableRow().getItem()));
-                btnDelete.setOnAction(e -> deleteDestination(getTableRow().getItem()));
+                String editHoverStyle = "-fx-background-color: #BFDBFE;" +
+                        "-fx-text-fill: #1D4ED8;" +
+                        "-fx-font-size: 15px;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-background-radius: 6px;" +
+                        "-fx-min-width: 34px;" +
+                        "-fx-min-height: 30px;" +
+                        "-fx-padding: 3px 8px;";
+
+                // Style bouton SUPPRIMER (rouge clair comme l'image)
+                String deleteStyle = "-fx-background-color: #FEE2E2;" +
+                        "-fx-text-fill: #DC2626;" +
+                        "-fx-font-size: 15px;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-background-radius: 6px;" +
+                        "-fx-min-width: 34px;" +
+                        "-fx-min-height: 30px;" +
+                        "-fx-padding: 3px 8px;";
+
+                String deleteHoverStyle = "-fx-background-color: #FECACA;" +
+                        "-fx-text-fill: #B91C1C;" +
+                        "-fx-font-size: 15px;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-background-radius: 6px;" +
+                        "-fx-min-width: 34px;" +
+                        "-fx-min-height: 30px;" +
+                        "-fx-padding: 3px 8px;";
+
+                btnEdit.setStyle(editStyle);
+                btnDelete.setStyle(deleteStyle);
+
+                btnEdit.setOnMouseEntered(e -> btnEdit.setStyle(editHoverStyle));
+                btnEdit.setOnMouseExited(e -> btnEdit.setStyle(editStyle));
+                btnDelete.setOnMouseEntered(e -> btnDelete.setStyle(deleteHoverStyle));
+                btnDelete.setOnMouseExited(e -> btnDelete.setStyle(deleteStyle));
+
+                box.setAlignment(javafx.geometry.Pos.CENTER);
+
+                btnEdit.setOnAction(e -> {
+                    if (getIndex() >= 0 && getIndex() < getTableView().getItems().size()) {
+                        editDestination(getTableView().getItems().get(getIndex()));
+                    }
+                });
+
+                btnDelete.setOnAction(e -> {
+                    if (getIndex() >= 0 && getIndex() < getTableView().getItems().size()) {
+                        deleteDestination(getTableView().getItems().get(getIndex()));
+                    }
+                });
             }
 
             @Override

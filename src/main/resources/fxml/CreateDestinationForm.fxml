@@ -6,91 +6,95 @@
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="tn.esprit.tahwisa.controllers.CreateDestinationController"
-      spacing="20"
-      style="-fx-padding: 20;"
-      styleClass="content-area">
+      spacing="0">
 
-    <!-- HEADER -->
+    <!-- TOP BAR -->
     <HBox styleClass="top-bar" spacing="10" alignment="CENTER_LEFT">
-        <Button text="← Liste" styleClass="btn-secondary" onAction="#returnToList"/>
-        <Separator orientation="VERTICAL"/>
-        <Label fx:id="lblFormTitle" text="Créer une nouvelle Destination" styleClass="page-title"/>
+        <Button text="☰ Liste" styleClass="btn-secondary" onAction="#returnToList"/>
+        <Button text="+ Créer" styleClass="btn-primary"/>
     </HBox>
 
-    <!-- FORM CARD -->
-    <VBox styleClass="card" spacing="0" VBox.vgrow="ALWAYS">
-        <!-- Card Header -->
-        <HBox styleClass="card-header">
-            <Label text="Remplissez tous les champs requis" styleClass="card-subtitle"/>
-        </HBox>
+    <!-- CONTENU -->
+    <VBox spacing="20" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="20" right="80" bottom="20" left="80"/>
+        </padding>
 
-        <!-- Form Content -->
-        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: white;">
-            <VBox spacing="20" style="-fx-padding: 20;">
-
-                <!-- Client / Destination Name -->
-                <VBox spacing="5">
-                    <Label text="Nom de la Destination *" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="txtNom" promptText="Ex: Djerba"
-                               style="-fx-pref-height: 35px;"/>
-                    <Label fx:id="errNom" styleClass="error-label" managed="false" visible="false"/>
-                </VBox>
-
-                <!-- Pays et Ville -->
-                <HBox spacing="15">
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Pays *" style="-fx-font-weight: bold;"/>
-                        <TextField fx:id="txtPays" promptText="Ex: Tunisie"
-                                   style="-fx-pref-height: 35px;"/>
-                        <Label fx:id="errPays" styleClass="error-label" managed="false" visible="false"/>
-                    </VBox>
-
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Ville" style="-fx-font-weight: bold;"/>
-                        <TextField fx:id="txtVille" promptText="Ex: Houmt Souk"
-                                   style="-fx-pref-height: 35px;"/>
-                    </VBox>
-                </HBox>
-
-                <!-- Description -->
-                <VBox spacing="5">
-                    <Label text="Description" style="-fx-font-weight: bold;"/>
-                    <TextArea fx:id="txtDescription" promptText="Description de la destination..."
-                              prefRowCount="4" wrapText="true"/>
-                </VBox>
-
-                <!-- URL Image -->
-                <VBox spacing="5">
-                    <Label text="URL de l'image" style="-fx-font-weight: bold;"/>
-                    <TextField fx:id="txtImageUrl" promptText="Ex: djerba.jpg"
-                               style="-fx-pref-height: 35px;"/>
-                </VBox>
-
-                <!-- Coordinates -->
-                <HBox spacing="15">
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Latitude" style="-fx-font-weight: bold;"/>
-                        <TextField fx:id="txtLatitude" promptText="33.8076"
-                                   style="-fx-pref-height: 35px;"/>
-                        <Label fx:id="errLatitude" styleClass="error-label" managed="false" visible="false"/>
-                    </VBox>
-
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Longitude" style="-fx-font-weight: bold;"/>
-                        <TextField fx:id="txtLongitude" promptText="10.8451"
-                                   style="-fx-pref-height: 35px;"/>
-                        <Label fx:id="errLongitude" styleClass="error-label" managed="false" visible="false"/>
-                    </VBox>
-                </HBox>
-
+        <!-- FORM CARD -->
+        <VBox styleClass="card" VBox.vgrow="ALWAYS">
+            <!-- Card Header avec gradient -->
+            <VBox style="-fx-background-color: linear-gradient(to right, #EEF2FF, #F5F3FF);
+                         -fx-padding: 20px; -fx-background-radius: 10px 10px 0 0;">
+                <Label fx:id="lblFormTitle" text="Créer une nouvelle Destination"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+                <Label text="Remplissez tous les champs requis"
+                       style="-fx-font-size: 12px; -fx-text-fill: #6B7280;"/>
             </VBox>
-        </ScrollPane>
 
-        <!-- Card Footer with Buttons -->
-        <HBox styleClass="card-footer" spacing="10" alignment="CENTER_RIGHT">
-            <Button text="Annuler" styleClass="btn-secondary" onAction="#returnToList"/>
-            <Button fx:id="btnSave" text="💾 Enregistrer" styleClass="btn-primary" onAction="#saveDestination"/>
-        </HBox>
+            <!-- Formulaire -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        style="-fx-background-color: white; -fx-background: white;">
+                <VBox spacing="20" style="-fx-padding: 25px;">
+
+                    <!-- Ligne 1 : Nom -->
+                    <VBox spacing="6">
+                        <Label text="Nom de la Destination *" styleClass="form-label"/>
+                        <TextField fx:id="txtNom" promptText="Ex: Djerba" styleClass="form-field"/>
+                        <Label fx:id="errNom" styleClass="error-label" managed="false" visible="false"/>
+                    </VBox>
+
+                    <!-- Ligne 2 : Pays + Ville -->
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Pays *" styleClass="form-label"/>
+                            <TextField fx:id="txtPays" promptText="Ex: Tunisie" styleClass="form-field"/>
+                            <Label fx:id="errPays" styleClass="error-label" managed="false" visible="false"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Ville" styleClass="form-label"/>
+                            <TextField fx:id="txtVille" promptText="Ex: Houmt Souk" styleClass="form-field"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Ligne 3 : Description -->
+                    <VBox spacing="6">
+                        <Label text="Description" styleClass="form-label"/>
+                        <TextArea fx:id="txtDescription"
+                                  promptText="Description de la destination..."
+                                  prefRowCount="3" wrapText="true"
+                                  style="-fx-border-color: #D1D5DB; -fx-border-radius: 6px;
+                                         -fx-background-radius: 6px; -fx-font-size: 13px;"/>
+                    </VBox>
+
+                    <!-- Ligne 4 : Image URL -->
+                    <VBox spacing="6">
+                        <Label text="URL de l'image" styleClass="form-label"/>
+                        <TextField fx:id="txtImageUrl" promptText="Ex: djerba.jpg" styleClass="form-field"/>
+                    </VBox>
+
+                    <!-- Ligne 5 : Latitude + Longitude -->
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Latitude" styleClass="form-label"/>
+                            <TextField fx:id="txtLatitude" promptText="33.8076" styleClass="form-field"/>
+                            <Label fx:id="errLatitude" styleClass="error-label" managed="false" visible="false"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Longitude" styleClass="form-label"/>
+                            <TextField fx:id="txtLongitude" promptText="10.8451" styleClass="form-field"/>
+                            <Label fx:id="errLongitude" styleClass="error-label" managed="false" visible="false"/>
+                        </VBox>
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+
+            <!-- Card Footer avec boutons -->
+            <HBox styleClass="card-footer" spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Annuler" styleClass="btn-secondary" onAction="#returnToList"/>
+                <Button fx:id="btnSave" text="💾 Enregistrer" styleClass="btn-primary"
+                        onAction="#saveDestination"/>
+            </HBox>
+        </VBox>
     </VBox>
-
 </VBox>
