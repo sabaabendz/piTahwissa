@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="tn.esprit.tahwisa.controllers.MainLayoutController"
@@ -22,11 +24,18 @@
         <!-- SIDEBAR -->
         <VBox styleClass="sidebar" prefWidth="200">
 
-        <!-- LOGO SIMPLE -->
-            <VBox styleClass="logo-container" spacing="5">
-                <Label text="🌍 Tahwissa" styleClass="logo-title"/>
-                <Label text="Travel Management" styleClass="logo-subtitle"/>
-            </VBox>
+            <!-- LOGO -->
+            <HBox styleClass="logo-container" spacing="10" alignment="CENTER_LEFT">
+                <ImageView fitWidth="46" fitHeight="46" preserveRatio="true">
+                    <image>
+                        <Image url="@/logo_tahwissa.png"/>
+                    </image>
+                </ImageView>
+                <VBox spacing="1">
+                    <Label text="Tahwissa" styleClass="logo-title"/>
+                    <Label text="Travel Management" styleClass="logo-subtitle"/>
+                </VBox>
+            </HBox>
 
             <!-- MENU -->
             <VBox VBox.vgrow="ALWAYS" spacing="5"
