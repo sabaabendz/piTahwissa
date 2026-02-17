@@ -58,3 +58,5 @@ public class MainApp extends Application {
         launch(args);
     }
 }
+// Minor improvement and cleanup
+
