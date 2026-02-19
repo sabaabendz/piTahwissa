@@ -83,7 +83,7 @@ class Projet
         return $this->dateDebut;
     }
 
-    public function setDateDebut(\DateTimeInterface $dateDebut): static
+    public function setDateDebut(?\DateTimeInterface $dateDebut): static
     {
         $this->dateDebut = $dateDebut;
         return $this;
@@ -94,7 +94,7 @@ class Projet
         return $this->dateEcheance;
     }
 
-    public function setDateEcheance(\DateTimeInterface $dateEcheance): static
+    public function setDateEcheance(?\DateTimeInterface $dateEcheance): static
     {
         $this->dateEcheance = $dateEcheance;
         return $this;

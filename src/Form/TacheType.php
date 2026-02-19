@@ -20,6 +20,7 @@ class TacheType extends AbstractType
             ->add('libelle', TextType::class, [
                 'label' => 'Libellé',
                 'attr' => ['class' => 'form-control'],
+                'required' => true,
             ])
             ->add('priorite', ChoiceType::class, [
                 'label' => 'Priorité',
@@ -29,11 +30,13 @@ class TacheType extends AbstractType
                     'Haute' => Tache::PRIORITE_HAUTE,
                 ],
                 'attr' => ['class' => 'form-select'],
+                'required' => true,
             ])
             ->add('dateLimite', DateType::class, [
                 'label' => 'Date limite',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control'],
+                'required' => true,
             ])
             ->add('etat', ChoiceType::class, [
                 'label' => 'État',
@@ -43,12 +46,14 @@ class TacheType extends AbstractType
                     'Terminé' => Tache::ETAT_TERMINE,
                 ],
                 'attr' => ['class' => 'form-select'],
+                'required' => true,
             ])
             ->add('projet', EntityType::class, [
                 'label' => 'Projet',
                 'class' => Projet::class,
                 'choice_label' => 'nom',
                 'attr' => ['class' => 'form-select'],
+                'required' => true,
             ])
         ;
     }

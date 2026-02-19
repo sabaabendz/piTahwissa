@@ -33,6 +33,10 @@ class ProjetController extends AbstractController
             $this->addFlash('success', 'Projet créé avec succès.');
             return $this->redirectToRoute('app_projet_show', ['id' => $projet->getId()]);
         }
+        
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire.');
+        }
         return $this->render('front/projet/new.html.twig', ['projet' => $projet, 'form' => $form]);
     }
 
