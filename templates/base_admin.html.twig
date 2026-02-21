@@ -91,28 +91,41 @@
 </head>
 
 <body>
+	{% set page_body %}
+		{% block body %}{% endblock %}
+	{% endset %}
 
 <!-- **************** MAIN CONTENT START **************** -->
 <main>
-	
-	{% include 'partials/_sidebar.html.twig' %}
+	{% if is_granted('ROLE_ADMIN') %}
+		{% include 'partials/_sidebar.html.twig' %}
 
-	<!-- Page content START -->
-	<div class="page-content">
+		<!-- Page content START -->
+		<div class="page-content">
 
-		{% include 'partials/_topbar.html.twig' %}
+			{% include 'partials/_topbar.html.twig' %}
 
-		<!-- Page main content START -->
-		<div class="page-content-wrapper border">
+			<!-- Page main content START -->
+			<div class="page-content-wrapper border">
 
-			{% include 'partials/_flash_messages.html.twig' %}
+				{% include 'partials/_flash_messages.html.twig' %}
 
-			{% block body %}{% endblock %}
+				{{ page_body }}
 
+			</div>
+			<!-- Page main content END -->
 		</div>
-		<!-- Page main content END -->
-	</div>
-	<!-- Page content END -->
+		<!-- Page content END -->
+	{% else %}
+		<div class="page-content">
+			{% include 'partials/_member_topnav.html.twig' %}
+
+			<div class="page-content-wrapper border-0">
+				{% include 'partials/_flash_messages.html.twig' %}
+				<div class="container py-4">{{ page_body }}</div>
+			</div>
+		</div>
+	{% endif %}
 
 </main>
 <!-- **************** MAIN CONTENT END **************** -->

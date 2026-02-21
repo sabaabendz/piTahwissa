@@ -15,41 +15,10 @@
 </head>
 <body>
 <main>
-    <nav class="navbar sidebar navbar-expand-xl navbar-dark bg-dark">
-        <div class="d-flex align-items-center">
-            <a class="navbar-brand" href="{{ path('app_admin_dashboard') }}">
-                <img class="navbar-brand-item" src="{{ asset('assets/images/logo-light.svg') }}" alt="">
-            </a>
-        </div>
-        <div class="offcanvas offcanvas-start flex-row custom-scrollbar h-100" data-bs-backdrop="true" tabindex="-1" id="offcanvasSidebar">
-            <div class="offcanvas-body sidebar-content d-flex flex-column bg-dark">
-                <ul class="navbar-nav flex-column" id="navbar-sidebar">
-                    <li class="nav-item"><a href="{{ path('app_admin_dashboard') }}" class="nav-link"><i class="bi bi-house fa-fw me-2"></i>Dashboard</a></li>
-                    <li class="nav-item ms-2 my-2">Gestion</li>
-                    <li class="nav-item"><a class="nav-link" href="{{ path('app_admin_projet_index') }}"><i class="bi bi-folder fa-fw me-2"></i>Projets</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ path('app_admin_tache_index') }}"><i class="bi bi-list-task fa-fw me-2"></i>Tâches</a></li>
-                    <li class="nav-item ms-2 my-2">Site</li>
-                    <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}"><i class="bi bi-globe me-2"></i>Frontoffice</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include 'partials/_sidebar.html.twig' %}
 
     <div class="page-content">
-        <nav class="navbar top-bar navbar-light border-bottom py-0 py-xl-3">
-            <div class="container-fluid p-0">
-                <div class="d-flex align-items-center w-100">
-                    <div class="navbar-expand-xl sidebar-offcanvas-menu">
-                        <button class="navbar-toggler me-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-expanded="false" aria-label="Toggle navigation" data-bs-auto-close="outside">
-                            <i class="bi bi-text-right fa-fw h2 lh-0 mb-0"></i>
-                        </button>
-                    </div>
-                    <div class="ms-xl-auto">
-                        <span class="navbar-text">Backoffice</span>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        {% include 'partials/_topbar.html.twig' %}
 
         <div class="page-content-wrapper border">
             {% for label, messages in app.flashes %}

@@ -15,7 +15,7 @@ security:
     role_hierarchy:
         ROLE_MANAGER: [ROLE_USER, ROLE_PROJECT_ACCESS]
         ROLE_COLLABORATOR: [ROLE_USER, ROLE_PROJECT_ACCESS]
-        ROLE_ADMIN: [ROLE_USER]
+        ROLE_ADMIN: [ROLE_MANAGER]
 
     firewalls:
         dev:
@@ -55,8 +55,6 @@ security:
         - { path: ^/connect/google, roles: PUBLIC_ACCESS }
         - { path: ^/connect/linkedin, roles: PUBLIC_ACCESS }
         - { path: ^/$, roles: PUBLIC_ACCESS }  # Homepage
-        - { path: ^/users, roles: PUBLIC_ACCESS }  # FrontOffice user listing
-        
         # Admin routes - ROLE_ADMIN only
         - { path: ^/admin, roles: ROLE_ADMIN }
         

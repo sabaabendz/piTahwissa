@@ -1,0 +1,77 @@
+<nav class="navbar navbar-expand-lg navbar-light border-bottom bg-white">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{{ path('app_dashboard_index') }}">SmartTask</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#memberNavbar" aria-controls="memberNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="memberNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">Dashboard</a>
+                </li>
+
+                {% if is_granted('ROLE_MANAGER') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ app.request.get('_route') starts with 'app_collaborator' ? 'active' : '' }}" href="#" id="usersMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Users
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="usersMenu">
+                            <li><a class="dropdown-item" href="{{ path('app_collaborator_index') }}">List Users</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_collaborator_new') }}">Add User</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" href="#" id="projectsMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Projects
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="projectsMenu">
+                            <li><a class="dropdown-item" href="{{ path('app_projet_index') }}">List Projects</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_projet_new') }}">Create Project</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {{ app.request.get('_route') starts with 'app_tache' ? 'active' : '' }}" href="#" id="tasksMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Tasks
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="tasksMenu">
+                            <li><a class="dropdown-item" href="{{ path('app_tache_index') }}">List Tasks</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_tache_new') }}">Create Task</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_dashboard_index') }}">Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') == 'app_front_profile_edit' ? 'active' : '' }}" href="{{ path('app_front_profile_edit') }}">Settings</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" href="{{ path('app_projet_index') }}">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_dashboard_index') }}">Reports</a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdownMember" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ app.user ? app.user.name : 'Profile' }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdownMember">
+                        <li><a class="dropdown-item" href="{{ path('app_front_profile_edit') }}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_front_profile_edit') }}">Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
