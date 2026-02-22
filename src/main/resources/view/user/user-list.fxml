@@ -13,7 +13,7 @@
 
     <top>
         <VBox spacing="0">
-            <HBox style="-fx-background-color: #2C3E50; -fx-padding: 20 30;"
+            <HBox style="-fx-background-color: #4F46E5; -fx-padding: 20 30;"
                   alignment="CENTER_LEFT">
                 <HBox spacing="15" alignment="CENTER_LEFT">
                     <Label text="👥" style="-fx-font-size: 28px; -fx-text-fill: white;"/>
@@ -26,13 +26,13 @@
                 </HBox>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Button fx:id="backToDashboardBtn" text="← Dashboard"
-                        style="-fx-background-color: #34495E; -fx-text-fill: white;
+                        style="-fx-background-color: #9333EA; -fx-text-fill: white;
                                -fx-font-weight: bold; -fx-font-size: 13px;
                                -fx-background-radius: 20; -fx-padding: 10 20;
                                -fx-cursor: hand;"
                         prefHeight="40.0"/>
                 <Button fx:id="addUserBtn" text="➕ Nouvel Utilisateur"
-                        style="-fx-background-color: #27AE60; -fx-text-fill: white;
+                        style="-fx-background-color: #9333EA; -fx-text-fill: white;
                                -fx-font-weight: bold; -fx-font-size: 14px;
                                -fx-background-radius: 20; -fx-padding: 10 25;
                                -fx-cursor: hand;"
@@ -58,7 +58,7 @@
                                       -fx-background-color: white;"/>
                     <Button fx:id="searchBtn" text="🔍 Rechercher"
                             prefHeight="40" prefWidth="120"
-                            style="-fx-background-color: #3498DB;
+                            style="-fx-background-color: #3B82F6;
                                    -fx-text-fill: white;
                                    -fx-font-weight: bold;
                                    -fx-background-radius: 0 20 20 0;
@@ -101,7 +101,7 @@
             <!-- Tableau -->
             <VBox spacing="15">
                 <Label text="📋 Liste des utilisateurs"
-                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #4F46E5;"/>
 
                 <TableView fx:id="userTable" prefHeight="400" VBox.vgrow="ALWAYS"
                            style="-fx-background-radius: 10; -fx-border-radius: 10;
@@ -123,18 +123,18 @@
             <!-- Statistiques -->
             <HBox alignment="CENTER_RIGHT" spacing="30">
                 <Label fx:id="totalUsersLabel" text="Total: 0 utilisateurs"
-                       style="-fx-font-size: 13px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;"/>
+                       style="-fx-font-size: 13px; -fx-text-fill: #4F46E5; -fx-font-weight: bold;"/>
                 <Label fx:id="activeUsersLabel" text="Actifs: 0"
-                       style="-fx-font-size: 13px; -fx-text-fill: #27AE60; -fx-font-weight: bold;"/>
+                       style="-fx-font-size: 13px; -fx-text-fill: #3B82F6; -fx-font-weight: bold;"/>
             </HBox>
         </VBox>
     </center>
 
     <bottom>
-        <HBox style="-fx-background-color: #34495E; -fx-padding: 15 30;"
+        <HBox style="-fx-background-color: #4F46E5; -fx-padding: 15 30;"
               alignment="CENTER_RIGHT">
             <Label fx:id="dbStatusLabel" text="✅ Connecté à pidev"
-                   style="-fx-text-fill: #27AE60; -fx-font-size: 12px;"/>
+                   style="-fx-text-fill: #3B82F6; -fx-font-size: 12px;"/>
         </HBox>
     </bottom>
 

@@ -1,8 +1,7 @@
 package controller;
 
 import services.UserService;
-// ⚠️ COMMENTÉ - Vérification biométrique désactivée temporairement
-// import services.PythonBiometricService;
+import services.PythonBiometricService;
 import utils.SessionManager;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -37,16 +36,14 @@ public class LoginController {
     private Button registerButton;
 
     private UserService userService;
-    // ⚠️ COMMENTÉ - Service biométrique désactivé temporairement
-    // private PythonBiometricService biometricService;
+    private PythonBiometricService biometricService;
     // private boolean biometricVerified = false;
 
     @FXML
     public void initialize() {
         System.out.println("✅ LoginController initialisé");
         userService = new UserService();
-        // ⚠️ COMMENTÉ - Service biométrique désactivé temporairement
-        // biometricService = new PythonBiometricService();
+        biometricService = new PythonBiometricService();
 
         // Init choix de rôle
         if (roleChoiceBox != null && roleChoiceBox.getItems().isEmpty()) {
@@ -373,14 +370,6 @@ public class LoginController {
         System.out.println("  - Rôle: " + roleChoiceBox.getValue());
         System.out.println("  - Mot de passe: " + password.length() + " caractères");
 
-        // ═══════════════════════════════════════════════════════════════════════════
-        // ⚠️ SECTION COMMENTÉE - VÉRIFICATION BIOMÉTRIQUE PYTHON + OPENCV
-        // ═══════════════════════════════════════════════════════════════════════════
-        // Cette section gérait la vérification faciale via webcam avant l'inscription.
-        // Commentée temporairement - création de compte direct sans vérification.
-        // ═══════════════════════════════════════════════════════════════════════════
-
-        /*
         // ═══════════ VÉRIFICATION BIOMÉTRIQUE PYTHON ═══════════
         System.out.println("🔐 Démarrage de la vérification biométrique...");
 
@@ -388,8 +377,9 @@ public class LoginController {
         if (!biometricService.isPythonAvailable()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Python requis");
-            alert.setHeaderText("Python n'est pas installé");
+            alert.setHeaderText("Python/OpenCV indisponible");
             alert.setContentText("La vérification biométrique nécessite Python 3.x avec OpenCV.\n\n" +
+                               "Détails: " + biometricService.getLastError() + "\n\n" +
                                "Voulez-vous continuer sans vérification biométrique ?");
 
             ButtonType btnYes = new ButtonType("Continuer sans vérification", ButtonBar.ButtonData.YES);
@@ -398,7 +388,6 @@ public class LoginController {
 
             alert.showAndWait().ifPresent(response -> {
                 if (response == btnYes) {
-                    // Créer le compte sans vérification
                     createUserAccount(firstName, lastName, email, password, phone, city, country, roleChoiceBox.getValue());
                 }
             });
@@ -408,7 +397,6 @@ public class LoginController {
         // Afficher un message d'attente
         showStatus("🎥 Lancement de la vérification biométrique...", "#4F46E5");
 
-        // Variables finales pour la lambda
         final String finalFirstName = firstName;
         final String finalLastName = lastName;
         final String finalEmail = email;
@@ -418,12 +406,10 @@ public class LoginController {
         final String finalCountry = country;
         final String finalRole = roleChoiceBox.getValue();
 
-        // Exécuter la vérification dans un thread séparé
         Task<PythonBiometricService.VerificationResult> verificationTask =
             new Task<PythonBiometricService.VerificationResult>() {
             @Override
             protected PythonBiometricService.VerificationResult call() {
-                // Lancer le script Python (durée: 15 secondes)
                 return biometricService.verifyWithWebcam(15, null);
             }
         };
@@ -437,7 +423,6 @@ public class LoginController {
                 System.out.println("✅ Vérification biométrique réussie!");
                 showStatus("✅ Visage vérifié! Création du compte...", "#10B981");
 
-                // Créer le compte après vérification réussie
                 Platform.runLater(() -> {
                     createUserAccount(finalFirstName, finalLastName, finalEmail, finalPassword,
                                     finalPhone, finalCity, finalCountry, finalRole);
@@ -446,7 +431,6 @@ public class LoginController {
                 System.out.println("❌ Vérification biométrique échouée: " + result.getMessage());
                 showStatus("❌ " + result.getMessage(), "#EF4444");
 
-                // Proposer de réessayer
                 Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Vérification échouée");
@@ -459,7 +443,7 @@ public class LoginController {
 
                     alert.showAndWait().ifPresent(response -> {
                         if (response == btnRetry) {
-                            handleRegister(); // Relancer la vérification
+                            handleRegister();
                         }
                     });
                 });
@@ -482,16 +466,15 @@ public class LoginController {
             });
         });
 
-        // Démarrer le thread
         new Thread(verificationTask).start();
-        */
+        return;
 
         // ═══════════════════════════════════════════════════════════════════════════
         // ⚠️ CRÉATION DIRECTE DU COMPTE (SANS VÉRIFICATION BIOMÉTRIQUE)
         // ═══════════════════════════════════════════════════════════════════════════
 
         // Créer le compte directement
-        createUserAccount(firstName, lastName, email, password, phone, city, country, roleChoiceBox.getValue());
+        // createUserAccount(firstName, lastName, email, password, phone, city, country, roleChoiceBox.getValue());
     }
 
     /**
@@ -585,3 +568,4 @@ public class LoginController {
         if (roleChoiceBox != null) roleChoiceBox.setValue("Voyageur");
     }
 }
+

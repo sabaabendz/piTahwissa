@@ -26,10 +26,10 @@
         <!-- En-tête avec icône -->
         <HBox alignment="CENTER_LEFT" spacing="15">
             <Label fx:id="formIcon" text="➕"
-                   style="-fx-font-size: 32px; -fx-text-fill: #27AE60;"/>
+                   style="-fx-font-size: 32px; -fx-text-fill: #9333EA;"/>
             <VBox spacing="5">
                 <Label fx:id="formTitle" text="Ajouter un utilisateur"
-                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #4F46E5;"/>
                 <Label fx:id="formSubtitle" text="Remplissez les informations ci-dessous"
                        style="-fx-font-size: 12px; -fx-text-fill: #7F8C8D;"/>
             </VBox>
@@ -181,7 +181,7 @@
                            -fx-cursor: hand;"
                     onAction="#closeForm"/>
             <Button fx:id="saveBtn" text="Ajouter"
-                    style="-fx-background-color: #27AE60;
+                    style="-fx-background-color: #9333EA;
                            -fx-text-fill: white;
                            -fx-font-weight: bold;
                            -fx-background-radius: 5;
