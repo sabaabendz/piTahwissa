@@ -6,8 +6,10 @@ use App\Entity\Collaborator;
 use App\Entity\Manager;
 use App\Form\RegistrationFormType;
 use App\Service\EnterpriseCodeGenerator;
+use App\Service\RecaptchaVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -20,7 +22,8 @@ class RegistrationController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
-        EnterpriseCodeGenerator $enterpriseCodeGenerator
+        EnterpriseCodeGenerator $enterpriseCodeGenerator,
+        RecaptchaVerifier $recaptchaVerifier
     ): Response {
         if ($this->getUser()) {
             return $this->redirectToRoute('app_dashboard_index');
@@ -28,6 +31,13 @@ class RegistrationController extends AbstractController
 
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $captchaResponse = (string) $request->request->get('g-recaptcha-response', '');
+            if (!$recaptchaVerifier->verify($captchaResponse, $request->getClientIp())) {
+                $form->get('recaptcha')->addError(new FormError('Please verify that you are not a robot.'));
+            }
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $role = $form->get('role')->getData();

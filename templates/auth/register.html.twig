@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle role selection functions
     function updateOAuthLinks(role) {
         const googleBtn = document.getElementById('googleSignUpBtn');
-        const linkedinBtn = document.getElementById('linkedinSignUpBtn');
+        const githubBtn = document.getElementById('githubSignUpBtn');
         const oauthContainer = document.getElementById('oauthSignUpContainer');
         
         if (oauthContainer) {
@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const googleBaseUrl = '{{ path('connect_google_start') }}';
                 googleBtn.href = googleBaseUrl + '?role=' + role;
             }
-            if (linkedinBtn) {
-                const linkedinBaseUrl = '{{ path('connect_linkedin_start') }}';
-                linkedinBtn.href = linkedinBaseUrl + '?role=' + role;
+            if (githubBtn) {
+                const githubBaseUrl = '{{ path('connect_github_start') }}';
+                githubBtn.href = githubBaseUrl + '?role=' + role;
             }
             oauthContainer.style.display = 'block';
         }
@@ -81,11 +81,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             clearTimeout(debounceTimer);
             if (!password) {
-                strengthWrapper.style.display = 'none';
+                if (strengthWrapper) {
+                    strengthWrapper.style.display = 'none';
+                }
                 return;
             }
 
-            strengthWrapper.style.display = 'block';
+            if (strengthWrapper) {
+                strengthWrapper.style.display = 'block';
+            }
             
             debounceTimer = setTimeout(() => {
                 checkPasswordStrength(password);
@@ -127,6 +131,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateStrengthUI(data) {
+        if (!strengthBar || !strengthLabel || !strengthSuggestions) {
+            return;
+        }
+
         // NEW: Handle both old and new API response formats
         const score = data.score || 0;
         const label = data.label || 'weak';
