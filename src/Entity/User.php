@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "user")]
 #[ORM\InheritanceType("JOINED")]
@@ -56,6 +59,15 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $resetTokenExpiresAt = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatarName = null;
+
+    #[Vich\UploadableField(mapping: 'avatars', fileNameProperty: 'avatarName')]
+    private ?File $avatarFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
    
 
@@ -206,6 +218,46 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
         return $this->resetTokenExpiresAt === null || $this->resetTokenExpiresAt < new \DateTimeImmutable();
     }
 
+    public function getAvatarName(): ?string
+    {
+        return $this->avatarName;
+    }
+
+    public function setAvatarName(?string $avatarName): static
+    {
+        $this->avatarName = $avatarName;
+
+        return $this;
+    }
+
+    public function getAvatarFile(): ?File
+    {
+        return $this->avatarFile;
+    }
+
+    public function setAvatarFile(?File $avatarFile = null): static
+    {
+        $this->avatarFile = $avatarFile;
+
+        if ($avatarFile !== null) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
     public function eraseCredentials(): void
     {
     }
@@ -213,5 +265,65 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email ?? '';
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'idUser' => $this->idUser,
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => $this->password,
+            'googleId' => $this->googleId,
+            'linkedinId' => $this->linkedinId,
+            'roles' => $this->roles,
+            'isEnabled' => $this->isEnabled,
+            'resetToken' => $this->resetToken,
+            'resetTokenExpiresAt' => $this->resetTokenExpiresAt,
+            'avatarName' => $this->avatarName,
+            'updatedAt' => $this->updatedAt,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $read = static function (array $payload, string $property) {
+            if (array_key_exists($property, $payload)) {
+                return $payload[$property];
+            }
+
+            $prefixed = [
+                "\0*\0{$property}",
+                "\0" . self::class . "\0{$property}",
+            ];
+
+            foreach ($prefixed as $key) {
+                if (array_key_exists($key, $payload)) {
+                    return $payload[$key];
+                }
+            }
+
+            foreach ($payload as $key => $value) {
+                if (str_ends_with((string) $key, "\0{$property}")) {
+                    return $value;
+                }
+            }
+
+            return null;
+        };
+
+        $this->idUser = $read($data, 'idUser');
+        $this->name = $read($data, 'name');
+        $this->email = $read($data, 'email');
+        $this->password = $read($data, 'password');
+        $this->googleId = $read($data, 'googleId');
+        $this->linkedinId = $read($data, 'linkedinId');
+        $this->roles = $read($data, 'roles') ?? [];
+        $this->isEnabled = $read($data, 'isEnabled') ?? true;
+        $this->resetToken = $read($data, 'resetToken');
+        $this->resetTokenExpiresAt = $read($data, 'resetTokenExpiresAt');
+        $this->avatarName = $read($data, 'avatarName');
+        $this->updatedAt = $read($data, 'updatedAt');
+        $this->avatarFile = null;
     }
 }

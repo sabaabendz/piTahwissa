@@ -66,8 +66,9 @@
                         </button>
 
                         <div class="dropdown">
+                            {% set avatarPath = app.user and app.user.avatarName ? vich_uploader_asset(app.user, 'avatarFile') : asset('assets/images/avatar/01.jpg') %}
                             <a class="d-flex align-items-center text-decoration-none" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ asset('assets/images/avatar/01.jpg') }}" alt="avatar" class="rounded-circle" width="40" height="40">
+                                <img src="{{ avatarPath }}" alt="avatar" class="rounded-circle avatar-hover" width="40" height="40">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
                                 <li><a class="dropdown-item" href="{{ path('app_front_profile_edit') }}">Edit Profile</a></li>

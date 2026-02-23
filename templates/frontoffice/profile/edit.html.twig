@@ -28,6 +28,12 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
                 {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                    <div class="mb-4 text-center">
+                        {% set avatarPath = app.user and app.user.avatarName ? vich_uploader_asset(app.user, 'avatarFile') : asset('assets/images/avatar/01.jpg') %}
+                        <img src="{{ avatarPath }}" alt="avatar" class="rounded-circle shadow avatar-hover" width="110" height="110">
+                        <div class="small text-muted mt-2">Votre photo actuelle</div>
+                    </div>
+
                     <div class="mb-4">
                         {{ form_label(form.name) }}
                         {{ form_widget(form.name) }}
@@ -38,6 +44,13 @@
                         {{ form_label(form.email) }}
                         {{ form_widget(form.email) }}
                         {{ form_errors(form.email) }}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.avatarFile) }}
+                        {{ form_widget(form.avatarFile) }}
+                        {{ form_errors(form.avatarFile) }}
+                        <div class="form-text mt-2">Formats accepts: JPG or PNG. Max 2MB.</div>
                     </div>
 
                     <hr class="my-4 text-muted opacity-25">

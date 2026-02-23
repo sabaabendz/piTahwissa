@@ -10,8 +10,9 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class UserProfileType extends AbstractType
 {
@@ -27,6 +28,26 @@ class UserProfileType extends AbstractType
                 'label' => 'Adresse Email',
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
+            ])
+            ->add('avatarFile', VichImageType::class, [
+                'label' => 'Photo de profil',
+                'required' => false,
+                'allow_delete' => false,
+                'download_uri' => false,
+                'image_uri' => false,
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'form-label'],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/jpg',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid JPG or PNG image.',
+                    ]),
+                ],
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
