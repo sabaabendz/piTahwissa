@@ -65,7 +65,16 @@
 
                 <Region VBox.vgrow="ALWAYS"/>
 
+                <HBox fx:id="btnEmail" styleClass="menu-button" spacing="10"
+                      alignment="CENTER_LEFT" style="-fx-cursor: hand;"
+                      onMouseClicked="#showEmail">
+                    <Label text="📧" style="-fx-font-size: 15px;"/>
+                    <Label text="Emails"
+                           style="-fx-text-fill: rgba(255,255,255,0.85); -fx-font-size: 13px;"/>
+                </HBox>
+
                 <Label text="PARAMÈTRES" styleClass="menu-section-title"/>
+
 
                 <!-- Paramètres -->
                 <Button fx:id="btnParametres" text="⚙️ Paramètres" styleClass="menu-button"

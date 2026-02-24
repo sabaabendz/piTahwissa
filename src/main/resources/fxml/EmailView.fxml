@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.tahwisa.controllers.EmailController"
+      spacing="0">
+
+    <!-- TOP BAR -->
+    <HBox style="-fx-background-color: white; -fx-padding: 12px 20px;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);"
+          spacing="12" alignment="CENTER_LEFT">
+        <Label text="📧  Envoi d'Emails"
+               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnTestConnection" text="🔌 Tester Connexion" onAction="#testConnection"
+                style="-fx-background-color: #10B981; -fx-text-fill: white;
+                       -fx-font-size: 13px; -fx-padding: 8px 16px;
+                       -fx-background-radius: 6px; -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- CONTENU -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color: #F3F4F6; -fx-background: #F3F4F6;">
+        <VBox spacing="20" style="-fx-padding: 20px;">
+
+            <!-- SECTION : EMAIL PERSONNALISÉ -->
+            <VBox style="-fx-background-color: white; -fx-background-radius: 10px;
+                         -fx-padding: 25px;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
+
+                <Label text="✉️ Envoyer un Email Personnalisé"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+
+                <VBox spacing="15" style="-fx-padding: 20px 0 0 0;">
+
+                    <!-- Destinataire -->
+                    <VBox spacing="6">
+                        <Label text="Destinataire *"
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                        <TextField fx:id="txtTo" promptText="email@example.com"
+                                   style="-fx-background-color: white; -fx-border-color: #D1D5DB;
+                                          -fx-border-width: 1px; -fx-border-radius: 6px;
+                                          -fx-background-radius: 6px; -fx-padding: 10px;
+                                          -fx-font-size: 13px;"/>
+                    </VBox>
+
+                    <!-- Sujet -->
+                    <VBox spacing="6">
+                        <Label text="Sujet *"
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                        <TextField fx:id="txtSubject" promptText="Objet de l'email"
+                                   style="-fx-background-color: white; -fx-border-color: #D1D5DB;
+                                          -fx-border-width: 1px; -fx-border-radius: 6px;
+                                          -fx-background-radius: 6px; -fx-padding: 10px;
+                                          -fx-font-size: 13px;"/>
+                    </VBox>
+
+                    <!-- Message -->
+                    <VBox spacing="6">
+                        <Label text="Message *"
+                               style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+                        <TextArea fx:id="txtMessage" promptText="Contenu de l'email..."
+                                  prefRowCount="6" wrapText="true"
+                                  style="-fx-border-color: #D1D5DB; -fx-border-radius: 6px;
+                                         -fx-background-radius: 6px; -fx-font-size: 13px;"/>
+                    </VBox>
+
+                    <!-- Bouton Envoyer -->
+                    <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10px 0 0 0;">
+                        <Button text="Effacer" onAction="#clearForm"
+                                style="-fx-background-color: white; -fx-text-fill: #4B5563;
+                                       -fx-font-size: 13px; -fx-padding: 10px 20px;
+                                       -fx-background-radius: 6px; -fx-cursor: hand;
+                                       -fx-border-color: #D1D5DB; -fx-border-width: 1px;
+                                       -fx-border-radius: 6px;"/>
+                        <Button fx:id="btnSendCustom" text="📤 Envoyer" onAction="#sendCustomEmail"
+                                style="-fx-background-color: #3B82F6; -fx-text-fill: white;
+                                       -fx-font-size: 13px; -fx-font-weight: bold;
+                                       -fx-padding: 10px 24px; -fx-background-radius: 6px;
+                                       -fx-cursor: hand;"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- SECTION : EMAILS AUTOMATIQUES -->
+            <VBox style="-fx-background-color: white; -fx-background-radius: 10px;
+                         -fx-padding: 25px;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
+
+                <Label text="🤖 Emails Automatiques"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+
+                <VBox spacing="10" style="-fx-padding: 20px 0 0 0;">
+
+                    <!-- Destinataire pour emails auto -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Email de destination :"
+                               style="-fx-font-size: 13px; -fx-text-fill: #6B7280;"/>
+                        <TextField fx:id="txtAutoEmail" promptText="admin@tahwissa.com"
+                                   HBox.hgrow="ALWAYS"
+                                   style="-fx-background-color: #F9FAFB; -fx-border-color: #E5E7EB;
+                                          -fx-border-width: 1px; -fx-border-radius: 6px;
+                                          -fx-background-radius: 6px; -fx-padding: 8px;
+                                          -fx-font-size: 13px;"/>
+                    </HBox>
+
+                    <Separator style="-fx-padding: 10px 0;"/>
+
+                    <!-- Boutons d'envoi automatique -->
+                    <GridPane hgap="15" vgap="15">
+                        <Button text="📍 Test Email Destination" onAction="#sendTestDestinationEmail"
+                                GridPane.columnIndex="0" GridPane.rowIndex="0"
+                                style="-fx-background-color: #EEF2FF; -fx-text-fill: #4F46E5;
+                                       -fx-font-size: 13px; -fx-padding: 12px 20px;
+                                       -fx-background-radius: 6px; -fx-cursor: hand;
+                                       -fx-border-color: #4F46E5; -fx-border-width: 1px;
+                                       -fx-border-radius: 6px; -fx-pref-width: 250px;"/>
+
+                        <Button text="🏖️ Test Email Point d'Intérêt" onAction="#sendTestPointInteretEmail"
+                                GridPane.columnIndex="1" GridPane.rowIndex="0"
+                                style="-fx-background-color: #FDF2F8; -fx-text-fill: #EC4899;
+                                       -fx-font-size: 13px; -fx-padding: 12px 20px;
+                                       -fx-background-radius: 6px; -fx-cursor: hand;
+                                       -fx-border-color: #EC4899; -fx-border-width: 1px;
+                                       -fx-border-radius: 6px; -fx-pref-width: 250px;"/>
+
+                        <Button text="📊 Envoyer Rapport Hebdomadaire" onAction="#sendWeeklyReport"
+                                GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2"
+                                style="-fx-background-color: #DBEAFE; -fx-text-fill: #2563EB;
+                                       -fx-font-size: 13px; -fx-padding: 12px 20px;
+                                       -fx-background-radius: 6px; -fx-cursor: hand;
+                                       -fx-border-color: #2563EB; -fx-border-width: 1px;
+                                       -fx-border-radius: 6px; -fx-pref-width: 515px;"/>
+                    </GridPane>
+                </VBox>
+            </VBox>
+
+            <!-- SECTION : HISTORIQUE -->
+            <VBox style="-fx-background-color: white; -fx-background-radius: 10px;
+                         -fx-padding: 25px;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 8, 0, 0, 2);">
+
+                <Label text="📜 Historique des Emails"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+
+                <TextArea fx:id="txtHistory" editable="false" prefRowCount="8"
+                          style="-fx-background-color: #F9FAFB; -fx-border-color: #E5E7EB;
+                                 -fx-border-radius: 6px; -fx-background-radius: 6px;
+                                 -fx-font-family: 'Consolas', monospace; -fx-font-size: 12px;
+                                 -fx-padding: 15px; -fx-margin-top: 15px;"/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+</VBox>

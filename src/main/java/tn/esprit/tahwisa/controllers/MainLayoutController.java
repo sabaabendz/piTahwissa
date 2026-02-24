@@ -4,8 +4,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
@@ -17,49 +19,69 @@ import java.util.ResourceBundle;
 public class MainLayoutController implements Initializable {
 
     @FXML private StackPane contentArea;
+
+    @FXML private HBox btnEmail; // ← HBox OK
+
     @FXML private Button btnReservations;
     @FXML private Button btnDestinations;
     @FXML private Button btnPointsInteret;
     @FXML private Button btnTransports;
     @FXML private Button btnEvenements;
     @FXML private Button btnParametres;
+
     @FXML private Label lblStatus;
     @FXML private Label lblDate;
     @FXML private Label lblMode;
 
-    private Button[] allButtons;
+    // 🔥 On change Button[] → Node[]
+    private Node[] allMenuItems;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        allButtons = new Button[]{
-                btnReservations, btnDestinations, btnPointsInteret,
-                btnTransports, btnEvenements, btnParametres
+
+        allMenuItems = new Node[]{
+                btnReservations,
+                btnDestinations,
+                btnPointsInteret,
+                btnTransports,
+                btnEvenements,
+                btnEmail,           // maintenant accepté
+                btnParametres
         };
 
         updateDateTime();
         showDestinations();
     }
 
+    // ================= EMAIL =================
+    @FXML
+    public void showEmail() {
+        loadView("/fxml/EmailView.fxml");
+        setActiveItem(btnEmail);   // ✔ plus d'erreur
+        updateMode("Mode: Emails");
+    }
+
+    // ================= DESTINATIONS =================
     @FXML
     public void showDestinations() {
-        loadView("/DestinationsView.fxml");
-        setActiveButton(btnDestinations);
+        loadView("/fxml/DestinationsView.fxml"); // ⚠ j’ai corrigé le chemin
+        setActiveItem(btnDestinations);
         updateMode("Mode: Liste");
     }
 
     @FXML
     public void showReservations() {
-        // À implémenter ultérieurement
         System.out.println("Affichage des réservations");
     }
 
     @FXML
     public void showPointsInteret() {
         loadView("/fxml/Pointsinteretview.fxml");
-        setActiveButton(btnPointsInteret);
+        setActiveItem(btnPointsInteret);
         updateMode("Mode: Liste");
     }
 
+    // ================= LOAD VIEW =================
     private void loadView(String fxmlPath) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
@@ -72,15 +94,16 @@ public class MainLayoutController implements Initializable {
         }
     }
 
-    private void setActiveButton(Button activeBtn) {
-        for (Button btn : allButtons) {
-            if (btn != null) {
-                btn.getStyleClass().remove("active");
+    // 🔥 Remplace setActiveButton
+    private void setActiveItem(Node activeItem) {
+        for (Node item : allMenuItems) {
+            if (item != null) {
+                item.getStyleClass().remove("active");
             }
         }
 
-        if (activeBtn != null) {
-            activeBtn.getStyleClass().add("active");
+        if (activeItem != null) {
+            activeItem.getStyleClass().add("active");
         }
     }
 
@@ -90,6 +113,7 @@ public class MainLayoutController implements Initializable {
 
     private void updateDateTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        if (lblDate != null) lblDate.setText(LocalDateTime.now().format(formatter));
+        if (lblDate != null)
+            lblDate.setText(LocalDateTime.now().format(formatter));
     }
 }
