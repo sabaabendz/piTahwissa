@@ -102,7 +102,7 @@ final class AuthController extends AbstractController
 
                 // Send email
                 $templatedEmail = (new TemplatedEmail())
-                    ->from('no-reply@smarttask.com')
+                    ->from('mohsennabli321@gmail.com')
                     ->to($user->getEmail())
                     ->subject('Your password reset request')
                     ->htmlTemplate('email/reset_password.html.twig')
