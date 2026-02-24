@@ -2,6 +2,7 @@ package controller;
 
 import services.UserService;
 import services.PythonBiometricService;
+import services.FaceRecognitionService;
 import utils.SessionManager;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -33,17 +34,19 @@ public class LoginController {
     @FXML private VBox registerForm;
     @FXML private VBox loginSection;
     @FXML private Button loginButton;
+    @FXML private Button faceLoginButton;
     private Button registerButton;
 
     private UserService userService;
     private PythonBiometricService biometricService;
-    // private boolean biometricVerified = false;
+    private FaceRecognitionService faceRecognitionService;
 
     @FXML
     public void initialize() {
         System.out.println("✅ LoginController initialisé");
         userService = new UserService();
         biometricService = new PythonBiometricService();
+        faceRecognitionService = new FaceRecognitionService();
 
         // Init choix de rôle
         if (roleChoiceBox != null && roleChoiceBox.getItems().isEmpty()) {
@@ -388,7 +391,7 @@ public class LoginController {
 
             alert.showAndWait().ifPresent(response -> {
                 if (response == btnYes) {
-                    createUserAccount(firstName, lastName, email, password, phone, city, country, roleChoiceBox.getValue());
+                    startFaceEnrollmentAndCreateUser(firstName, lastName, email, password, phone, city, country, roleChoiceBox.getValue());
                 }
             });
             return;
@@ -421,11 +424,11 @@ public class LoginController {
 
             if (result.isSuccess()) {
                 System.out.println("✅ Vérification biométrique réussie!");
-                showStatus("✅ Visage vérifié! Création du compte...", "#10B981");
+                showStatus("✅ Visage vérifié! Capture faciale en cours...", "#10B981");
 
                 Platform.runLater(() -> {
-                    createUserAccount(finalFirstName, finalLastName, finalEmail, finalPassword,
-                                    finalPhone, finalCity, finalCountry, finalRole);
+                    startFaceEnrollmentAndCreateUser(finalFirstName, finalLastName, finalEmail, finalPassword,
+                            finalPhone, finalCity, finalCountry, finalRole);
                 });
             } else {
                 System.out.println("❌ Vérification biométrique échouée: " + result.getMessage());
@@ -468,20 +471,162 @@ public class LoginController {
 
         new Thread(verificationTask).start();
         return;
+    }
 
-        // ═══════════════════════════════════════════════════════════════════════════
-        // ⚠️ CRÉATION DIRECTE DU COMPTE (SANS VÉRIFICATION BIOMÉTRIQUE)
-        // ═══════════════════════════════════════════════════════════════════════════
+    private void startFaceEnrollmentAndCreateUser(String firstName, String lastName, String email, String password,
+                                                  String phone, String city, String country, String role) {
+        if (!faceRecognitionService.isPythonAvailable()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Face recognition requis");
+            alert.setHeaderText("face_recognition indisponible");
+            alert.setContentText("Détails: " + faceRecognitionService.getLastError() + "\n\n" +
+                    "Voulez-vous continuer sans enregistrement facial ?");
 
-        // Créer le compte directement
-        // createUserAccount(firstName, lastName, email, password, phone, city, country, roleChoiceBox.getValue());
+            ButtonType btnYes = new ButtonType("Continuer sans visage", ButtonBar.ButtonData.YES);
+            ButtonType btnNo = new ButtonType("Annuler", ButtonBar.ButtonData.NO);
+            alert.getButtonTypes().setAll(btnYes, btnNo);
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == btnYes) {
+                    createUserAccount(firstName, lastName, email, password, phone, city, country, role, null);
+                }
+            });
+            return;
+        }
+
+        showStatus("📷 Capture du visage en cours...", "#4F46E5");
+
+        Task<FaceRecognitionService.FaceResult> enrollTask = new Task<FaceRecognitionService.FaceResult>() {
+            @Override
+            protected FaceRecognitionService.FaceResult call() {
+                return faceRecognitionService.enrollWithWebcam(12);
+            }
+        };
+
+        enrollTask.setOnSucceeded(event -> {
+            FaceRecognitionService.FaceResult result = enrollTask.getValue();
+            if (result.isSuccess() && result.getEmbedding() != null) {
+                showStatus("✅ Visage capture! Creation du compte...", "#10B981");
+                createUserAccount(firstName, lastName, email, password, phone, city, country, role, result.getEmbedding());
+            } else {
+                showStatus("❌ " + result.getMessage(), "#EF4444");
+
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Capture faciale echouee");
+                alert.setHeaderText("Impossible d'enregistrer le visage");
+                alert.setContentText(result.getMessage() + "\n\nContinuer sans visage ?");
+
+                ButtonType btnYes = new ButtonType("Continuer sans visage", ButtonBar.ButtonData.YES);
+                ButtonType btnNo = new ButtonType("Annuler", ButtonBar.ButtonData.NO);
+                alert.getButtonTypes().setAll(btnYes, btnNo);
+
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == btnYes) {
+                        createUserAccount(firstName, lastName, email, password, phone, city, country, role, null);
+                    }
+                });
+            }
+        });
+
+        enrollTask.setOnFailed(event -> {
+            Throwable error = enrollTask.getException();
+            showStatus("❌ Erreur lors de la capture faciale", "#EF4444");
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Erreur lors de la capture faciale");
+            alert.setContentText(error.getMessage());
+            alert.showAndWait();
+        });
+
+        new Thread(enrollTask).start();
+    }
+
+    @FXML
+    private void handleFaceLogin() {
+        String email = emailField != null ? emailField.getText().trim() : "";
+        if (email.isEmpty()) {
+            showStatus("❌ Veuillez saisir votre email", "#EF4444");
+            return;
+        }
+
+        User user;
+        try {
+            user = userService.findByEmail(email);
+            if (user == null) {
+                showStatus("❌ Utilisateur introuvable", "#EF4444");
+                return;
+            }
+        } catch (Exception e) {
+            showStatus("❌ Erreur: " + e.getMessage(), "#EF4444");
+            return;
+        }
+
+        double[] storedEmbedding;
+        try {
+            storedEmbedding = userService.loadFaceEmbedding(user.getId());
+            if (storedEmbedding == null) {
+                showStatus("❌ Aucun visage enregistre pour ce compte", "#EF4444");
+                return;
+            }
+        } catch (Exception e) {
+            showStatus("❌ Erreur: " + e.getMessage(), "#EF4444");
+            return;
+        }
+
+        if (!faceRecognitionService.isPythonAvailable()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Face recognition requis");
+            alert.setHeaderText("face_recognition indisponible");
+            alert.setContentText("Détails: " + faceRecognitionService.getLastError());
+            alert.showAndWait();
+            return;
+        }
+
+        showStatus("📷 Verification faciale en cours...", "#4F46E5");
+
+        Task<FaceRecognitionService.FaceResult> task = new Task<FaceRecognitionService.FaceResult>() {
+            @Override
+            protected FaceRecognitionService.FaceResult call() {
+                return faceRecognitionService.verifyWithWebcam(storedEmbedding, 12, 0.55);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            FaceRecognitionService.FaceResult result = task.getValue();
+            if (result.isSuccess()) {
+                showStatus("✅ Visage reconnu", "#10B981");
+                String role = user.getRole() != null ? user.getRole().toUpperCase() : "";
+                try {
+                    if (role.equals("ADMIN") || role.equals("AGENT")) {
+                        openDashboard(role, user);
+                    } else {
+                        openComingSoon(user);
+                    }
+                } catch (Exception e) {
+                    showStatus("❌ Erreur lors de l'ouverture", "#EF4444");
+                }
+            } else {
+                String msg = result.getMessage() != null && !result.getMessage().isBlank()
+                        ? result.getMessage()
+                        : "Visage non reconnu";
+                showStatus("❌ " + msg, "#EF4444");
+            }
+        });
+
+        task.setOnFailed(event -> {
+            Throwable error = task.getException();
+            showStatus("❌ Erreur: " + error.getMessage(), "#EF4444");
+        });
+
+        new Thread(task).start();
     }
 
     /**
      * Crée le compte utilisateur après vérification biométrique
      */
     private void createUserAccount(String firstName, String lastName, String email, String password,
-                                   String phone, String city, String country, String role) {
+                                   String phone, String city, String country, String role, double[] faceEmbedding) {
         try {
             System.out.println("🔄 Création de l'utilisateur après vérification biométrique...");
 
@@ -504,11 +649,13 @@ public class LoginController {
             // Ajouter l'utilisateur à la base de données
             userService.ajouter(newUser);
 
-            System.out.println("✅ Utilisateur ajouté avec succès dans la base de données!");
-            showStatus("✅ Inscription réussie! Votre identité a été vérifiée. Vous pouvez vous connecter.", "#27ae60");
+            User saved = userService.findByEmail(email);
+            if (saved != null && faceEmbedding != null) {
+                userService.saveFaceEmbedding(saved.getId(), faceEmbedding);
+            }
 
-            // ⚠️ COMMENTÉ - Flag biométrique non utilisé actuellement
-            // biometricVerified = false;
+            System.out.println("✅ Utilisateur ajouté avec succès dans la base de données!");
+            showStatus("✅ Inscription réussie! Vous pouvez vous connecter.", "#27ae60");
 
             // Revenir au mode connexion après 3 secondes
             new Thread(() -> {
@@ -568,4 +715,5 @@ public class LoginController {
         if (roleChoiceBox != null) roleChoiceBox.setValue("Voyageur");
     }
 }
+
 

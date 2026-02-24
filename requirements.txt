@@ -7,3 +7,5 @@ opencv-python==4.9.0.80
 # NumPy (dépendance d'OpenCV, installée automatiquement)
 numpy>=1.24.0
 
+# Reconnaissance faciale (dlib)
+face_recognition==1.3.0

@@ -17,6 +17,7 @@ public class User {
     private String country;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime faceEnrolledAt;
 
     // Constructeurs
     public User() {
@@ -102,6 +103,10 @@ public class User {
     // ================ UPDATED AT ================
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    // ================ FACE ENROLLED AT ================
+    public LocalDateTime getFaceEnrolledAt() { return faceEnrolledAt; }
+    public void setFaceEnrolledAt(LocalDateTime faceEnrolledAt) { this.faceEnrolledAt = faceEnrolledAt; }
 
     // ================ UTILITAIRES ================
     public String getFullName() {

@@ -5,6 +5,8 @@ import utils.MyDatabase;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 
 public class UserService implements IService<User> {
 
@@ -162,5 +164,48 @@ public class UserService implements IService<User> {
             throw e;
         }
         return null;
+    }
+
+    public void saveFaceEmbedding(int userId, double[] embedding) throws SQLException {
+        if (embedding == null || embedding.length == 0) {
+            return;
+        }
+        String sql = "UPDATE user SET face_embedding = ?, face_enrolled_at = NOW() WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setBytes(1, toBytes(embedding));
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        }
+    }
+
+    public double[] loadFaceEmbedding(int userId) throws SQLException {
+        String sql = "SELECT face_embedding FROM user WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    byte[] data = rs.getBytes("face_embedding");
+                    if (data == null || data.length == 0) {
+                        return null;
+                    }
+                    return toDoubles(data);
+                }
+            }
+        }
+        return null;
+    }
+
+    private byte[] toBytes(double[] values) {
+        ByteBuffer buffer = ByteBuffer.allocate(values.length * Double.BYTES);
+        DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();
+        doubleBuffer.put(values);
+        return buffer.array();
+    }
+
+    private double[] toDoubles(byte[] data) {
+        DoubleBuffer buffer = ByteBuffer.wrap(data).asDoubleBuffer();
+        double[] values = new double[buffer.remaining()];
+        buffer.get(values);
+        return values;
     }
 }

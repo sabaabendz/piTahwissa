@@ -2,11 +2,13 @@ package controller;
 
 import entities.User;
 import services.UserService;
+import services.FaceRecognitionService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 
 import java.sql.SQLException;
 import java.io.BufferedReader;
@@ -32,15 +34,20 @@ public class UserFormController {
     @FXML private Button saveBtn;
     @FXML private Button cancelBtn;
     @FXML private Button closeBtn;
+    @FXML private Button captureFaceBtn;
+    @FXML private Label faceStatusLabel;
 
     private UserService userService;
+    private FaceRecognitionService faceRecognitionService;
     private UserListController userListController;
     private User currentUser;
     private boolean isEditMode = false;
+    private double[] pendingFaceEmbedding;
 
     @FXML
     public void initialize() {
         userService = new UserService();
+        faceRecognitionService = new FaceRecognitionService();
         if (errorLabel != null) {
             errorLabel.setManaged(false);
             errorLabel.setVisible(false);
@@ -55,6 +62,10 @@ public class UserFormController {
         }
         if (activeCheckbox != null) {
             activeCheckbox.setSelected(true);
+        }
+        if (faceStatusLabel != null) {
+            faceStatusLabel.setText("Visage non capture");
+            faceStatusLabel.setStyle("-fx-text-fill: #7F8C8D; -fx-font-size: 11px;");
         }
     }
 
@@ -77,6 +88,10 @@ public class UserFormController {
             saveBtn.setText("Ajouter");
         }
         clearForm();
+        pendingFaceEmbedding = null;
+        if (faceStatusLabel != null) {
+            faceStatusLabel.setText("Visage non capture");
+        }
     }
 
     public void initForEdit(User user) {
@@ -128,6 +143,10 @@ public class UserFormController {
         }
         if (passwordField != null) {
             passwordField.setPromptText("Laisser vide pour conserver");
+        }
+        pendingFaceEmbedding = null;
+        if (faceStatusLabel != null) {
+            faceStatusLabel.setText("Capture facultative en modification");
         }
     }
 
@@ -246,6 +265,66 @@ public class UserFormController {
     }
 
     @FXML
+    private void handleCaptureFace() {
+        if (!faceRecognitionService.isPythonAvailable()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Python requis");
+            alert.setHeaderText("face_recognition indisponible");
+            alert.setContentText("Détails: " + faceRecognitionService.getLastError());
+            alert.showAndWait();
+            return;
+        }
+
+        if (captureFaceBtn != null) {
+            captureFaceBtn.setDisable(true);
+        }
+        if (faceStatusLabel != null) {
+            faceStatusLabel.setText("Capture en cours...");
+            faceStatusLabel.setStyle("-fx-text-fill: #4F46E5; -fx-font-size: 11px;");
+        }
+
+        Task<FaceRecognitionService.FaceResult> task = new Task<FaceRecognitionService.FaceResult>() {
+            @Override
+            protected FaceRecognitionService.FaceResult call() {
+                return faceRecognitionService.enrollWithWebcam(12);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            FaceRecognitionService.FaceResult result = task.getValue();
+            if (result.isSuccess() && result.getEmbedding() != null) {
+                pendingFaceEmbedding = result.getEmbedding();
+                if (faceStatusLabel != null) {
+                    faceStatusLabel.setText("Visage capture avec succes");
+                    faceStatusLabel.setStyle("-fx-text-fill: #10B981; -fx-font-size: 11px;");
+                }
+            } else {
+                pendingFaceEmbedding = null;
+                if (faceStatusLabel != null) {
+                    faceStatusLabel.setText(result.getMessage());
+                    faceStatusLabel.setStyle("-fx-text-fill: #EF4444; -fx-font-size: 11px;");
+                }
+            }
+            if (captureFaceBtn != null) {
+                captureFaceBtn.setDisable(false);
+            }
+        });
+
+        task.setOnFailed(event -> {
+            pendingFaceEmbedding = null;
+            if (faceStatusLabel != null) {
+                faceStatusLabel.setText("Erreur lors de la capture");
+                faceStatusLabel.setStyle("-fx-text-fill: #EF4444; -fx-font-size: 11px;");
+            }
+            if (captureFaceBtn != null) {
+                captureFaceBtn.setDisable(false);
+            }
+        });
+
+        new Thread(task).start();
+    }
+
+    @FXML
     private void handleSave() {
         // Validation des champs obligatoires
         if (emailField == null || emailField.getText() == null || emailField.getText().trim().isEmpty()) {
@@ -266,6 +345,11 @@ public class UserFormController {
         }
         if (roleField == null || roleField.getValue() == null) {
             showError("Le rôle est obligatoire");
+            return;
+        }
+
+        if (!isEditMode && pendingFaceEmbedding == null) {
+            showError("Veuillez capturer le visage avant de creer l'utilisateur");
             return;
         }
 
@@ -306,6 +390,12 @@ public class UserFormController {
                 }
 
                 userService.ajouter(newUser);
+
+                User saved = userService.findByEmail(newUser.getEmail());
+                if (saved != null && pendingFaceEmbedding != null) {
+                    userService.saveFaceEmbedding(saved.getId(), pendingFaceEmbedding);
+                }
+
                 showSuccess("Utilisateur ajouté avec succès!");
             } else {
                 // Modification
@@ -338,6 +428,11 @@ public class UserFormController {
                 }
 
                 userService.update(currentUser);
+
+                if (pendingFaceEmbedding != null && currentUser != null) {
+                    userService.saveFaceEmbedding(currentUser.getId(), pendingFaceEmbedding);
+                }
+
                 showSuccess("Utilisateur modifié avec succès!");
             }
 
@@ -415,6 +510,9 @@ public class UserFormController {
         if (errorLabel != null) {
             errorLabel.setManaged(false);
             errorLabel.setVisible(false);
+        }
+        if (faceStatusLabel != null) {
+            faceStatusLabel.setText("Visage non capture");
         }
     }
 

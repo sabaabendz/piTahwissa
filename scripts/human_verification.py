@@ -27,9 +27,9 @@ class HumanVerification:
         self.face_cascade = cv2.CascadeClassifier(self.cascade_path)
 
         if self.face_cascade.empty():
-            raise Exception("❌ Impossible de charger le classificateur de visages")
+            raise Exception("Impossible de charger le classificateur de visages")
 
-        print("✅ Classificateur de visages chargé avec succès", file=sys.stderr)
+        print("Classificateur de visages charge avec succes", file=sys.stderr)
 
     def detect_faces(self, frame):
         """
@@ -110,10 +110,10 @@ class HumanVerification:
         camera = cv2.VideoCapture(0)
 
         if not camera.isOpened():
-            result['message'] = "❌ Impossible d'accéder à la webcam"
+            result['message'] = "Impossible d'acceder a la webcam"
             return result
 
-        print("📹 Webcam activée. Positionnez-vous face à la caméra...", file=sys.stderr)
+        print("Webcam activee. Positionnez-vous face a la camera...", file=sys.stderr)
 
         # Attendre que la caméra se stabilise
         for _ in range(10):
@@ -185,30 +185,30 @@ class HumanVerification:
                 key = cv2.waitKey(1) & 0xFF
 
                 if key == 27:  # ESC
-                    result['message'] = "❌ Vérification annulée par l'utilisateur"
+                    result['message'] = "Verification annulee par l'utilisateur"
                     break
 
                 elif key == 32:  # SPACE
                     if face_count == 1:
                         result['success'] = True
                         result['face_count'] = face_count
-                        result['message'] = "✅ Visage humain vérifié avec succès!"
+                        result['message'] = "Visage humain verifie avec succes"
 
                         # Sauvegarder l'image si demandé
                         if save_image and output_path:
                             cv2.imwrite(output_path, frame)
                             result['image_path'] = output_path
-                            print(f"💾 Image sauvegardée: {output_path}", file=sys.stderr)
+                            print(f"Image sauvegardee: {output_path}", file=sys.stderr)
 
                         break
                     else:
-                        print(f"⚠️ Impossible de capturer: {face_count} visage(s) détecté(s)", file=sys.stderr)
+                        print(f"Impossible de capturer: {face_count} visage(s) detecte(s)", file=sys.stderr)
 
             # Si aucune capture manuelle et au moins un visage détecté
             if not result['success'] and frames_with_one_face > total_frames * 0.3:
                 result['success'] = True
                 result['face_count'] = 1
-                result['message'] = "✅ Visage humain détecté (vérification automatique)"
+                result['message'] = "Visage humain detecte (verification automatique)"
 
                 if save_image and output_path and best_frame is not None:
                     cv2.imwrite(output_path, best_frame)
@@ -216,15 +216,15 @@ class HumanVerification:
 
             elif not result['success'] and result['message'] == '':
                 if max_faces_detected == 0:
-                    result['message'] = "❌ Aucun visage détecté. Veuillez réessayer."
+                    result['message'] = "Aucun visage detecte. Veuillez reessayer."
                 elif max_faces_detected > 1:
-                    result['message'] = f"❌ Plusieurs visages détectés ({max_faces_detected}). Une seule personne doit être visible."
+                    result['message'] = f"Plusieurs visages detectes ({max_faces_detected}). Une seule personne doit etre visible."
                 else:
-                    result['message'] = "❌ Temps écoulé sans capture valide."
+                    result['message'] = "Temps ecoule sans capture valide."
 
         except Exception as e:
-            result['message'] = f"❌ Erreur: {str(e)}"
-            print(f"❌ Exception: {e}", file=sys.stderr)
+            result['message'] = f"Erreur: {str(e)}"
+            print(f"Exception: {e}", file=sys.stderr)
 
         finally:
             camera.release()
@@ -250,7 +250,7 @@ class HumanVerification:
         }
 
         if not os.path.exists(image_path):
-            result['message'] = f"❌ Image introuvable: {image_path}"
+            result['message'] = f"Image introuvable: {image_path}"
             return result
 
         try:
@@ -258,7 +258,7 @@ class HumanVerification:
             frame = cv2.imread(image_path)
 
             if frame is None:
-                result['message'] = "❌ Impossible de charger l'image"
+                result['message'] = "Impossible de charger l'image"
                 return result
 
             # Détecter les visages
@@ -268,14 +268,14 @@ class HumanVerification:
 
             if face_count == 1:
                 result['success'] = True
-                result['message'] = "✅ Visage humain vérifié avec succès!"
+                result['message'] = "Visage humain verifie avec succes"
             elif face_count == 0:
-                result['message'] = "❌ Aucun visage détecté dans l'image"
+                result['message'] = "Aucun visage detecte dans l'image"
             else:
-                result['message'] = f"❌ Plusieurs visages détectés ({face_count}). Un seul requis."
+                result['message'] = f"Plusieurs visages detectes ({face_count}). Un seul requis."
 
         except Exception as e:
-            result['message'] = f"❌ Erreur: {str(e)}"
+            result['message'] = f"Erreur: {str(e)}"
 
         return result
 
@@ -287,7 +287,7 @@ def main():
     if len(sys.argv) < 2:
         print(json.dumps({
             'success': False,
-            'message': "❌ Usage: python human_verification.py <mode> [options]",
+            'message': "Usage: python human_verification.py <mode> [options]",
             'usage': {
                 'webcam': 'python human_verification.py webcam [duration] [save_path]',
                 'image': 'python human_verification.py image <image_path>'
@@ -305,7 +305,7 @@ def main():
             duration = int(sys.argv[2]) if len(sys.argv) > 2 else 10
             save_path = sys.argv[3] if len(sys.argv) > 3 else None
 
-            print(f"🎥 Mode webcam activé (durée: {duration}s)", file=sys.stderr)
+            print(f"Mode webcam active (duree: {duration}s)", file=sys.stderr)
 
             result = verifier.verify_webcam(
                 duration=duration,
@@ -318,24 +318,24 @@ def main():
             if len(sys.argv) < 3:
                 print(json.dumps({
                     'success': False,
-                    'message': "❌ Chemin de l'image requis"
+                    'message': "Chemin de l'image requis"
                 }))
                 sys.exit(1)
 
             image_path = sys.argv[2]
-            print(f"🖼️ Mode image activé: {image_path}", file=sys.stderr)
+            print(f"Mode image active: {image_path}", file=sys.stderr)
 
             result = verifier.verify_image(image_path)
 
         else:
             print(json.dumps({
                 'success': False,
-                'message': f"❌ Mode inconnu: {mode}. Utilisez 'webcam' ou 'image'"
+                'message': f"Mode inconnu: {mode}. Utilisez 'webcam' ou 'image'"
             }))
             sys.exit(1)
 
-        # Afficher le résultat en JSON
-        print(json.dumps(result, ensure_ascii=False))
+        # Afficher le resultat en JSON
+        print(json.dumps(result, ensure_ascii=True))
 
         # Code de sortie
         sys.exit(0 if result['success'] else 1)
@@ -343,7 +343,7 @@ def main():
     except Exception as e:
         print(json.dumps({
             'success': False,
-            'message': f"❌ Erreur: {str(e)}",
+            'message': f"Erreur: {str(e)}",
             'error': str(e)
         }))
         sys.exit(1)
