@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test AI API</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 800px; margin: 0 auto; }
+        textarea { width: 100%; height: 100px; margin: 10px 0; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #result { margin-top: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; }
+        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test AI API</h1>
+    
+    <div>
+        <label><strong>Project Name:</strong></label>
+        <input type="text" id="projectName" value="Test Project" style="width: 100%; padding: 5px;">
+    </div>
+    
+    <div>
+        <label><strong>Project Description:</strong></label>
+        <textarea id="description">Build a web application with user authentication, dashboard, and reporting features. Include responsive design and email notifications.</textarea>
+    </div>
+    
+    <button onclick="testAPI()">🚀 Test AI Suggestions</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            const description = document.getElementById('description').value;
+            const projectName = document.getElementById('projectName').value;
+            
+            resultDiv.innerHTML = '<p>⏳ Sending request...</p>';
+            resultDiv.className = '';
+            
+            try {
+                console.log('Sending request to /api/ai/suggest-tasks');
+                console.log('Data:', { description, projectName });
+                
+                const response = await fetch('/api/ai/suggest-tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        description: description,
+                        projectName: projectName
+                    })
+                });
+                
+                console.log('Response status:', response.status);
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (response.ok) {
+                    if (data.suggestions && data.suggestions.length > 0) {
+                        let html = '<h3 class="success">✅ Success! Got ' + data.suggestions.length + ' suggestions:</h3>';
+                        html += '<ul>';
+                        data.suggestions.forEach(task => {
+                            html += '<li><strong>' + task.libelle + '</strong><br>';
+                            html += 'Priority: ' + task.priorite + ' | Duration: ' + task.days + ' days</li>';
+                        });
+                        html += '</ul>';
+                        resultDiv.innerHTML = html;
+                        resultDiv.className = 'success';
+                    } else {
+                        resultDiv.innerHTML = '<h3>⚠️ No suggestions returned</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                        resultDiv.className = 'error';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<h3 class="error">❌ Error ' + response.status + '</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                    resultDiv.className = 'error';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = '<h3 class="error">❌ Network Error</h3><p>' + error.message + '</p>';
+                resultDiv.className = 'error';
+            }
+        }
+        
+        // Auto-test on load (optional)
+        // window.onload = () => testAPI();
+    </script>
+    
+    <hr style="margin: 30px 0;">
+    
+    <h2>📋 Instructions</h2>
+    <ol>
+        <li>Make sure your Symfony server is running</li>
+        <li>Open browser console (F12) to see detailed logs</li>
+        <li>Click the "Test AI Suggestions" button</li>
+        <li>Wait 2-5 seconds for the response</li>
+        <li>Check the result below</li>
+    </ol>
+    
+    <h3>Expected Result:</h3>
+    <p>You should see 3-5 task suggestions with names, priorities, and durations.</p>
+    
+    <h3>If It Fails:</h3>
+    <ul>
+        <li>Check browser console for errors</li>
+        <li>Verify GROQ_API_KEY in .env file</li>
+        <li>Check Symfony logs: <code>tail -f var/log/dev.log</code></li>
+        <li>Verify route exists: <code>php bin/console debug:router ai_suggest_tasks</code></li>
+    </ul>
+</body>
+</html>

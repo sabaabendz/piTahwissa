@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Projet;
 use App\Form\ProjetType;
 use App\Repository\ProjetRepository;
+use App\Service\EmailNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,12 +48,20 @@ class ProjetController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_projet_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
-    public function edit(Request $request, Projet $projet, EntityManagerInterface $em): Response
+    public function edit(Request $request, Projet $projet, EntityManagerInterface $em, EmailNotificationService $emailService): Response
     {
         $form = $this->createForm(ProjetType::class, $projet);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
+            
+            try {
+                $emailService->notifyProjectUpdated($projet);
+                $this->addFlash('info', 'Email de notification envoyé.');
+            } catch (\Exception $e) {
+                $this->addFlash('warning', 'Projet mis à jour mais email non envoyé: ' . $e->getMessage());
+            }
+            
             $this->addFlash('success', 'Projet mis à jour.');
             return $this->redirectToRoute('app_projet_show', ['id' => $projet->getId()]);
         }
@@ -60,12 +69,32 @@ class ProjetController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'app_projet_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
-    public function delete(Request $request, Projet $projet, EntityManagerInterface $em): Response
+    public function delete(Request $request, Projet $projet, EntityManagerInterface $em, EmailNotificationService $emailService): Response
     {
         if ($this->isCsrfTokenValid('delete' . $projet->getId(), (string) $request->request->get('_token'))) {
+            $projectName = $projet->getNom();
+            
+            // Log before deletion
+            error_log("Deleting project: " . $projectName);
+            
             $em->remove($projet);
             $em->flush();
+            
+            error_log("Project deleted, now sending email...");
+            
+            try {
+                $emailService->notifyProjectDeleted($projectName);
+                error_log("Email sent successfully");
+                $this->addFlash('info', 'Email de notification envoyé à ismail.karoui@esprit.tn');
+            } catch (\Exception $e) {
+                error_log("Email error: " . $e->getMessage());
+                $this->addFlash('warning', 'Projet supprimé mais email non envoyé: ' . $e->getMessage());
+            }
+            
             $this->addFlash('success', 'Projet supprimé.');
+        } else {
+            error_log("CSRF token invalid");
+            $this->addFlash('error', 'Token CSRF invalide');
         }
         return $this->redirectToRoute('app_projet_index');
     }

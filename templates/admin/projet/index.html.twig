@@ -34,6 +34,7 @@
                                 <tr>
                                     <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'id', order: sortBy == 'id' ? nextOrder : 'ASC' }) }}">ID</a></th>
                                     <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'nom', order: sortBy == 'nom' ? nextOrder : 'ASC' }) }}">Nom</a></th>
+                                    <th>Description</th>
                                     <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'dateDebut', order: sortBy == 'dateDebut' ? nextOrder : 'ASC' }) }}">Date début</a></th>
                                     <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'dateEcheance', order: sortBy == 'dateEcheance' ? nextOrder : 'ASC' }) }}">Échéance</a></th>
                                     <th><a href="{{ path('app_admin_projet_index', { search: search, sort: 'statut', order: sortBy == 'statut' ? nextOrder : 'ASC' }) }}">Statut</a></th>
@@ -45,6 +46,21 @@
                                     <tr>
                                         <td>{{ p.id }}</td>
                                         <td><a href="{{ path('app_admin_projet_show', { id: p.id }) }}">{{ p.nom }}</a></td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="text-muted small">{{ p.description|length > 50 ? p.description|slice(0, 50) ~ '...' : (p.description ?: 'Aucune description') }}</span>
+                                                {% if p.description %}
+                                                    <button type="button" 
+                                                            class="btn btn-sm btn-outline-primary vocal-briefing-btn" 
+                                                            data-projet-id="{{ p.id }}"
+                                                            data-projet-nom="{{ p.nom }}"
+                                                            data-projet-description="{{ p.description|e('js') }}"
+                                                            title="Morning Briefing Vocal">
+                                                        <i class="bi bi-play-circle"></i>
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                        </td>
                                         <td>{{ p.dateDebut ? p.dateDebut|date('d/m/Y') : '-' }}</td>
                                         <td>{{ p.dateEcheance ? p.dateEcheance|date('d/m/Y') : '-' }}</td>
                                         <td>
@@ -69,4 +85,180 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+class MorningBriefingVocal {
+    constructor() {
+        this.synthesis = window.speechSynthesis;
+        this.currentUtterance = null;
+        this.isPlaying = false;
+        this.init();
+    }
+
+    init() {
+        // Vérifier si l'API Web Speech est supportée
+        if (!this.synthesis) {
+            console.warn('L\'API Web Speech n\'est pas supportée par ce navigateur');
+            return;
+        }
+
+        // Attacher les événements aux boutons
+        this.attachEventListeners();
+    }
+
+    attachEventListeners() {
+        document.querySelectorAll('.vocal-briefing-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const projetId = button.dataset.projetId;
+                const projetNom = button.dataset.projetNom;
+                const projetDescription = button.dataset.projetDescription;
+
+                if (this.isPlaying && this.currentProjetId === projetId) {
+                    this.stop();
+                } else {
+                    this.speak(projetId, projetNom, projetDescription, button);
+                }
+            });
+        });
+    }
+
+    speak(projetId, projetNom, projetDescription, button) {
+        // Arrêter toute lecture en cours
+        this.stop();
+
+        // Mettre à jour l'UI
+        this.updateButtonUI(button, true);
+        this.isPlaying = true;
+        this.currentProjetId = projetId;
+
+        // Créer le message vocal
+        const message = this.createBriefingMessage(projetNom, projetDescription);
+        
+        // Créer l'utterance
+        this.currentUtterance = new SpeechSynthesisUtterance(message);
+        
+        // Configurer la voix (français si disponible)
+        this.configureVoice();
+        
+        // Événements
+        this.currentUtterance.onend = () => {
+            this.reset();
+            this.updateButtonUI(button, false);
+        };
+
+        this.currentUtterance.onerror = (event) => {
+            console.error('Erreur de synthèse vocale:', event);
+            this.reset();
+            this.updateButtonUI(button, false);
+            this.showNotification('Erreur lors de la lecture vocale', 'error');
+        };
+
+        // Démarrer la lecture
+        this.synthesis.speak(this.currentUtterance);
+    }
+
+    createBriefingMessage(nom, description) {
+        const date = new Date().toLocaleDateString('fr-FR', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+
+        let message = `Briefing du ${date}. `;
+        message += `Projet : ${nom}. `;
+        
+        if (description) {
+            message += `Description : ${description}. `;
+        }
+        
+        message += `Voilà le résumé de ce projet.`;
+
+        return message;
+    }
+
+    configureVoice() {
+        // Configurer les paramètres vocaux
+        this.currentUtterance.lang = 'fr-FR';
+        this.currentUtterance.rate = 0.9;  // Vitesse légèrement réduite
+        this.currentUtterance.pitch = 1;   // Ton normal
+        this.currentUtterance.volume = 1;   // Volume maximum
+
+        // Essayer de sélectionner une voix française
+        const voices = this.synthesis.getVoices();
+        const frenchVoice = voices.find(voice => 
+            voice.lang.startsWith('fr') || 
+            voice.name.includes('French') ||
+            voice.name.includes('Français')
+        );
+
+        if (frenchVoice) {
+            this.currentUtterance.voice = frenchVoice;
+        }
+    }
+
+    stop() {
+        if (this.synthesis && this.synthesis.speaking) {
+            this.synthesis.cancel();
+        }
+        this.reset();
+    }
+
+    reset() {
+        this.isPlaying = false;
+        this.currentProjetId = null;
+        this.currentUtterance = null;
+    }
+
+    updateButtonUI(button, isPlaying) {
+        if (isPlaying) {
+            button.innerHTML = '<i class="bi bi-stop-circle"></i>';
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-outline-danger');
+            button.title = 'Arrêter la lecture';
+        } else {
+            button.innerHTML = '<i class="bi bi-play-circle"></i>';
+            button.classList.remove('btn-outline-danger');
+            button.classList.add('btn-outline-primary');
+            button.title = 'Morning Briefing Vocal';
+        }
+    }
+
+    showNotification(message, type = 'info') {
+        // Créer une notification temporaire
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto-suppression après 3 secondes
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+}
+
+// Initialiser le système quand le DOM est chargé
+document.addEventListener('DOMContentLoaded', () => {
+    // Charger les voix disponibles
+    if ('speechSynthesis' in window) {
+        speechSynthesis.getVoices();
+        speechSynthesis.onvoiceschanged = () => {
+            new MorningBriefingVocal();
+        };
+    } else {
+        new MorningBriefingVocal();
+    }
+});
+</script>
 {% endblock %}

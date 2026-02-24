@@ -14,46 +14,90 @@
         <div class="card shadow">
             <div class="card-body">
                 {% if taches is empty %}
-                    <p class="mb-0">Aucune tâche. <a href="{{ path('app_tache_new') }}">Créer une tâche</a> (liée à un projet).</p>
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <i class="bi bi-list-task display-1 text-muted"></i>
+                        </div>
+                        <h4 class="text-muted">Aucune tâche trouvée</h4>
+                        <p class="text-muted mb-4">Commencez par créer votre première tâche.</p>
+                        <a href="{{ path('app_tache_new') }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Nouvelle tâche
+                        </a>
+                    </div>
                 {% else %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Libellé</th>
-                                    <th>Projet</th>
-                                    <th>Priorité</th>
-                                    <th>Date limite</th>
-                                    <th>État</th>
-                                    <th class="text-end">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for t in taches %}
-                                    <tr>
-                                        <td><a href="{{ path('app_tache_show', { id: t.id }) }}">{{ t.libelle }}</a></td>
-                                        <td><a href="{{ path('app_projet_show', { id: t.projet.id }) }}">{{ t.projet.nom }}</a></td>
-                                        <td>
-                                            <span class="badge bg-{{ t.priorite == 'haute' ? 'danger' : (t.priorite == 'moyenne' ? 'warning' : 'secondary') }}">{{ t.priorite|capitalize }}</span>
-                                        </td>
-                                        <td>{{ t.dateLimite ? t.dateLimite|date('d/m/Y') : '-' }}</td>
-                                        <td>
-                                            {% if t.etat == 'a_faire' %}<span class="badge bg-secondary">À faire</span>
-                                            {% elseif t.etat == 'en_cours' %}<span class="badge bg-info">En cours</span>
-                                            {% else %}<span class="badge bg-success">Terminé</span>{% endif %}
-                                        </td>
-                                        <td class="text-end">
-                                            <a href="{{ path('app_tache_show', { id: t.id }) }}" class="btn btn-sm btn-light">Voir</a>
-                                            <a href="{{ path('app_tache_edit', { id: t.id }) }}" class="btn btn-sm btn-outline-primary">Modifier</a>
-                                            <form method="post" action="{{ path('app_tache_delete', { id: t.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer cette tâche ?');">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ t.id) }}">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="row g-4">
+                        {% for t in taches %}
+                            <div class="col-lg-4 col-md-6">
+                                <div class="card h-100 shadow-sm border-0">
+                                    <div class="card-body d-flex flex-column">
+                                        <!-- Header avec priorité et état -->
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h5 class="card-title mb-0">
+                                                <a href="{{ path('app_tache_show', { id: t.id }) }}" class="text-decoration-none text-dark">
+                                                    {{ t.libelle|length > 40 ? t.libelle|slice(0, 40) ~ '...' : t.libelle }}
+                                                </a>
+                                            </h5>
+                                            <div class="d-flex flex-column gap-1">
+                                                {% if t.priorite == 'haute' %}
+                                                    <span class="badge bg-danger">Haute</span>
+                                                {% elseif t.priorite == 'moyenne' %}
+                                                    <span class="badge bg-warning">Moyenne</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">Basse</span>
+                                                {% endif %}
+                                                {% if t.etat == 'a_faire' %}
+                                                    <span class="badge bg-secondary">À faire</span>
+                                                {% elseif t.etat == 'en_cours' %}
+                                                    <span class="badge bg-info">En cours</span>
+                                                {% else %}
+                                                    <span class="badge bg-success">Terminé</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Projet associé -->
+                                        <div class="mb-3">
+                                            <small class="text-muted d-block">Projet associé</small>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-folder text-primary me-2"></i>
+                                                <a href="{{ path('app_projet_show', { id: t.projet.id }) }}" class="text-decoration-none">
+                                                    {{ t.projet.nom }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Informations principales -->
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-calendar-event text-danger me-2"></i>
+                                                <div>
+                                                    <small class="text-muted d-block">Date limite</small>
+                                                    <strong>{{ t.dateLimite ? t.dateLimite|date('d/m/Y') : '-' }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Actions -->
+                                        <div class="mt-auto">
+                                            <div class="btn-group w-100" role="group">
+                                                <a href="{{ path('app_tache_show', { id: t.id }) }}" class="btn btn-outline-primary btn-sm">
+                                                    <i class="bi bi-eye me-1"></i>Voir
+                                                </a>
+                                                <a href="{{ path('app_tache_edit', { id: t.id }) }}" class="btn btn-outline-secondary btn-sm">
+                                                    <i class="bi bi-pencil me-1"></i>Modifier
+                                                </a>
+                                                <form method="post" action="{{ path('app_tache_delete', { id: t.id }) }}" class="d-inline" onsubmit="return confirm('Supprimer cette tâche ?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ t.id) }}">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                        <i class="bi bi-trash me-1"></i>Supprimer
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 {% endif %}
             </div>
