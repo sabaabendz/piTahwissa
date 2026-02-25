@@ -58,10 +58,23 @@
                     <h5 class="mb-3 fw-bold"><i class="bi bi-person-bounding-box me-2"></i>Face ID</h5>
                     <p class="text-muted">Capture your face here. Only the embedding is stored, never the raw image.</p>
 
+                    {% set faceConfigured = app.user and app.user.faceEmbedding is not empty %}
+                    <div class="mb-3">
+                        {% if faceConfigured %}
+                            <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">
+                                <i class="bi bi-check-circle me-1"></i>Face ID already configured
+                            </span>
+                        {% else %}
+                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                                <i class="bi bi-exclamation-circle me-1"></i>Face ID not configured yet
+                            </span>
+                        {% endif %}
+                    </div>
+
                     <div class="mb-3">
                         <video id="faceEnrollVideo" class="w-100 rounded border" autoplay playsinline style="max-height: 260px; object-fit: cover;"></video>
                         <canvas id="faceEnrollCanvas" class="d-none"></canvas>
-                        <input type="hidden" id="faceImageBase64" name="face_image_base64">
+                        <input type="hidden" id="faceImageBase64" name="face_image_base64" data-face-configured="{{ faceConfigured ? '1' : '0' }}">
                     </div>
 
                     <div class="d-flex gap-2 mb-2">
@@ -124,6 +137,11 @@
             }
 
             let stream;
+            const alreadyConfigured = input.dataset.faceConfigured === '1';
+            if (alreadyConfigured) {
+                status.textContent = 'Face ID already configured. Capture again to update it.';
+                status.className = 'small text-success mb-3';
+            }
 
             startButton.addEventListener('click', async () => {
                 try {

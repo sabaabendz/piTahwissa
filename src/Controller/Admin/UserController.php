@@ -111,4 +111,36 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('app_admin_users_index');
     }
+
+    #[Route('/{id}/remove-face-id', name: 'app_admin_users_remove_face_id', methods: ['POST'])]
+    public function removeFaceId(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->find($id);
+
+        if (!$user) {
+            $this->addFlash('error', 'User not found.');
+
+            return $this->redirectToRoute('app_admin_users_index');
+        }
+
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('remove-face-id-' . $id, $token)) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+
+            return $this->redirectToRoute('app_admin_users_index');
+        }
+
+        if (empty($user->getFaceEmbedding())) {
+            $this->addFlash('info', sprintf('Face ID is already removed for "%s".', $user->getName()));
+
+            return $this->redirectToRoute('app_admin_users_index');
+        }
+
+        $user->setFaceEmbedding(null);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', sprintf('Face ID removed for "%s".', $user->getName()));
+
+        return $this->redirectToRoute('app_admin_users_index');
+    }
 }
