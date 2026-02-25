@@ -1,228 +1,3 @@
-{% extends 'base_auth.html.twig' %}
-
-{% block title %}Sign Up - SmartTask Manager{% endblock %}
-
-{% block body %}
-<section class="p-0 d-flex align-items-center position-relative overflow-hidden">
-	
-	<div class="container-fluid">
-		<div class="row">
-			<!-- left -->
-			<div class="col-12 col-lg-6 d-md-flex align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100">
-				<div class="p-3 p-lg-5">
-					<!-- Title -->
-					<div class="text-center">
-						<h2 class="fw-bold">Welcome to SmartTask Manager</h2>
-						<p class="mb-0 h6 fw-light">Intelligent Task & Meeting Management Platform</p>
-					</div>
-					<!-- SVG Image -->
-					<img src="{{ asset('assets/images/element/02.svg') }}" class="mt-5" alt="">
-					<!-- Info -->
-					<div class="d-sm-flex mt-5 align-items-center justify-content-center">
-						<ul class="avatar-group mb-2 mb-sm-0">
-							<li class="avatar avatar-sm"><img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/01.jpg') }}" alt="avatar"></li>
-							<li class="avatar avatar-sm"><img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/02.jpg') }}" alt="avatar"></li>
-							<li class="avatar avatar-sm"><img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/03.jpg') }}" alt="avatar"></li>
-							<li class="avatar avatar-sm"><img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/04.jpg') }}" alt="avatar"></li>
-						</ul>
-						<!-- Content -->
-						<p class="mb-0 h6 fw-light ms-0 ms-sm-3">Join our team of managers and collaborators!</p>
-					</div>
-				</div>
-			</div>
-
-			<!-- Right -->
-			<div class="col-12 col-lg-6 m-auto">
-				<div class="row my-5">
-					<div class="col-sm-10 col-xl-8 m-auto">
-						<!-- Title -->
-						<img src="{{ asset('assets/images/element/03.svg') }}" class="h-40px mb-2" alt="">
-						<h2>Sign up for your account!</h2>
-						<p class="lead mb-4">Nice to see you! Please select your role and fill in the form.</p>
-					
-						<!-- Error Message -->
-						{% if error %}
-							<div class="alert alert-danger alert-dismissible fade show" role="alert">
-								<i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
-								<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-							</div>
-						{% endif %}
-
-						<!-- Flash Messages -->
-						{% for message in app.flashes('success') %}
-							<div class="alert alert-success alert-dismissible fade show" role="alert">
-								<i class="bi bi-check-circle me-2"></i>{{ message }}
-								<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-							</div>
-						{% endfor %}
-
-						<!-- Form START -->
-
-							<!-- OAuth Sign Up -->
-							<div class="mb-4" id="oauthSignUpContainer" style="display: none;">
-								<a href="{{ path('connect_google_start') }}" id="googleSignUpBtn" class="btn btn-outline-secondary btn-lg w-100 mb-2" type="button">
-									<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" class="me-2"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 6.168-2.172l-2.908-2.258c-.806.54-1.837.86-3.26.86-2.51 0-4.656-1.696-5.424-4.07H.638v2.331C2.33 15.98 5.5 18 9 18z"/><path fill="#FBBC05" d="M3.576 10.711c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.638C.232 6.46 0 7.988 0 9.5s.232 3.04.638 4.54l2.938-2.258 3.04 2.318z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.5 0 2.33 2.02.638 4.96l2.938 2.258C4.344 5.276 6.49 3.58 9 3.58z"/></svg>
-									Continue with Google
-								</a>
-								<a href="{{ path('connect_linkedin_start') }}" id="linkedinSignUpBtn" class="btn btn-outline-secondary btn-lg w-100" type="button">
-									<svg width="20" height="20" viewBox="0 0 24 24" fill="#0077b5" xmlns="http://www.w3.org/2000/svg" class="me-2"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-									Continue with LinkedIn
-								</a>
-								<div class="text-center my-3"><span class="text-muted">— or —</span></div>
-							</div>
-							<!-- Role Selection -->
-							<div class="mb-4">
-								<label class="form-label">I am a: *</label>
-								<div class="d-flex gap-3">
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="role" id="roleManager" value="manager" {{ selected_role == 'manager' ? 'checked' : '' }}>
-										<label class="form-check-label" for="roleManager">
-											<i class="bi bi-person-badge me-1"></i>Manager
-										</label>
-									</div>
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="role" id="roleCollaborator" value="collaborator" {{ selected_role == 'collaborator' ? 'checked' : '' }}>
-										<label class="form-check-label" for="roleCollaborator">
-											<i class="bi bi-people me-1"></i>Collaborator
-										</label>
-									</div>
-								</div>
-								<small class="form-text text-muted">Managers create a new enterprise. Collaborators join an existing enterprise.</small>
-							</div>
-
-							{% if form %}
-								{{ form_start(form, {'attr': {'id': 'registrationForm', 'novalidate': 'novalidate'}}) }}
-								<input type="hidden" name="role" value="{{ selected_role }}">
-								<!-- Name -->
-								<div class="mb-4">
-									{{ form_label(form.name, null, {'label_attr': {'class': 'form-label'}}) }}
-									<div class="input-group input-group-lg">
-										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-person-fill"></i></span>
-										{{ form_widget(form.name, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'Full Name'}}) }}
-									</div>
-									{{ form_errors(form.name) }}
-								</div>
-
-								<!-- Email -->
-								<div class="mb-4">
-									{{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
-									<div class="input-group input-group-lg">
-										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-envelope-fill"></i></span>
-										{{ form_widget(form.email, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'E-mail'}}) }}
-									</div>
-									{{ form_errors(form.email) }}
-								</div>
-
-								<!-- Password -->
-								<div class="mb-4">
-									{{ form_label(form.password, null, {'label_attr': {'class': 'form-label'}}) }}
-									<div class="input-group input-group-lg">
-										<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="fas fa-lock"></i></span>
-										{{ form_widget(form.password, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'Password'}}) }}
-									</div>
-									{{ form_errors(form.password) }}
-									{% if form.password.vars.help is defined %}
-										<div class="form-text">{{ form.password.vars.help }}</div>
-									{% endif %}
-								</div>
-
-								{% if form.level is defined %}
-									<!-- Manager-specific fields -->
-									<div id="managerFields">
-										<!-- Level -->
-										<div class="mb-4">
-											{{ form_label(form.level, null, {'label_attr': {'class': 'form-label'}}) }}
-											<div class="input-group input-group-lg">
-												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-award-fill"></i></span>
-												{{ form_widget(form.level, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'e.g., Senior, Junior'}}) }}
-											</div>
-											{{ form_errors(form.level) }}
-										</div>
-
-										<!-- Department -->
-										<div class="mb-4">
-											{{ form_label(form.department, null, {'label_attr': {'class': 'form-label'}}) }}
-											<div class="input-group input-group-lg">
-												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-building"></i></span>
-												{{ form_widget(form.department, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'e.g., IT, HR, Sales'}}) }}
-											</div>
-											{{ form_errors(form.department) }}
-										</div>
-									</div>
-								{% endif %}
-
-								{% if form.enterpriseCode is defined %}
-									<!-- Collaborator-specific fields -->
-									<div id="collaboratorFields">
-										<!-- Enterprise Code -->
-										<div class="mb-4">
-											{{ form_label(form.enterpriseCode, null, {'label_attr': {'class': 'form-label'}}) }}
-											<div class="input-group input-group-lg">
-												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-key-fill"></i></span>
-												{{ form_widget(form.enterpriseCode, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'Enter enterprise code'}}) }}
-											</div>
-											{{ form_errors(form.enterpriseCode) }}
-											<div class="form-text">Enter the enterprise code provided by your manager.</div>
-										</div>
-
-										<!-- Post -->
-										<div class="mb-4">
-											{{ form_label(form.post, null, {'label_attr': {'class': 'form-label'}}) }}
-											<div class="input-group input-group-lg">
-												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-briefcase-fill"></i></span>
-												{{ form_widget(form.post, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'e.g., Developer, Designer'}}) }}
-											</div>
-											{{ form_errors(form.post) }}
-										</div>
-
-										<!-- Team -->
-										<div class="mb-4">
-											{{ form_label(form.team, null, {'label_attr': {'class': 'form-label'}}) }}
-											<div class="input-group input-group-lg">
-												<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-people-fill"></i></span>
-												{{ form_widget(form.team, {'attr': {'class': 'form-control border-0 bg-light rounded-end ps-1', 'placeholder': 'e.g., Backend, Frontend'}}) }}
-											</div>
-											{{ form_errors(form.team) }}
-										</div>
-									</div>
-								{% endif %}
-
-								<!-- Check box -->
-								<div class="mb-4">
-									{{ form_row(form.terms) }}
-								</div>
-
-								<!-- Button -->
-								<div class="align-items-center mt-0">
-									<div class="d-grid">
-										<button class="btn btn-primary mb-0" type="submit">
-											<i class="bi bi-person-plus me-2"></i>Sign Up
-										</button>
-									</div>
-								</div>
-
-								{{ form_end(form) }}
-							{% else %}
-								<!-- Initial state: Show role selection only -->
-								<div class="alert alert-info">
-									<i class="bi bi-info-circle me-2"></i>Please select your role above to continue.
-								</div>
-							{% endif %}
-
-						<!-- Form END -->
-
-						<!-- Sign in link -->
-						<div class="mt-4 text-center">
-							<span>Already have an account? <a href="{{ path('app_login') }}">Sign in here</a></span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
-{% endblock %}
-
 {% block javascripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -232,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle role selection functions
     function updateOAuthLinks(role) {
         const googleBtn = document.getElementById('googleSignUpBtn');
-        const linkedinBtn = document.getElementById('linkedinSignUpBtn');
+        const githubBtn = document.getElementById('githubSignUpBtn');
         const oauthContainer = document.getElementById('oauthSignUpContainer');
         
         if (oauthContainer) {
@@ -240,9 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const googleBaseUrl = '{{ path('connect_google_start') }}';
                 googleBtn.href = googleBaseUrl + '?role=' + role;
             }
-            if (linkedinBtn) {
-                const linkedinBaseUrl = '{{ path('connect_linkedin_start') }}';
-                linkedinBtn.href = linkedinBaseUrl + '?role=' + role;
+            if (githubBtn) {
+                const githubBaseUrl = '{{ path('connect_github_start') }}';
+                githubBtn.href = githubBaseUrl + '?role=' + role;
             }
             oauthContainer.style.display = 'block';
         }
@@ -286,6 +61,139 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             document.body.appendChild(form);
             form.submit();
+        }
+    }
+
+    // ==========================================
+    // PASSWORD STRENGTH LOGIC - UPDATED
+    // ==========================================
+    const passwordField = document.querySelector('.password-field');
+    const strengthWrapper = document.querySelector('.password-strength-wrapper');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthLabel = document.getElementById('strengthLabel');
+    const strengthSuggestions = document.getElementById('strengthSuggestions');
+
+    let debounceTimer;
+
+    if (passwordField) {
+        passwordField.addEventListener('input', function() {
+            const password = this.value;
+            
+            clearTimeout(debounceTimer);
+            if (!password) {
+                if (strengthWrapper) {
+                    strengthWrapper.style.display = 'none';
+                }
+                return;
+            }
+
+            if (strengthWrapper) {
+                strengthWrapper.style.display = 'block';
+            }
+            
+            debounceTimer = setTimeout(() => {
+                checkPasswordStrength(password);
+            }, 300);
+        });
+    }
+
+    async function checkPasswordStrength(password) {
+        try {
+            const response = await fetch('{{ path('api_password_strength') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                updateStrengthUI(data);
+            } else {
+                // Handle error gracefully
+                console.warn('Password strength check failed:', response.status);
+                updateStrengthUI({
+                    score: 50,
+                    label: 'medium',
+                    suggestions: ['Unable to check password strength']
+                });
+            }
+        } catch (error) {
+            console.error('Error checking password strength:', error);
+            // Show fallback UI instead of breaking
+            updateStrengthUI({
+                score: 50,
+                label: 'medium',
+                suggestions: ['Password strength check unavailable']
+            });
+        }
+    }
+
+    function updateStrengthUI(data) {
+        if (!strengthBar || !strengthLabel || !strengthSuggestions) {
+            return;
+        }
+
+        // NEW: Handle both old and new API response formats
+        const score = data.score || 0;
+        const label = data.label || 'weak';
+        const suggestions = data.suggestions || [];
+        const confidence = data.confidence || 0;
+        
+        // Calculate progress bar width based on NEW 0-100 scale
+        let width = '0%';
+        let colorClass = 'bg-danger';
+        let textColorClass = 'text-danger';
+        let icon = '🔴';
+        
+        if (score < 40) {
+            // Weak
+            width = '33%';
+            colorClass = 'bg-danger';
+            textColorClass = 'text-danger';
+            icon = '🔴';
+        } else if (score < 70) {
+            // Medium
+            width = '66%';
+            colorClass = 'bg-warning';
+            textColorClass = 'text-warning';
+            icon = '🟡';
+        } else {
+            // Strong
+            width = '100%';
+            colorClass = 'bg-success';
+            textColorClass = 'text-success';
+            icon = '🟢';
+        }
+
+        // Update progress bar
+        strengthBar.style.width = width;
+        strengthBar.className = 'progress-bar ' + colorClass;
+        
+        // Update label with icon and capitalized text
+        const labelText = label.charAt(0).toUpperCase() + label.slice(1);
+        strengthLabel.innerHTML = icon + ' ' + labelText;
+        strengthLabel.className = 'fw-bold ' + textColorClass;
+
+        // Update suggestions
+        if (suggestions && suggestions.length > 0 && label !== 'strong') {
+            strengthSuggestions.innerHTML = '';
+            suggestions.forEach(suggestion => {
+                const li = document.createElement('li');
+                // NEW: Suggestions now include emojis, render as HTML
+                li.innerHTML = suggestion;
+                strengthSuggestions.appendChild(li);
+            });
+            strengthSuggestions.style.display = 'block';
+            strengthSuggestions.className = 'small mt-2 mb-0 ps-3 ' + textColorClass;
+        } else if (label === 'strong') {
+            // Show success message for strong passwords
+            strengthSuggestions.innerHTML = '<li>✅ Password meets all security requirements!</li>';
+            strengthSuggestions.className = 'small text-success mt-2 mb-0 ps-3';
+            strengthSuggestions.style.display = 'block';
+        } else {
+            strengthSuggestions.style.display = 'none';
         }
     }
 });

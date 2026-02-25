@@ -22,12 +22,27 @@ class UserController extends AbstractController
     }
 
     #[Route('', name: 'app_admin_users_index', methods: ['GET'])]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $users = $this->userRepository->findAll();
+        $role = strtolower((string) $request->query->get('role', 'all'));
+        $query = (string) $request->query->get('q', '');
+
+        if (!in_array($role, ['all', 'admin', 'manager', 'collaborator'], true)) {
+            $role = 'all';
+        }
+
+        $users = $this->userRepository->findByRoleAndSearch($role, $query);
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('admin/users/_table.html.twig', [
+                'users' => $users,
+            ]);
+        }
 
         return $this->render('admin/users/index.html.twig', [
             'users' => $users,
+            'selectedRole' => $role,
+            'query' => $query,
         ]);
     }
 
@@ -35,6 +50,7 @@ class UserController extends AbstractController
     public function toggleStatus(int $id, Request $request): Response
     {
         $user = $this->userRepository->find($id);
+        $currentUser = $this->getUser();
 
         if (!$user) {
             $this->addFlash('error', 'User not found.');
@@ -42,7 +58,7 @@ class UserController extends AbstractController
         }
 
         // Prevent admin from disabling themselves
-        if ($user->getIdUser() === $this->getUser()->getIdUser()) {
+        if ($currentUser instanceof User && $user->getIdUser() === $currentUser->getIdUser()) {
             $this->addFlash('error', 'You cannot disable your own account.');
             return $this->redirectToRoute('app_admin_users_index');
         }
@@ -67,6 +83,7 @@ class UserController extends AbstractController
     public function delete(int $id, Request $request): Response
     {
         $user = $this->userRepository->find($id);
+        $currentUser = $this->getUser();
 
         if (!$user) {
             $this->addFlash('error', 'User not found.');
@@ -74,7 +91,7 @@ class UserController extends AbstractController
         }
 
         // Prevent admin from deleting themselves
-        if ($user->getIdUser() === $this->getUser()->getIdUser()) {
+        if ($currentUser instanceof User && $user->getIdUser() === $currentUser->getIdUser()) {
             $this->addFlash('error', 'You cannot delete your own account.');
             return $this->redirectToRoute('app_admin_users_index');
         }
@@ -91,6 +108,38 @@ class UserController extends AbstractController
         $this->entityManager->flush();
 
         $this->addFlash('success', sprintf('User "%s" has been deleted successfully.', $userName));
+
+        return $this->redirectToRoute('app_admin_users_index');
+    }
+
+    #[Route('/{id}/remove-face-id', name: 'app_admin_users_remove_face_id', methods: ['POST'])]
+    public function removeFaceId(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->find($id);
+
+        if (!$user) {
+            $this->addFlash('error', 'User not found.');
+
+            return $this->redirectToRoute('app_admin_users_index');
+        }
+
+        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('remove-face-id-' . $id, $token)) {
+            $this->addFlash('error', 'Invalid CSRF token.');
+
+            return $this->redirectToRoute('app_admin_users_index');
+        }
+
+        if (empty($user->getFaceEmbedding())) {
+            $this->addFlash('info', sprintf('Face ID is already removed for "%s".', $user->getName()));
+
+            return $this->redirectToRoute('app_admin_users_index');
+        }
+
+        $user->setFaceEmbedding(null);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', sprintf('Face ID removed for "%s".', $user->getName()));
 
         return $this->redirectToRoute('app_admin_users_index');
     }

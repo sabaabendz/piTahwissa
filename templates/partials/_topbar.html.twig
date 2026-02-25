@@ -89,8 +89,9 @@
 					<!-- Profile dropdown START -->
 					<li class="nav-item ms-2 ms-md-3 dropdown">
 						<!-- Avatar -->
+						{% set avatarPath = app.user and app.user.avatarName ? vich_uploader_asset(app.user, 'avatarFile') : asset('assets/images/avatar/01.jpg') %}
 						<a class="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
-							<img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/01.jpg') }}" alt="avatar">
+							<img class="avatar-img rounded-circle avatar-hover" src="{{ avatarPath }}" alt="avatar">
 						</a>
 
 						<!-- Profile dropdown START -->
@@ -100,7 +101,7 @@
 								<div class="d-flex align-items-center">
 									<!-- Avatar -->
 									<div class="avatar me-3 mb-3">
-										<img class="avatar-img rounded-circle shadow" src="{{ asset('assets/images/avatar/01.jpg') }}" alt="avatar">
+										<img class="avatar-img rounded-circle shadow" src="{{ avatarPath }}" alt="avatar">
 									</div>
 									<div>
 										{% if app.user %}

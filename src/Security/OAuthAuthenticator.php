@@ -6,20 +6,20 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
+use League\OAuth2\Client\Provider\GithubResourceOwner;
 use League\OAuth2\Client\Provider\GoogleUser;
-use League\OAuth2\Client\Provider\LinkedInResourceOwner;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Service\EnterpriseCodeGenerator;
 
 class OAuthAuthenticator extends OAuth2Authenticator implements AuthenticationEntryPointInterface
 {
@@ -27,19 +27,31 @@ class OAuthAuthenticator extends OAuth2Authenticator implements AuthenticationEn
         private readonly ClientRegistry $clientRegistry,
         private readonly EntityManagerInterface $entityManager,
         private readonly RouterInterface $router,
-        private readonly EnterpriseCodeGenerator $enterpriseCodeGenerator,
         private readonly ValidatorInterface $validator
     ) {
     }
 
     public function supports(Request $request): ?bool
     {
-        return in_array($request->attributes->get('_route'), ['connect_google_check', 'connect_linkedin_check']);
+        $isOAuthCallbackRoute = in_array($request->attributes->get('_route'), ['connect_google_check', 'connect_github_check'], true);
+
+        if (!$isOAuthCallbackRoute) {
+            return false;
+        }
+
+        return $request->query->has('state') && ($request->query->has('code') || $request->query->has('error'));
     }
 
     public function authenticate(Request $request): Passport
     {
-        $clientKey = $request->attributes->get('_route') === 'connect_google_check' ? 'google' : 'linkedin';
+        if ($request->query->has('error')) {
+            $error = (string) $request->query->get('error', 'authorization_error');
+            $description = (string) $request->query->get('error_description', 'OAuth authorization failed.');
+
+            throw new CustomUserMessageAuthenticationException(sprintf('OAuth error: %s (%s)', $error, $description));
+        }
+
+        $clientKey = $request->attributes->get('_route') === 'connect_github_check' ? 'github' : 'google';
         $client = $this->clientRegistry->getClient($clientKey);
         $accessToken = $this->fetchAccessToken($client);
 
@@ -54,10 +66,9 @@ class OAuthAuthenticator extends OAuth2Authenticator implements AuthenticationEn
                 if ($oauthUser instanceof GoogleUser) {
                     $email = $oauthUser->getEmail();
                     $name = $oauthUser->getName();
-                } elseif ($oauthUser instanceof LinkedInResourceOwner) {
+                } elseif ($oauthUser instanceof GithubResourceOwner) {
                     $email = $oauthUser->getEmail();
-                    // LinkedInResourceOwner has getFirstName() and getLastName()
-                    $name = $oauthUser->getFirstName() . ' ' . $oauthUser->getLastName();
+                    $name = $oauthUser->getName() ?: $oauthUser->getNickname();
                 }
 
                 if (!$email) {
@@ -65,8 +76,11 @@ class OAuthAuthenticator extends OAuth2Authenticator implements AuthenticationEn
                 }
 
                 // 1) Find existing user by specific OAuth ID
-                $existingUser = $this->entityManager->getRepository(User::class)
-                    ->findOneBy([$clientKey . 'Id' => $externalId]);
+                $existingUser = null;
+                if ($clientKey === 'google') {
+                    $existingUser = $this->entityManager->getRepository(User::class)
+                        ->findOneBy([$clientKey . 'Id' => $externalId]);
+                }
 
                 if ($existingUser) {
                     return $existingUser;
@@ -77,36 +91,29 @@ class OAuthAuthenticator extends OAuth2Authenticator implements AuthenticationEn
                     ->findOneBy(['email' => $email]);
 
                 if ($existingUser) {
-                    // Update the ID for this provider
-                    $setter = 'set' . ucfirst($clientKey) . 'Id';
-                    $existingUser->$setter($externalId);
-                    $this->entityManager->persist($existingUser);
-                    $this->entityManager->flush();
+                    if ($clientKey === 'google') {
+                        $setter = 'set' . ucfirst($clientKey) . 'Id';
+                        $existingUser->$setter($externalId);
+                        $this->entityManager->persist($existingUser);
+                        $this->entityManager->flush();
+                    }
 
                     return $existingUser;
                 }
 
                 // 3) Create new user (registration via OAuth)
-                $session = $request->getSession();
-                $role = $session->get('_oauth_auth_role');
-                $session->remove('_oauth_auth_role');
-
-                if ($role === 'manager') {
-                    $user = new \App\Entity\Manager();
-                    $user->setLevel('Owner');
-                    $user->setDepartment('General');
-                    $user->setEnterpriseCode($this->enterpriseCodeGenerator->generate());
-                } else {
-                    $user = new \App\Entity\Collaborator();
-                    $user->setPost('New Member');
-                    $user->setTeam('General');
-                    $user->setEnterpriseCode('P_' . uniqid());
-                }
+                $user = new \App\Entity\Collaborator();
+                $user->setPost('New Member');
+                $user->setTeam('General');
+                $user->setEnterpriseCode('P_' . uniqid());
+                $user->setRoles(['ROLE_COLLABORATOR']);
 
                 $user->setEmail($email);
                 $user->setName($name ?? $email);
-                $setter = 'set' . ucfirst($clientKey) . 'Id';
-                $user->$setter($externalId);
+                if ($clientKey === 'google') {
+                    $setter = 'set' . ucfirst($clientKey) . 'Id';
+                    $user->$setter($externalId);
+                }
                 $user->setPassword(null);
 
                 // Validate user entity

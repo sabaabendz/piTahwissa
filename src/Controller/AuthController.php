@@ -9,7 +9,10 @@ use App\Form\CollaboratorType;
 use App\Repository\ManagerRepository;
 use App\Repository\UserRepository;
 use App\Service\EnterpriseCodeGenerator;
+use App\Service\FaceRecognitionService;
+use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -27,11 +31,83 @@ final class AuthController extends AbstractController
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly FaceRecognitionService $faceRecognitionService,
+        private readonly LoggerInterface $logger,
+        private readonly Security $security,
 
         private readonly EnterpriseCodeGenerator $enterpriseCodeGenerator,
         private readonly EntityManagerInterface $entityManager,
         private readonly ManagerRepository $managerRepository
     ) {
+    }
+
+    #[Route('/login/face', name: 'app_face_login', methods: ['POST'])]
+    public function faceLogin(Request $request): JsonResponse
+    {
+        $payload = json_decode($request->getContent(), true);
+
+        $csrfToken = (string) ($payload['_csrf_token'] ?? '');
+        if (!$this->isCsrfTokenValid('face_login', $csrfToken)) {
+            return $this->json(['message' => 'Invalid request token.'], Response::HTTP_FORBIDDEN);
+        }
+
+        $email = trim((string) ($payload['email'] ?? ''));
+        $image = (string) ($payload['image'] ?? '');
+
+        if ('' === $email || '' === $image) {
+            return $this->json(['message' => 'Email and face image are required.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+
+        if (!$user || !$user->isEnabled()) {
+            $this->logger->warning('Face ID login failed: user not found or disabled', [
+                'email' => $email,
+                'ip' => $request->getClientIp(),
+            ]);
+
+            return $this->json(['message' => 'Invalid credentials.'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $storedEmbedding = $user->getFaceEmbedding();
+        if (empty($storedEmbedding)) {
+            return $this->json(['message' => 'Face ID not configured.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $result = $this->faceRecognitionService->verify($image, $storedEmbedding);
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (\RuntimeException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        if (!$result['match']) {
+            $this->logger->info('Face ID login failed: no match', [
+                'email' => $email,
+                'ip' => $request->getClientIp(),
+                'similarity' => $result['similarity'],
+            ]);
+
+            return $this->json([
+                'message' => 'Face does not match.',
+                'similarity' => $result['similarity'],
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $this->security->login($user, LoginFormAuthenticator::class, 'main');
+
+        $this->logger->info('Face ID login success', [
+            'email' => $email,
+            'ip' => $request->getClientIp(),
+            'similarity' => $result['similarity'],
+        ]);
+
+        return $this->json([
+            'message' => 'Login success',
+            'similarity' => $result['similarity'],
+            'redirect' => $this->generateUrl('app_dashboard_index'),
+        ]);
     }
 
     /**
@@ -76,93 +152,7 @@ final class AuthController extends AbstractController
 
 
 
-    /**
-     * Registration page
-     * GET: Display registration form
-     * POST: Handle form submission based on role (Manager or Collaborator)
-     */
-    #[Route('/register', name: 'app_register', methods: ['GET', 'POST'])]
-    public function register(Request $request): Response
-    {
-        if ($this->getUser()) {
-            $response = $this->redirectToRoute('app_dashboard_index');
-            // Prevent caching of redirect
-            $response->setCache([
-                'must_revalidate' => true,
-                'no_cache' => true,
-                'no_store' => true,
-                'max_age' => 0,
-            ]);
-            return $response;
-        }
-
-        $role = $request->request->get('role');
-        $error = null;
-        $form = null;
-
-        // Handle POST: Process form based on role
-        if ($request->isMethod('POST')) {
-            if ($role === 'manager') {
-                $manager = new Manager();
-                $form = $this->createForm(ManagerType::class, $manager, ['is_edit' => false]);
-                $form->handleRequest($request);
-
-                // Check if form was actually submitted with data (not just role selection)
-                if ($form->isSubmitted() && $form->isValid()) {
-                    // Generate enterprise code
-                    $enterpriseCode = $this->enterpriseCodeGenerator->generate();
-                    $manager->setEnterpriseCode($enterpriseCode);
-
-                    // Hash password from form
-                    $plainPassword = $form->get('password')->getData();
-                    $hashedPassword = $this->passwordHasher->hashPassword($manager, $plainPassword);
-                    $manager->setPassword($hashedPassword);
-
-                    $this->entityManager->persist($manager);
-                    $this->entityManager->flush();
-
-                    $this->addFlash('success', 'Manager created successfully! Enterprise code: ' . $enterpriseCode);
-                    return $this->redirectToRoute('app_login');
-                }
-            } elseif ($role === 'collaborator') {
-                $collaborator = new Collaborator();
-                $form = $this->createForm(CollaboratorType::class, $collaborator, ['is_edit' => false]);
-                $form->handleRequest($request);
-
-                // Check if form was actually submitted with data (not just role selection)
-                if ($form->isSubmitted() && $form->isValid()) {
-                    // Hash password from form
-                    $plainPassword = $form->get('password')->getData();
-                    $hashedPassword = $this->passwordHasher->hashPassword($collaborator, $plainPassword);
-                    $collaborator->setPassword($hashedPassword);
-
-                    $this->entityManager->persist($collaborator);
-                    $this->entityManager->flush();
-
-                    $this->addFlash('success', 'Collaborator created successfully!');
-                    return $this->redirectToRoute('app_login');
-                }
-            } else {
-                $error = 'Please select a role (Manager or Collaborator).';
-            }
-        }
-
-        $response = $this->render('auth/register.html.twig', [
-            'form' => $form,
-            'error' => $error,
-            'selected_role' => $role,
-        ]);
-
-        // Prevent browser from caching the register page
-        $response->setCache([
-            'must_revalidate' => true,
-            'no_cache' => true,
-            'no_store' => true,
-            'max_age' => 0,
-        ]);
-
-        return $response;
-    }
+    // Removed old register method as it's now handled by RegistrationController
 
     /**
      * Forgot password page
@@ -188,7 +178,7 @@ final class AuthController extends AbstractController
 
                 // Send email
                 $templatedEmail = (new TemplatedEmail())
-                    ->from('no-reply@smarttask.com')
+                    ->from('mohsennabli321@gmail.com')
                     ->to($user->getEmail())
                     ->subject('Your password reset request')
                     ->htmlTemplate('email/reset_password.html.twig')

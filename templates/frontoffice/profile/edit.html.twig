@@ -1,4 +1,4 @@
-{% extends 'frontoffice/base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
 {% block title %}Modifier mon Profil - SmartTask Manager{% endblock %}
 
@@ -28,6 +28,12 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4 p-md-5">
                 {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                    <div class="mb-4 text-center">
+                        {% set avatarPath = app.user and app.user.avatarName ? vich_uploader_asset(app.user, 'avatarFile') : asset('assets/images/avatar/01.jpg') %}
+                        <img src="{{ avatarPath }}" alt="avatar" class="rounded-circle shadow avatar-hover" width="110" height="110">
+                        <div class="small text-muted mt-2">Votre photo actuelle</div>
+                    </div>
+
                     <div class="mb-4">
                         {{ form_label(form.name) }}
                         {{ form_widget(form.name) }}
@@ -39,6 +45,43 @@
                         {{ form_widget(form.email) }}
                         {{ form_errors(form.email) }}
                     </div>
+
+                    <div class="mb-4">
+                        {{ form_label(form.avatarFile) }}
+                        {{ form_widget(form.avatarFile) }}
+                        {{ form_errors(form.avatarFile) }}
+                        <div class="form-text mt-2">Formats accepts: JPG or PNG. Max 2MB.</div>
+                    </div>
+
+                    <hr class="my-4 text-muted opacity-25">
+
+                    <h5 class="mb-3 fw-bold"><i class="bi bi-person-bounding-box me-2"></i>Face ID</h5>
+                    <p class="text-muted">Capture your face here. Only the embedding is stored, never the raw image.</p>
+
+                    {% set faceConfigured = app.user and app.user.faceEmbedding is not empty %}
+                    <div class="mb-3">
+                        {% if faceConfigured %}
+                            <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">
+                                <i class="bi bi-check-circle me-1"></i>Face ID already configured
+                            </span>
+                        {% else %}
+                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                                <i class="bi bi-exclamation-circle me-1"></i>Face ID not configured yet
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <video id="faceEnrollVideo" class="w-100 rounded border" autoplay playsinline style="max-height: 260px; object-fit: cover;"></video>
+                        <canvas id="faceEnrollCanvas" class="d-none"></canvas>
+                        <input type="hidden" id="faceImageBase64" name="face_image_base64" data-face-configured="{{ faceConfigured ? '1' : '0' }}">
+                    </div>
+
+                    <div class="d-flex gap-2 mb-2">
+                        <button type="button" id="faceEnrollStart" class="btn btn-outline-primary btn-sm">Start Camera</button>
+                        <button type="button" id="faceEnrollCapture" class="btn btn-outline-success btn-sm" disabled>Capture Face</button>
+                    </div>
+                    <div id="faceEnrollStatus" class="small text-muted mb-3">Face ID not captured yet.</div>
 
                     <hr class="my-4 text-muted opacity-25">
 
@@ -76,9 +119,59 @@
     </div>
 </div>
 
-<style>
-    .form-error-icon { display: none; }
-    .invalid-feedback { display: block; }
-    .form-control.is-invalid { border-color: #dc3545; }
-</style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        (() => {
+            const video = document.getElementById('faceEnrollVideo');
+            const canvas = document.getElementById('faceEnrollCanvas');
+            const input = document.getElementById('faceImageBase64');
+            const startButton = document.getElementById('faceEnrollStart');
+            const captureButton = document.getElementById('faceEnrollCapture');
+            const status = document.getElementById('faceEnrollStatus');
+
+            if (!video || !canvas || !input || !startButton || !captureButton || !status) {
+                return;
+            }
+
+            let stream;
+            const alreadyConfigured = input.dataset.faceConfigured === '1';
+            if (alreadyConfigured) {
+                status.textContent = 'Face ID already configured. Capture again to update it.';
+                status.className = 'small text-success mb-3';
+            }
+
+            startButton.addEventListener('click', async () => {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream;
+                    captureButton.disabled = false;
+                    status.textContent = 'Camera ready. Capture your face.';
+                    status.className = 'small text-success mb-3';
+                } catch (error) {
+                    status.textContent = 'Unable to access camera.';
+                    status.className = 'small text-danger mb-3';
+                }
+            });
+
+            captureButton.addEventListener('click', () => {
+                if (!video.videoWidth || !video.videoHeight) {
+                    status.textContent = 'Camera is not ready yet.';
+                    status.className = 'small text-danger mb-3';
+                    return;
+                }
+
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                input.value = canvas.toDataURL('image/jpeg', 0.92);
+                status.textContent = 'Face captured. Save profile to enroll Face ID.';
+                status.className = 'small text-success mb-3';
+            });
+        })();
+    </script>
 {% endblock %}

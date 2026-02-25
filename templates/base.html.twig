@@ -1,17 +1,160 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}SmartTask Manager{% endblock %}</title>
+        <link rel="icon" href="{{ asset('assets/images/favicon.ico') }}">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% block stylesheets %}
+            <link rel="preconnect" href="https://fonts.googleapis.com/">
+            <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap">
+
+            <link rel="stylesheet" href="{{ asset('assets/vendor/font-awesome/css/all.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/vendor/overlay-scrollbar/css/overlayscrollbars.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/css/branding.css') }}">
+
+            <style>
+                :root {
+                    --sidebar-width: 260px;
+                }
+                body {
+                    background-color: #f6f7fb;
+                    font-family: 'Heebo', 'Roboto', sans-serif;
+                }
+                .app-shell {
+                    padding-top: 72px;
+                    min-height: 100vh;
+                }
+                .app-content {
+                    padding: 24px;
+                }
+                .app-sidebar {
+                    width: var(--sidebar-width);
+                }
+                @media (min-width: 992px) {
+                    .app-shell {
+                        padding-left: var(--sidebar-width);
+                    }
+                    .offcanvas-lg {
+                        position: fixed;
+                        top: 72px;
+                        bottom: 0;
+                        border-right: 1px solid #edf0f7;
+                        transform: none;
+                        visibility: visible !important;
+                    }
+                }
+            </style>
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% block topnav %}
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top shadow-sm">
+                <div class="container-fluid">
+                    <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#backofficeSidebar" aria-controls="backofficeSidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <a class="navbar-brand fw-bold ms-2" href="{{ path('app_dashboard_index') }}">SmartTask</a>
+
+                    <div class="ms-auto d-flex align-items-center gap-3">
+                        <button class="btn btn-light btn-icon rounded-circle" type="button">
+                            <i class="bi bi-bell"></i>
+                        </button>
+
+                        <div class="dropdown">
+                            {% set avatarPath = app.user and app.user.avatarName ? vich_uploader_asset(app.user, 'avatarFile') : asset('assets/images/avatar/01.jpg') %}
+                            <a class="d-flex align-items-center text-decoration-none" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="{{ avatarPath }}" alt="avatar" class="rounded-circle avatar-hover" width="40" height="40">
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="{{ path('app_front_profile_edit') }}">Edit Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ path('app_front_profile_edit') }}">Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}">Sign Out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        {% endblock %}
+
+        {% block sidebar %}
+            <div class="offcanvas offcanvas-start offcanvas-lg bg-white app-sidebar" tabindex="-1" id="backofficeSidebar" aria-labelledby="backofficeSidebarLabel">
+                <div class="offcanvas-header border-bottom">
+                    <h5 class="offcanvas-title" id="backofficeSidebarLabel">Navigation</h5>
+                    <button type="button" class="btn-close text-reset d-lg-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body px-0">
+                    <nav class="navbar-nav">
+                        {% if is_granted('ROLE_MANAGER') %}
+                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-2">Core</div>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                            </a>
+
+                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">User Management</div>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/collaborator' ? 'active' : '' }}" data-bs-toggle="collapse" href="#usersMenu" role="button" aria-expanded="false">
+                                <i class="bi bi-people me-2"></i>Users
+                            </a>
+                            <div class="collapse" id="usersMenu">
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo == '/collaborator' ? 'active' : '' }}" href="{{ path('app_collaborator_index') }}">List Users</a>
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/collaborator/new' ? 'active' : '' }}" href="{{ path('app_collaborator_new') }}">Add User</a>
+                            </div>
+
+                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Project Management</div>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/projet' ? 'active' : '' }}" data-bs-toggle="collapse" href="#projectsMenu" role="button" aria-expanded="false">
+                                <i class="bi bi-kanban me-2"></i>Projects
+                            </a>
+                            <div class="collapse" id="projectsMenu">
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo == '/projet/' or app.request.pathInfo == '/projet' ? 'active' : '' }}" href="{{ path('app_projet_index') }}">List Projects</a>
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/projet/new' ? 'active' : '' }}" href="{{ path('app_projet_new') }}">Create Project</a>
+                            </div>
+
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/tache' ? 'active' : '' }}" data-bs-toggle="collapse" href="#tasksMenu" role="button" aria-expanded="false">
+                                <i class="bi bi-list-check me-2"></i>Tasks
+                            </a>
+                            <div class="collapse" id="tasksMenu">
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo == '/tache/' or app.request.pathInfo == '/tache' ? 'active' : '' }}" href="{{ path('app_tache_index') }}">List Tasks</a>
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/tache/new' ? 'active' : '' }}" href="{{ path('app_tache_new') }}">Create Task</a>
+                            </div>
+
+                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Insights</div>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">
+                                <i class="bi bi-bar-chart me-2"></i>Reports & Statistics
+                            </a>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/profile' ? 'active' : '' }}" href="{{ path('app_front_profile_edit') }}">
+                                <i class="bi bi-gear me-2"></i>Settings
+                            </a>
+                        {% else %}
+                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-2">Projects</div>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/projet' ? 'active' : '' }}" href="{{ path('app_projet_index') }}">
+                                <i class="bi bi-kanban me-2"></i>Projects
+                            </a>
+
+                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Reports</div>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">
+                                <i class="bi bi-bar-chart me-2"></i>Reports & Statistics
+                            </a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
+        {% endblock %}
+
+        <div class="app-shell">
+            <main class="app-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+
+        {% block javascripts %}
+            <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+            <script src="{{ asset('assets/vendor/overlay-scrollbar/js/overlayscrollbars.min.js') }}"></script>
+            <script src="{{ asset('assets/js/functions.js') }}"></script>
+        {% endblock %}
     </body>
 </html>

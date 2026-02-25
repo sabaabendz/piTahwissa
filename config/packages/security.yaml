@@ -15,7 +15,7 @@ security:
     role_hierarchy:
         ROLE_MANAGER: [ROLE_USER, ROLE_PROJECT_ACCESS]
         ROLE_COLLABORATOR: [ROLE_USER, ROLE_PROJECT_ACCESS]
-        ROLE_ADMIN: [ROLE_USER]
+        ROLE_ADMIN: [ROLE_MANAGER]
 
     firewalls:
         dev:
@@ -29,18 +29,11 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            entry_point: form_login
+            entry_point: App\Security\LoginFormAuthenticator
             user_checker: App\Security\UserEnabledChecker
             custom_authenticators:
                 - App\Security\OAuthAuthenticator
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                default_target_path: app_dashboard_index
-                username_parameter: _username
-                password_parameter: _password
-                enable_csrf: true
-                csrf_token_id: authenticate
+                - App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
                 target: app_login
@@ -53,10 +46,8 @@ security:
         - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/forgot-password, roles: PUBLIC_ACCESS }
         - { path: ^/connect/google, roles: PUBLIC_ACCESS }
-        - { path: ^/connect/linkedin, roles: PUBLIC_ACCESS }
+        - { path: ^/connect/github, roles: PUBLIC_ACCESS }
         - { path: ^/$, roles: PUBLIC_ACCESS }  # Homepage
-        - { path: ^/users, roles: PUBLIC_ACCESS }  # FrontOffice user listing
-        
         # Admin routes - ROLE_ADMIN only
         - { path: ^/admin, roles: ROLE_ADMIN }
         

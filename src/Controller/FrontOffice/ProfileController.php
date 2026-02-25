@@ -3,7 +3,9 @@
 namespace App\Controller\FrontOffice;
 
 use App\Form\UserProfileType;
+use App\Service\FaceRecognitionService;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +20,9 @@ class ProfileController extends AbstractController
     public function edit(
         Request $request, 
         EntityManagerInterface $entityManager, 
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        FaceRecognitionService $faceRecognitionService,
+        LoggerInterface $logger,
     ): Response {
         $user = $this->getUser();
         $form = $this->createForm(UserProfileType::class, $user);
@@ -30,6 +34,24 @@ class ProfileController extends AbstractController
                 $user->setPassword(
                     $passwordHasher->hashPassword($user, $plainPassword)
                 );
+            }
+
+            $faceImageBase64 = (string) $request->request->get('face_image_base64', '');
+            if ('' !== trim($faceImageBase64)) {
+                try {
+                    $embedding = $faceRecognitionService->enroll($faceImageBase64);
+                    $user->setFaceEmbedding($embedding);
+                    $this->addFlash('success', 'Face ID configured successfully.');
+                } catch (\Throwable $e) {
+                    $logger->warning('Face ID enrollment failed', [
+                        'user' => method_exists($user, 'getEmail') ? $user->getEmail() : null,
+                        'error' => $e->getMessage(),
+                    ]);
+
+                    $this->addFlash('error', $e->getMessage());
+
+                    return $this->redirectToRoute('app_front_profile_edit');
+                }
             }
 
             $entityManager->flush();

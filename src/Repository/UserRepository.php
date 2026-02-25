@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use App\Entity\Collaborator;
+use App\Entity\Manager;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -39,5 +41,33 @@ class UserRepository extends ServiceEntityRepository
             ->orderBy('u.name', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param string|null $role all|admin|manager|collaborator
+     */
+    public function findByRoleAndSearch(?string $role = 'all', ?string $term = null): array
+    {
+        $normalizedRole = $role ?? 'all';
+
+        $qb = $this->createQueryBuilder('u')
+            ->orderBy('u.name', 'ASC');
+
+        if ($term !== null && trim($term) !== '') {
+            $qb
+                ->andWhere('u.name LIKE :term OR u.email LIKE :term')
+                ->setParameter('term', '%' . trim($term) . '%');
+        }
+
+        if ($normalizedRole === 'manager') {
+            $qb->andWhere('u INSTANCE OF ' . Manager::class);
+        } elseif ($normalizedRole === 'collaborator') {
+            $qb->andWhere('u INSTANCE OF ' . Collaborator::class);
+        } elseif ($normalizedRole === 'admin') {
+            $qb->andWhere('u.roles LIKE :adminRole')
+                ->setParameter('adminRole', '%ROLE_ADMIN%');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }
