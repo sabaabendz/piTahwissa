@@ -1,0 +1,559 @@
+================================================================================
+  GUIDE D'IMPLÉMENTATION - SUGGESTIONS IA ET NOTIFICATIONS EMAIL
+================================================================================
+
+Date: 24 Février 2026
+Projet: Système de gestion de projets avec IA (Groq) et notifications email
+
+================================================================================
+  TABLE DES MATIÈRES
+================================================================================
+
+1. VUE D'ENSEMBLE
+2. CONFIGURATION (.env)
+3. SERVICES CRÉÉS
+4. CONTRÔLEURS
+5. TEMPLATES (VUES)
+6. FLUX DE DONNÉES
+7. FICHIERS MODIFIÉS
+8. COMMENT ÇA FONCTIONNE
+
+================================================================================
+  1. VUE D'ENSEMBLE
+================================================================================
+
+Ce système permet de :
+- Générer automatiquement des suggestions de tâches via l'IA Groq
+- Accepter/refuser les suggestions de manière interactive
+- Créer automatiquement les tâches acceptées
+- Envoyer des emails lors de la mise à jour ou suppression d'un projet
+
+Technologies utilisées :
+- Groq API (llama-3.3-70b-versatile) pour l'IA
+- Gmail SMTP pour les emails
+- JavaScript (Fetch API) pour l'interface interactive
+- Symfony 6.4 pour le backend
+
+================================================================================
+  2. CONFIGURATION (.env)
+================================================================================
+
+Fichier: .env
+Emplacement: Racine du projet
+
+Contenu ajouté:
+```
+GROQ_API_KEY=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
+MAILER_DSN=gmail://karouihajer5@gmail.com:ppkztvxkinrmwqsd@default
+ADMIN_EMAIL=ismail.karoui@esprit.tn
+```
+
+Explication:
+- GROQ_API_KEY : Clé API pour accéder au service Groq AI
+- MAILER_DSN : Configuration SMTP Gmail pour envoyer les emails
+- ADMIN_EMAIL : Email du destinataire des notifications
+
+================================================================================
+  3. SERVICES CRÉÉS
+================================================================================
+
+3.1. SERVICE IA - GroqAiService
+--------------------------------
+Fichier: src/Service/GroqAiService.php
+Rôle: Communiquer avec l'API Groq pour générer des suggestions de tâches
+
+Méthode principale:
+- suggestTasks($description, $projectName) : array
+  
+Fonctionnement:
+1. Reçoit la description du projet
+2. Construit un prompt pour l'IA
+3. Envoie une requête POST à l'API Groq
+4. Parse la réponse JSON
+5. Retourne un tableau de suggestions
+
+Format de retour:
+[
+  {
+    "libelle": "Nom de la tâche",
+    "priorite": "haute|moyenne|basse",
+    "days": 7
+  }
+]
+
+
+3.2. SERVICE EMAIL - EmailNotificationService
+---------------------------------------------
+Fichier: src/Service/EmailNotificationService.php
+Rôle: Envoyer des notifications email lors des modifications de projets
+
+Méthodes principales:
+- notifyProjectUpdated($projet) : void
+- notifyProjectDeleted($projectName) : void
+
+Fonctionnement:
+1. Crée un objet Email avec Symfony Mailer
+2. Définit l'expéditeur, destinataire, sujet
+3. Génère le contenu HTML de l'email
+4. Envoie l'email via Gmail SMTP
+
+Emails envoyés à: ismail.karoui@esprit.tn
+
+================================================================================
+  4. CONTRÔLEURS
+================================================================================
+
+4.1. CONTRÔLEUR IA - AiSuggestionController
+-------------------------------------------
+Fichier: src/Controller/AiSuggestionController.php
+Rôle: Gérer les requêtes API pour les suggestions IA
+
+Routes:
+1. POST /api/ai/suggest-tasks
+   - Génère des suggestions de tâches
+   - Paramètres: {description, projectName}
+   - Retour: {suggestions: [...]}
+
+2. POST /api/ai/accept-task/{projetId}
+   - Crée une tâche à partir d'une suggestion acceptée
+   - Paramètres: {libelle, priorite, days}
+   - Retour: {success: true, task: {...}}
+
+4.2. CONTRÔLEUR PROJET - ProjetController (MODIFIÉ)
+---------------------------------------------------
+Fichier: src/Controller/ProjetController.php
+Modifications:
+- Méthode edit() : Ajout de l'envoi d'email après mise à jour
+- Méthode delete() : Ajout de l'envoi d'email après suppression
+
+Injection de dépendance:
+- EmailNotificationService ajouté dans les méthodes
+
+================================================================================
+  5. TEMPLATES (VUES)
+================================================================================
+
+5.1. FORMULAIRE NOUVEAU PROJET
+-------------------------------
+Fichier: templates/front/projet/new.html.twig
+Modifications:
+
+A. HTML ajouté:
+   - Bouton "Suggérer des tâches avec IA"
+   - Div pour afficher les suggestions (#ai-suggestions)
+   - Div pour la liste des suggestions (#suggestions-list)
+
+B. JavaScript ajouté (dans {% block javascripts %}):
+   
+   Éléments clés:
+   - Détection automatique des champs du formulaire
+   - Gestion du clic sur le bouton IA
+   - Appel AJAX à /api/ai/suggest-tasks
+   - Affichage dynamique des suggestions
+   - Boutons Accepter/Refuser pour chaque suggestion
+   - Soumission du formulaire avec création des tâches acceptées
+
+   Flux JavaScript:
+   1. Utilisateur clique sur "Suggérer des tâches avec IA"
+   2. Récupération de la description et du nom du projet
+   3. Envoi requête POST à /api/ai/suggest-tasks
+   4. Affichage des suggestions avec boutons
+   5. Utilisateur accepte/refuse les suggestions
+   6. Lors de la soumission du formulaire:
+      - Création du projet
+      - Pour chaque tâche acceptée: POST à /api/ai/accept-task/{id}
+      - Redirection vers la page du projet
+
+================================================================================
+  6. FLUX DE DONNÉES
+================================================================================
+
+6.1. FLUX SUGGESTIONS IA
+-------------------------
+
+[Utilisateur] 
+    ↓ Remplit le formulaire
+[Formulaire /projet/new]
+    ↓ Clique sur "Suggérer des tâches avec IA"
+[JavaScript]
+    ↓ fetch('/api/ai/suggest-tasks', {description, projectName})
+[AiSuggestionController::suggestTasks()]
+    ↓ Appelle GroqAiService
+[GroqAiService::suggestTasks()]
+    ↓ Requête HTTPS
+[API Groq (llama-3.3-70b)]
+    ↓ Retourne suggestions JSON
+[GroqAiService]
+    ↓ Parse et retourne array
+[AiSuggestionController]
+    ↓ Retourne JSON response
+[JavaScript]
+    ↓ Affiche les suggestions
+[Utilisateur]
+    ↓ Accepte certaines suggestions
+[JavaScript - stocke dans acceptedTasks[]]
+    ↓ Soumet le formulaire
+[ProjetController::new()]
+    ↓ Crée le projet
+[JavaScript]
+    ↓ Pour chaque tâche acceptée
+    ↓ POST /api/ai/accept-task/{projetId}
+[AiSuggestionController::acceptTask()]
+    ↓ Crée entité Tache
+[Base de données]
+    ↓ Tâche enregistrée
+[Redirection vers /projet/{id}]
+
+
+6.2. FLUX NOTIFICATIONS EMAIL
+------------------------------
+
+A. Mise à jour de projet:
+
+[Utilisateur]
+    ↓ Modifie un projet
+[ProjetController::edit()]
+    ↓ Enregistre les modifications
+[EntityManager::flush()]
+    ↓ Appelle EmailNotificationService
+[EmailNotificationService::notifyProjectUpdated()]
+    ↓ Crée l'email avec détails du projet
+[Symfony Mailer]
+    ↓ Envoie via Gmail SMTP
+[Gmail]
+    ↓ Délivre l'email
+[ismail.karoui@esprit.tn]
+
+B. Suppression de projet:
+
+[Utilisateur]
+    ↓ Supprime un projet
+[ProjetController::delete()]
+    ↓ Stocke le nom du projet
+    ↓ Supprime de la base de données
+[EntityManager::flush()]
+    ↓ Appelle EmailNotificationService
+[EmailNotificationService::notifyProjectDeleted()]
+    ↓ Crée l'email avec nom et timestamp
+[Symfony Mailer]
+    ↓ Envoie via Gmail SMTP
+[Gmail]
+    ↓ Délivre l'email
+[ismail.karoui@esprit.tn]
+
+================================================================================
+  7. FICHIERS MODIFIÉS/CRÉÉS
+================================================================================
+
+FICHIERS CRÉÉS:
+---------------
+1. src/Service/GroqAiService.php
+   → Service pour l'intégration Groq AI
+
+2. src/Service/EmailNotificationService.php
+   → Service pour l'envoi d'emails
+
+3. src/Controller/AiSuggestionController.php
+   → Contrôleur API pour les suggestions IA
+
+4. public/test_ai_api.html
+   → Page de test pour l'API (optionnel)
+
+FICHIERS MODIFIÉS:
+------------------
+1. .env
+   → Ajout des variables d'environnement (API keys, email)
+
+2. config/services.yaml
+   → Configuration des services avec injection de paramètres
+
+3. src/Controller/ProjetController.php
+   → Ajout des notifications email dans edit() et delete()
+
+4. templates/front/projet/new.html.twig
+   → Ajout du bouton IA et du JavaScript
+
+5. composer.json (via composer require)
+   → Ajout de symfony/http-client et symfony/google-mailer
+
+================================================================================
+  8. COMMENT ÇA FONCTIONNE
+================================================================================
+
+8.1. CONFIGURATION DES SERVICES
+--------------------------------
+Fichier: config/services.yaml
+
+```yaml
+App\Service\GroqAiService:
+    arguments:
+        $groqApiKey: '%env(GROQ_API_KEY)%'
+
+App\Service\EmailNotificationService:
+    arguments:
+        $adminEmail: '%env(ADMIN_EMAIL)%'
+```
+
+Explication:
+- Symfony injecte automatiquement les variables d'environnement
+- Les services sont disponibles via l'autowiring
+
+8.2. UTILISATION DANS LES CONTRÔLEURS
+--------------------------------------
+
+Exemple - Suggestions IA:
+```php
+public function suggestTasks(Request $request, GroqAiService $aiService)
+{
+    $data = json_decode($request->getContent(), true);
+    $suggestions = $aiService->suggestTasks(
+        $data['description'], 
+        $data['projectName']
+    );
+    return $this->json(['suggestions' => $suggestions]);
+}
+```
+
+Exemple - Email:
+```php
+public function edit(Request $request, Projet $projet, 
+                     EntityManagerInterface $em, 
+                     EmailNotificationService $emailService)
+{
+    // ... traitement du formulaire ...
+    $em->flush();
+    $emailService->notifyProjectUpdated($projet);
+    // ...
+}
+```
+
+8.3. APPEL API DEPUIS JAVASCRIPT
+---------------------------------
+
+```javascript
+// Générer des suggestions
+const response = await fetch('/api/ai/suggest-tasks', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+        description: "Description du projet",
+        projectName: "Nom du projet"
+    })
+});
+const data = await response.json();
+// data.suggestions contient le tableau de suggestions
+
+// Créer une tâche acceptée
+await fetch(`/api/ai/accept-task/${projetId}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+        libelle: "Nom de la tâche",
+        priorite: "haute",
+        days: 7
+    })
+});
+```
+
+
+================================================================================
+  9. STRUCTURE DES DONNÉES
+================================================================================
+
+9.1. REQUÊTE SUGGESTIONS IA
+----------------------------
+Endpoint: POST /api/ai/suggest-tasks
+
+Requête:
+{
+    "description": "Description détaillée du projet",
+    "projectName": "Nom du projet"
+}
+
+Réponse:
+{
+    "suggestions": [
+        {
+            "libelle": "Conception de l'interface utilisateur",
+            "priorite": "haute",
+            "days": 10
+        },
+        {
+            "libelle": "Développement du back-office",
+            "priorite": "haute",
+            "days": 15
+        }
+    ]
+}
+
+9.2. CRÉATION DE TÂCHE
+-----------------------
+Endpoint: POST /api/ai/accept-task/{projetId}
+
+Requête:
+{
+    "libelle": "Nom de la tâche",
+    "priorite": "haute",
+    "days": 7
+}
+
+Réponse:
+{
+    "success": true,
+    "message": "Task created successfully",
+    "task": {
+        "id": 1,
+        "libelle": "Nom de la tâche",
+        "priorite": "haute",
+        "dateLimite": "2026-03-03"
+    }
+}
+
+9.3. STRUCTURE EMAIL
+--------------------
+
+Email de mise à jour:
+Sujet: Projet mis à jour: [Nom du projet]
+Contenu HTML:
+- Nom du projet
+- Description
+- Statut
+- Date de début
+- Date d'échéance
+
+Email de suppression:
+Sujet: Projet supprimé: [Nom du projet]
+Contenu HTML:
+- Nom du projet supprimé
+- Date et heure de suppression
+
+================================================================================
+  10. DÉPENDANCES INSTALLÉES
+================================================================================
+
+Via Composer:
+1. symfony/http-client
+   → Pour les requêtes HTTP vers l'API Groq
+
+2. symfony/google-mailer
+   → Pour l'envoi d'emails via Gmail SMTP
+
+Installation:
+```bash
+composer require symfony/http-client
+composer require symfony/google-mailer
+```
+
+================================================================================
+  11. COMMANDES UTILES
+================================================================================
+
+# Vider le cache
+php bin/console cache:clear
+
+# Vérifier les routes
+php bin/console debug:router ai_suggest_tasks
+php bin/console debug:router ai_accept_task
+
+# Vérifier les services
+php bin/console debug:container GroqAiService
+php bin/console debug:container EmailNotificationService
+
+# Tester l'envoi d'email
+php bin/console mailer:test ismail.karoui@esprit.tn
+
+# Voir les logs
+tail -f var/log/dev.log
+
+================================================================================
+  12. POINTS CLÉS DE L'IMPLÉMENTATION
+================================================================================
+
+1. SÉPARATION DES RESPONSABILITÉS
+   - Services: Logique métier (IA, Email)
+   - Contrôleurs: Gestion des requêtes HTTP
+   - Templates: Interface utilisateur
+
+2. INJECTION DE DÉPENDANCES
+   - Les services reçoivent leurs dépendances via le constructeur
+   - Symfony gère automatiquement l'injection
+
+3. API REST
+   - Endpoints JSON pour la communication frontend/backend
+   - Utilisation de fetch() en JavaScript
+
+4. GESTION D'ERREURS
+   - Try-catch dans les services
+   - Retour de messages d'erreur appropriés
+   - Logs pour le débogage
+
+5. EXPÉRIENCE UTILISATEUR
+   - Interface interactive sans rechargement de page
+   - Feedback visuel (spinner, couleurs)
+   - Messages d'erreur clairs
+
+================================================================================
+  13. SÉCURITÉ
+================================================================================
+
+1. Clés API stockées dans .env (non versionné)
+2. Validation des données côté serveur
+3. Protection CSRF sur les formulaires Symfony
+4. Utilisation de htmlspecialchars() dans les emails
+5. App password Gmail (pas le mot de passe principal)
+
+================================================================================
+  14. TESTS
+================================================================================
+
+Test manuel de l'API:
+1. Ouvrir: http://127.0.0.1:8000/test_ai_api.html
+2. Cliquer sur "Test AI Suggestions"
+3. Vérifier les suggestions retournées
+
+Test du formulaire:
+1. Ouvrir: http://127.0.0.1:8000/projet/new
+2. Remplir nom et description
+3. Cliquer sur "Suggérer des tâches avec IA"
+4. Accepter des suggestions
+5. Soumettre le formulaire
+6. Vérifier que les tâches sont créées
+
+Test des emails:
+1. Modifier un projet
+2. Vérifier l'email à ismail.karoui@esprit.tn
+3. Supprimer un projet
+4. Vérifier l'email de suppression
+
+================================================================================
+  15. RÉSUMÉ DES FICHIERS PAR FONCTIONNALITÉ
+================================================================================
+
+SUGGESTIONS IA:
+- src/Service/GroqAiService.php (Service IA)
+- src/Controller/AiSuggestionController.php (API endpoints)
+- templates/front/projet/new.html.twig (Interface + JavaScript)
+- .env (GROQ_API_KEY)
+
+NOTIFICATIONS EMAIL:
+- src/Service/EmailNotificationService.php (Service email)
+- src/Controller/ProjetController.php (Appels au service)
+- .env (MAILER_DSN, ADMIN_EMAIL)
+
+CONFIGURATION:
+- config/services.yaml (Injection de dépendances)
+- .env (Variables d'environnement)
+
+================================================================================
+  FIN DU GUIDE
+================================================================================
+
+Pour toute question ou problème:
+1. Vérifier les logs: var/log/dev.log
+2. Vérifier la console du navigateur (F12)
+3. Tester l'API avec test_ai_api.html
+4. Vérifier que le cache est vidé
+
+Auteur: Assistant IA
+Date: 24 Février 2026
+Version: 1.0

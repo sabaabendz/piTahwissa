@@ -8,12 +8,43 @@
         <h1 class="h3 mb-4">Nouveau projet</h1>
         <div class="card shadow">
             <div class="card-body">
-                {{ form_start(form) }}
-                {{ form_row(form.nom) }}
-                {{ form_row(form.description) }}
-                {{ form_row(form.dateDebut) }}
-                {{ form_row(form.dateEcheance) }}
-                {{ form_row(form.statut) }}
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'projet-form'}}) }}
+                <div class="mb-3">
+                    {{ form_label(form.nom) }}
+                    {{ form_widget(form.nom) }}
+                    {{ form_errors(form.nom) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description, {'attr': {'rows': 5}}) }}
+                    {{ form_errors(form.description) }}
+                    <button type="button" class="btn btn-sm btn-info mt-2" id="ai-suggest-btn">
+                        <i class="bi bi-magic"></i> Suggérer des tâches avec IA
+                    </button>
+                </div>
+                
+                <div id="ai-suggestions" class="mb-3" style="display: none;">
+                    <div class="alert alert-info">
+                        <h5>Suggestions de tâches par IA</h5>
+                        <div id="suggestions-list"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form_label(form.dateDebut) }}
+                    {{ form_widget(form.dateDebut) }}
+                    {{ form_errors(form.dateDebut) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.dateEcheance) }}
+                    {{ form_widget(form.dateEcheance) }}
+                    {{ form_errors(form.dateEcheance) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.statut) }}
+                    {{ form_widget(form.statut) }}
+                    {{ form_errors(form.statut) }}
+                </div>
                 {{ form_rest(form) }}
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary">Créer</button>
@@ -24,4 +55,213 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+console.log('AI Suggestion Script Loaded');
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+    
+    // Try multiple possible IDs for the fields
+    const descriptionField = document.getElementById('projet-description') || 
+                            document.getElementById('projet_description') ||
+                            document.querySelector('textarea[name*="description"]');
+    
+    const nomField = document.getElementById('projet-nom') || 
+                    document.getElementById('projet_nom') ||
+                    document.querySelector('input[name*="nom"]');
+    
+    const suggestBtn = document.getElementById('ai-suggest-btn');
+    const suggestionsDiv = document.getElementById('ai-suggestions');
+    const suggestionsList = document.getElementById('suggestions-list');
+    
+    console.log('Elements found:', {
+        suggestBtn: !!suggestBtn,
+        descriptionField: !!descriptionField,
+        nomField: !!nomField,
+        suggestionsDiv: !!suggestionsDiv,
+        suggestionsList: !!suggestionsList
+    });
+    
+    if (descriptionField) {
+        console.log('Description field ID:', descriptionField.id || 'no id');
+    }
+    if (nomField) {
+        console.log('Nom field ID:', nomField.id || 'no id');
+    }
+    
+    if (!suggestBtn) {
+        console.error('AI suggest button not found!');
+        return;
+    }
+    
+    if (!descriptionField) {
+        console.error('Description field not found!');
+        return;
+    }
+    
+    if (!nomField) {
+        console.error('Nom field not found!');
+        return;
+    }
+    
+    let acceptedTasks = [];
+    
+    suggestBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        console.log('AI button clicked');
+        
+        const description = descriptionField.value.trim();
+        const projectName = nomField.value.trim();
+        
+        console.log('Form data:', { description, projectName });
+        
+        if (!description) {
+            alert('Veuillez entrer une description du projet');
+            return;
+        }
+        
+        suggestBtn.disabled = true;
+        suggestBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Génération...';
+        
+        try {
+            console.log('Sending request to /api/ai/suggest-tasks');
+            
+            const response = await fetch('/api/ai/suggest-tasks', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({description, projectName})
+            });
+            
+            console.log('Response status:', response.status);
+            
+            const data = await response.json();
+            console.log('Response data:', data);
+            
+            if (data.suggestions && data.suggestions.length > 0) {
+                displaySuggestions(data.suggestions);
+            } else {
+                alert('Aucune suggestion générée. Veuillez réessayer.');
+                console.log('No suggestions returned');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Erreur lors de la génération des suggestions: ' + error.message);
+        } finally {
+            suggestBtn.disabled = false;
+            suggestBtn.innerHTML = '<i class="bi bi-magic"></i> Suggérer des tâches avec IA';
+        }
+    });
+    
+    function displaySuggestions(suggestions) {
+        console.log('Displaying suggestions:', suggestions);
+        suggestionsList.innerHTML = '';
+        
+        suggestions.forEach((task, index) => {
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'border p-3 mb-2 rounded';
+            taskDiv.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>${task.libelle}</strong><br>
+                        <small class="text-muted">
+                            Priorité: <span class="badge bg-${getPriorityColor(task.priorite)}">${task.priorite}</span> | 
+                            Durée estimée: ${task.days} jours
+                        </small>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-success accept-btn" data-index="${index}">
+                            <i class="bi bi-check"></i> Accepter
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger decline-btn" data-index="${index}">
+                            <i class="bi bi-x"></i> Refuser
+                        </button>
+                    </div>
+                </div>
+            `;
+            suggestionsList.appendChild(taskDiv);
+        });
+        
+        suggestionsDiv.style.display = 'block';
+        
+        document.querySelectorAll('.accept-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const index = this.dataset.index;
+                acceptedTasks.push(suggestions[index]);
+                this.closest('.border').style.backgroundColor = '#d4edda';
+                this.disabled = true;
+                this.nextElementSibling.disabled = true;
+                console.log('Task accepted:', suggestions[index]);
+            });
+        });
+        
+        document.querySelectorAll('.decline-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.border').remove();
+                console.log('Task declined');
+            });
+        });
+    }
+    
+    function getPriorityColor(priority) {
+        switch(priority) {
+            case 'haute': return 'danger';
+            case 'moyenne': return 'warning';
+            case 'basse': return 'info';
+            default: return 'secondary';
+        }
+    }
+    
+    const projetForm = document.getElementById('projet-form');
+    if (projetForm) {
+        projetForm.addEventListener('submit', async function(e) {
+            console.log('Form submitted, accepted tasks:', acceptedTasks.length);
+            
+            if (acceptedTasks.length > 0) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                
+                try {
+                    console.log('Submitting form with accepted tasks');
+                    
+                    const formResponse = await fetch(this.action || window.location.href, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (formResponse.redirected) {
+                        const projetId = formResponse.url.match(/\/projet\/(\d+)/)?.[1];
+                        console.log('Project created with ID:', projetId);
+                        
+                        if (projetId) {
+                            for (const task of acceptedTasks) {
+                                console.log('Creating task:', task);
+                                await fetch(`/api/ai/accept-task/${projetId}`, {
+                                    method: 'POST',
+                                    headers: {'Content-Type': 'application/json'},
+                                    body: JSON.stringify(task)
+                                });
+                            }
+                        }
+                        
+                        window.location.href = formResponse.url;
+                    } else {
+                        this.submit();
+                    }
+                } catch (error) {
+                    console.error('Form submission error:', error);
+                    submitBtn.disabled = false;
+                    alert('Erreur lors de la création du projet');
+                }
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

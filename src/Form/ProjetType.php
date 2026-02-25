@@ -19,6 +19,7 @@ class ProjetType extends AbstractType
             ->add('nom', TextType::class, [
                 'label' => 'Nom du projet',
                 'attr' => ['class' => 'form-control'],
+                'required' => true,
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
@@ -29,11 +30,13 @@ class ProjetType extends AbstractType
                 'label' => 'Date de début',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control'],
+                'required' => true,
             ])
             ->add('dateEcheance', DateType::class, [
                 'label' => 'Date d\'échéance (Deadline)',
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control'],
+                'required' => true,
             ])
             ->add('statut', ChoiceType::class, [
                 'label' => 'Statut',
@@ -43,6 +46,7 @@ class ProjetType extends AbstractType
                     'Terminé' => Projet::STATUT_TERMINE,
                 ],
                 'attr' => ['class' => 'form-select'],
+                'required' => true,
             ])
         ;
     }

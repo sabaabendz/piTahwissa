@@ -18,11 +18,20 @@ class DashboardController extends AbstractController
         $taches = $tacheRepository->findBy([], ['id' => 'DESC'], 5);
         $totalProjets = $projetRepository->count([]);
         $totalTaches = $tacheRepository->count([]);
+        
+        // Statistiques des projets par statut
+        $statutStats = [
+            'en_attente' => $projetRepository->count(['statut' => 'en_attente']),
+            'actif' => $projetRepository->count(['statut' => 'actif']),
+            'termine' => $projetRepository->count(['statut' => 'termine']),
+        ];
+        
         return $this->render('admin/dashboard.html.twig', [
             'projets' => $projets,
             'taches' => $taches,
             'totalProjets' => $totalProjets,
             'totalTaches' => $totalTaches,
+            'statutStats' => $statutStats,
         ]);
     }
 }

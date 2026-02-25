@@ -79,7 +79,7 @@ class Tache
         return $this->dateLimite;
     }
 
-    public function setDateLimite(\DateTimeInterface $dateLimite): static
+    public function setDateLimite(?\DateTimeInterface $dateLimite): static
     {
         $this->dateLimite = $dateLimite;
         return $this;

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Projet;
 use App\Form\ProjetType;
 use App\Repository\ProjetRepository;
+use App\Service\EmailNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,6 +37,10 @@ class ProjetController extends AbstractController
             $this->addFlash('success', 'Projet créé avec succès.');
             return $this->redirectToRoute('app_projet_show', ['id' => $projet->getId()]);
         }
+        
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire.');
+        }
         return $this->render('front/projet/new.html.twig', ['projet' => $projet, 'form' => $form]);
     }
 
@@ -47,12 +52,20 @@ class ProjetController extends AbstractController
 
     #[Route('/{id}/edit', name: 'app_projet_edit', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_MANAGER', message: 'Only managers can edit projects.')]
-    public function edit(Request $request, Projet $projet, EntityManagerInterface $em): Response
+    public function edit(Request $request, Projet $projet, EntityManagerInterface $em, EmailNotificationService $emailService): Response
     {
         $form = $this->createForm(ProjetType::class, $projet);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
+            
+            try {
+                $emailService->notifyProjectUpdated($projet);
+                $this->addFlash('info', 'Email de notification envoyé.');
+            } catch (\Exception $e) {
+                $this->addFlash('warning', 'Projet mis à jour mais email non envoyé: ' . $e->getMessage());
+            }
+            
             $this->addFlash('success', 'Projet mis à jour.');
             return $this->redirectToRoute('app_projet_show', ['id' => $projet->getId()]);
         }
@@ -61,12 +74,24 @@ class ProjetController extends AbstractController
 
     #[Route('/{id}/delete', name: 'app_projet_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     #[IsGranted('ROLE_MANAGER', message: 'Only managers can delete projects.')]
-    public function delete(Request $request, Projet $projet, EntityManagerInterface $em): Response
+    public function delete(Request $request, Projet $projet, EntityManagerInterface $em, EmailNotificationService $emailService): Response
     {
         if ($this->isCsrfTokenValid('delete' . $projet->getId(), (string) $request->request->get('_token'))) {
+            $projectName = $projet->getNom();
+
             $em->remove($projet);
             $em->flush();
+
+            try {
+                $emailService->notifyProjectDeleted($projectName);
+                $this->addFlash('info', 'Email de notification envoyé.');
+            } catch (\Exception $e) {
+                $this->addFlash('warning', 'Projet supprimé mais email non envoyé: ' . $e->getMessage());
+            }
+
             $this->addFlash('success', 'Projet supprimé.');
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide');
         }
         return $this->redirectToRoute('app_projet_index');
     }
