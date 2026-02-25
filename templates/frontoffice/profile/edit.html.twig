@@ -55,6 +55,23 @@
 
                     <hr class="my-4 text-muted opacity-25">
 
+                    <h5 class="mb-3 fw-bold"><i class="bi bi-person-bounding-box me-2"></i>Face ID</h5>
+                    <p class="text-muted">Capture your face here. Only the embedding is stored, never the raw image.</p>
+
+                    <div class="mb-3">
+                        <video id="faceEnrollVideo" class="w-100 rounded border" autoplay playsinline style="max-height: 260px; object-fit: cover;"></video>
+                        <canvas id="faceEnrollCanvas" class="d-none"></canvas>
+                        <input type="hidden" id="faceImageBase64" name="face_image_base64">
+                    </div>
+
+                    <div class="d-flex gap-2 mb-2">
+                        <button type="button" id="faceEnrollStart" class="btn btn-outline-primary btn-sm">Start Camera</button>
+                        <button type="button" id="faceEnrollCapture" class="btn btn-outline-success btn-sm" disabled>Capture Face</button>
+                    </div>
+                    <div id="faceEnrollStatus" class="small text-muted mb-3">Face ID not captured yet.</div>
+
+                    <hr class="my-4 text-muted opacity-25">
+
                     <h5 class="mb-4 fw-bold"><i class="bi bi-shield-lock me-2"></i>Changer le mot de passe</h5>
 
                     <div class="mb-4">
@@ -89,4 +106,54 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        (() => {
+            const video = document.getElementById('faceEnrollVideo');
+            const canvas = document.getElementById('faceEnrollCanvas');
+            const input = document.getElementById('faceImageBase64');
+            const startButton = document.getElementById('faceEnrollStart');
+            const captureButton = document.getElementById('faceEnrollCapture');
+            const status = document.getElementById('faceEnrollStatus');
+
+            if (!video || !canvas || !input || !startButton || !captureButton || !status) {
+                return;
+            }
+
+            let stream;
+
+            startButton.addEventListener('click', async () => {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream;
+                    captureButton.disabled = false;
+                    status.textContent = 'Camera ready. Capture your face.';
+                    status.className = 'small text-success mb-3';
+                } catch (error) {
+                    status.textContent = 'Unable to access camera.';
+                    status.className = 'small text-danger mb-3';
+                }
+            });
+
+            captureButton.addEventListener('click', () => {
+                if (!video.videoWidth || !video.videoHeight) {
+                    status.textContent = 'Camera is not ready yet.';
+                    status.className = 'small text-danger mb-3';
+                    return;
+                }
+
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                input.value = canvas.toDataURL('image/jpeg', 0.92);
+                status.textContent = 'Face captured. Save profile to enroll Face ID.';
+                status.className = 'small text-success mb-3';
+            });
+        })();
+    </script>
 {% endblock %}

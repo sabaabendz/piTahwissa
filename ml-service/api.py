@@ -1,11 +1,17 @@
-from fastapi import FastAPI, HTTPException
+import logging
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from joblib import load
 from features import extract
 import os
 
+from face.face_service import compare_embeddings, extract_embedding
+from face.utils import is_admin_role, validate_embedding_values
+
 app = FastAPI(title="Password Strength API", version="2.0")
+logger = logging.getLogger("face_api")
 
 # CORS middleware for frontend access
 app.add_middleware(
@@ -32,6 +38,26 @@ class PasswordResponse(BaseModel):
     confidence: float
     suggestions: list
     details: dict
+
+
+class FaceEnrollRequest(BaseModel):
+    image: str
+
+
+class FaceEnrollResponse(BaseModel):
+    embedding: list[float]
+
+
+class FaceVerifyRequest(BaseModel):
+    image: str
+    stored_embedding: list[float]
+    role: str | None = None
+
+
+class FaceVerifyResponse(BaseModel):
+    similarity: float
+    match: bool
+    threshold: float
 
 def get_recommendations(password, features):
     """Generate specific recommendations based on password analysis"""
@@ -95,6 +121,8 @@ def read_root():
         "message": "Password Strength API v2.0",
         "endpoints": {
             "POST /predict": "Analyze password strength",
+            "POST /face/enroll": "Extract face embedding",
+            "POST /face/verify": "Verify face against stored embedding",
             "GET /health": "Check API health"
         }
     }
@@ -197,6 +225,48 @@ def batch_predict(passwords: list[str]):
             results.append({"error": str(e), "password": pwd})
     
     return {"results": results}
+
+
+@app.post("/face/enroll", response_model=FaceEnrollResponse)
+def face_enroll(req: FaceEnrollRequest, request: Request):
+    try:
+        client_ip = request.client.host if request.client else "unknown"
+        logger.info("Face enroll request received from %s", client_ip)
+
+        embedding = extract_embedding(req.image)
+        return {"embedding": embedding}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Unexpected face enroll error: %s", str(e))
+        raise HTTPException(status_code=500, detail="Internal server error") from e
+
+
+@app.post("/face/verify", response_model=FaceVerifyResponse)
+def face_verify(req: FaceVerifyRequest, request: Request):
+    try:
+        client_ip = request.client.host if request.client else "unknown"
+        logger.info("Face verify request received from %s", client_ip)
+
+        if not validate_embedding_values(req.stored_embedding):
+            raise HTTPException(status_code=400, detail="Invalid stored embedding")
+
+        probe_embedding = extract_embedding(req.image)
+        similarity = compare_embeddings(probe_embedding, req.stored_embedding)
+
+        threshold = 0.85 if is_admin_role(req.role) else 0.75
+        is_match = similarity >= threshold
+
+        return {
+            "similarity": round(similarity, 4),
+            "match": is_match,
+            "threshold": threshold,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Unexpected face verify error: %s", str(e))
+        raise HTTPException(status_code=500, detail="Internal server error") from e
 
 if __name__ == "__main__":
     import uvicorn

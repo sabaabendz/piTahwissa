@@ -9,7 +9,10 @@ use App\Form\CollaboratorType;
 use App\Repository\ManagerRepository;
 use App\Repository\UserRepository;
 use App\Service\EnterpriseCodeGenerator;
+use App\Service\FaceRecognitionService;
+use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -27,11 +31,83 @@ final class AuthController extends AbstractController
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly FaceRecognitionService $faceRecognitionService,
+        private readonly LoggerInterface $logger,
+        private readonly Security $security,
 
         private readonly EnterpriseCodeGenerator $enterpriseCodeGenerator,
         private readonly EntityManagerInterface $entityManager,
         private readonly ManagerRepository $managerRepository
     ) {
+    }
+
+    #[Route('/login/face', name: 'app_face_login', methods: ['POST'])]
+    public function faceLogin(Request $request): JsonResponse
+    {
+        $payload = json_decode($request->getContent(), true);
+
+        $csrfToken = (string) ($payload['_csrf_token'] ?? '');
+        if (!$this->isCsrfTokenValid('face_login', $csrfToken)) {
+            return $this->json(['message' => 'Invalid request token.'], Response::HTTP_FORBIDDEN);
+        }
+
+        $email = trim((string) ($payload['email'] ?? ''));
+        $image = (string) ($payload['image'] ?? '');
+
+        if ('' === $email || '' === $image) {
+            return $this->json(['message' => 'Email and face image are required.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+
+        if (!$user || !$user->isEnabled()) {
+            $this->logger->warning('Face ID login failed: user not found or disabled', [
+                'email' => $email,
+                'ip' => $request->getClientIp(),
+            ]);
+
+            return $this->json(['message' => 'Invalid credentials.'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $storedEmbedding = $user->getFaceEmbedding();
+        if (empty($storedEmbedding)) {
+            return $this->json(['message' => 'Face ID not configured.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $result = $this->faceRecognitionService->verify($image, $storedEmbedding);
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (\RuntimeException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        if (!$result['match']) {
+            $this->logger->info('Face ID login failed: no match', [
+                'email' => $email,
+                'ip' => $request->getClientIp(),
+                'similarity' => $result['similarity'],
+            ]);
+
+            return $this->json([
+                'message' => 'Face does not match.',
+                'similarity' => $result['similarity'],
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $this->security->login($user, LoginFormAuthenticator::class, 'main');
+
+        $this->logger->info('Face ID login success', [
+            'email' => $email,
+            'ip' => $request->getClientIp(),
+            'similarity' => $result['similarity'],
+        ]);
+
+        return $this->json([
+            'message' => 'Login success',
+            'similarity' => $result['similarity'],
+            'redirect' => $this->generateUrl('app_dashboard_index'),
+        ]);
     }
 
     /**

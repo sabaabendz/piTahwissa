@@ -69,6 +69,9 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $faceEmbedding = null;
+
    
 
     public function getIdUser(): ?int
@@ -267,6 +270,18 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
         return $this->email ?? '';
     }
 
+    public function getFaceEmbedding(): ?array
+    {
+        return $this->faceEmbedding;
+    }
+
+    public function setFaceEmbedding(?array $faceEmbedding): static
+    {
+        $this->faceEmbedding = $faceEmbedding;
+
+        return $this;
+    }
+
     public function __serialize(): array
     {
         return [
@@ -282,6 +297,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
             'resetTokenExpiresAt' => $this->resetTokenExpiresAt,
             'avatarName' => $this->avatarName,
             'updatedAt' => $this->updatedAt,
+            'faceEmbedding' => $this->faceEmbedding,
         ];
     }
 
@@ -324,6 +340,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
         $this->resetTokenExpiresAt = $read($data, 'resetTokenExpiresAt');
         $this->avatarName = $read($data, 'avatarName');
         $this->updatedAt = $read($data, 'updatedAt');
+        $this->faceEmbedding = $read($data, 'faceEmbedding');
         $this->avatarFile = null;
     }
 }

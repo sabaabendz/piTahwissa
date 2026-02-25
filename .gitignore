@@ -40,3 +40,19 @@ ml-service/__pycache__/
 ml-service/*.pyc
 ml-service/.pytest_cache/
 ml-service/data/weak.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment (project root)
+/ml-env/
+# Virtual environment (inside ml-service, if created)
+ml-service/ml-env/
+# Any other local virtualenv names
+ml-env/
+env/
+venv/
+# Logs
+*.log

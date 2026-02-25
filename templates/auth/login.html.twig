@@ -48,6 +48,8 @@
 						<span class="mb-0 fs-1">👋</span>
 						<h1 class="fs-2">Login to SmartTask Manager!</h1>
 						<p class="lead mb-4">Nice to see you! Please log in with your account.</p>
+						<div id="faceLoginMessage"></div>
+						<input type="hidden" id="faceLoginCsrf" value="{{ csrf_token('face_login') }}">
 
 						<!-- Form START (novalidate: no browser validation, PHP only) -->
 						<form method="post" novalidate>
@@ -125,6 +127,19 @@
 						</form>
 						<!-- Form END -->
 
+						<div class="my-4 text-center text-muted">or</div>
+
+						<div class="card border-0 bg-light p-3">
+							<h6 class="mb-3"><i class="bi bi-person-bounding-box me-2"></i>Face ID Login</h6>
+							<video id="faceLoginVideo" class="w-100 rounded border mb-2" autoplay playsinline style="max-height: 220px; object-fit: cover;"></video>
+							<canvas id="faceLoginCanvas" class="d-none"></canvas>
+							<div class="d-grid gap-2">
+								<button type="button" id="faceLoginStart" class="btn btn-outline-primary btn-sm">Start Camera</button>
+								<button type="button" id="faceLoginSubmit" class="btn btn-outline-success btn-sm" disabled>Login with Face ID</button>
+							</div>
+							<div id="faceLoginStatus" class="small text-muted mt-2">Start camera to continue.</div>
+						</div>
+
 						
 
 						<!-- Sign up link -->
@@ -141,4 +156,94 @@
 
 {% block javascripts %}
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script>
+	(() => {
+		const video = document.getElementById('faceLoginVideo');
+		const canvas = document.getElementById('faceLoginCanvas');
+		const startButton = document.getElementById('faceLoginStart');
+		const submitButton = document.getElementById('faceLoginSubmit');
+		const status = document.getElementById('faceLoginStatus');
+		const message = document.getElementById('faceLoginMessage');
+		const emailInput = document.getElementById('inputEmail');
+						const csrfInput = document.getElementById('faceLoginCsrf');
+
+						if (!video || !canvas || !startButton || !submitButton || !status || !message || !emailInput || !csrfInput) {
+			return;
+		}
+
+		let stream;
+
+		const showMessage = (text, level = 'danger') => {
+			message.innerHTML = `<div class="alert alert-${level} alert-dismissible fade show" role="alert">${text}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+		};
+
+		startButton.addEventListener('click', async () => {
+			try {
+				stream = await navigator.mediaDevices.getUserMedia({ video: true });
+				video.srcObject = stream;
+				submitButton.disabled = false;
+				status.textContent = 'Camera ready. Look at the camera and click login.';
+				status.className = 'small text-success mt-2';
+			} catch (error) {
+				status.textContent = 'Unable to access camera.';
+				status.className = 'small text-danger mt-2';
+			}
+		});
+
+		submitButton.addEventListener('click', async () => {
+			const email = emailInput.value.trim();
+			if (!email) {
+				showMessage('Please enter your email first.', 'warning');
+				return;
+			}
+
+			if (!video.videoWidth || !video.videoHeight) {
+				showMessage('Camera is not ready yet.', 'warning');
+				return;
+			}
+
+			canvas.width = video.videoWidth;
+			canvas.height = video.videoHeight;
+			const ctx = canvas.getContext('2d');
+			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+			const image = canvas.toDataURL('image/jpeg', 0.92);
+
+			status.textContent = 'Verifying face...';
+			status.className = 'small text-primary mt-2';
+
+			try {
+				const response = await fetch('{{ path('app_face_login') }}', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-Requested-With': 'XMLHttpRequest'
+					},
+									body: JSON.stringify({
+										email,
+										image,
+										_csrf_token: csrfInput.value
+									})
+				});
+
+				const data = await response.json();
+
+				if (!response.ok) {
+					showMessage(data.message || 'Face login failed.', 'danger');
+					status.textContent = 'Face login failed.';
+					status.className = 'small text-danger mt-2';
+					return;
+				}
+
+				showMessage('Face login successful. Redirecting...', 'success');
+				status.textContent = 'Face detected and matched.';
+				status.className = 'small text-success mt-2';
+				window.location.href = data.redirect || '{{ path('app_dashboard_index') }}';
+			} catch (error) {
+				showMessage('Face ID service timeout/unavailable. Use password login.', 'warning');
+				status.textContent = 'Service unavailable.';
+				status.className = 'small text-warning mt-2';
+			}
+		});
+	})();
+</script>
 {% endblock %}
