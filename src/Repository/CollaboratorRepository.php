@@ -31,4 +31,29 @@ class CollaboratorRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Search collaborators by enterprise code and keyword.
+     *
+     * @param string $enterpriseCode
+     * @param string $query
+     * @return Collaborator[]
+     */
+    public function searchByEnterpriseCode(string $enterpriseCode, string $query): array
+    {
+        $trimmedQuery = trim($query);
+
+        if ($trimmedQuery == '') {
+            return $this->findByEnterpriseCode($enterpriseCode);
+        }
+
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.enterpriseCode = :enterpriseCode')
+            ->andWhere('LOWER(c.name) LIKE :query OR LOWER(c.email) LIKE :query OR LOWER(c.post) LIKE :query OR LOWER(c.team) LIKE :query')
+            ->setParameter('enterpriseCode', $enterpriseCode)
+            ->setParameter('query', '%' . mb_strtolower($trimmedQuery) . '%')
+            ->orderBy('c.idUser', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

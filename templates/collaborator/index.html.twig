@@ -22,8 +22,16 @@
 			<div class="row g-3 align-items-center justify-content-between">
 				<!-- Search bar -->
 				<div class="col-md-8">
-					<form class="rounded position-relative">
-						<input class="form-control bg-transparent" type="search" placeholder="Search collaborators..." aria-label="Search">
+					<form class="rounded position-relative" id="collaboratorSearchForm">
+						<input
+							id="collaboratorSearchInput"
+							class="form-control bg-transparent"
+							type="search"
+							name="q"
+							placeholder="Search collaborators..."
+							value="{{ query|default('') }}"
+							aria-label="Search"
+						>
 						<button class="bg-transparent p-2 position-absolute top-50 end-0 translate-middle-y border-0 text-primary-hover text-reset" type="submit">
 							<i class="fas fa-search fs-6"></i>
 						</button>
@@ -35,91 +43,53 @@
 		<!-- Card header END -->
 
 		<!-- Card body START -->
-		<div class="card-body px-0">
-			<div class="row g-4">
-				{% for collaborator in collaborators %}
-					<!-- Card item START -->
-					<div class="col-md-6 col-xxl-4">
-						<div class="card bg-transparent border h-100"> 
-							<!-- Card header -->
-							<div class="card-header bg-transparent border-bottom d-flex justify-content-between">
-								<div class="d-sm-flex align-items-center">
-									<!-- Avatar -->
-									<div class="avatar avatar-md flex-shrink-0">
-										<div class="avatar-img rounded-circle bg-success bg-opacity-10">
-											<span class="text-success position-absolute top-50 start-50 translate-middle fw-bold">{{ collaborator.name|first|upper }}</span>
-										</div>
-									</div>
-									<!-- Info -->
-									<div class="ms-0 ms-sm-2 mt-2 mt-sm-0">
-										<h5 class="mb-0"><a href="{{ path('app_collaborator_show', {'idUser': collaborator.idUser}) }}">{{ collaborator.name }}</a></h5>
-										<span class="text-body small"><i class="bi bi-envelope-fill me-1"></i>{{ collaborator.email }}</span>
-									</div>
-								</div>
-
-								<!-- Edit dropdown -->
-								<div class="dropdown text-end">
-									<a href="#" class="btn btn-sm btn-light btn-round small mb-0" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										<i class="bi bi-three-dots fa-fw"></i>
-									</a>
-									<ul class="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded">
-										<li><a class="dropdown-item" href="{{ path('app_collaborator_edit', {'idUser': collaborator.idUser}) }}"><i class="bi bi-pencil-square fa-fw me-2"></i>Edit</a></li>
-									</ul>
-								</div>
-							</div>
-
-							<div class="card-body">
-								<!-- Post -->
-								<div class="d-flex justify-content-between align-items-center mb-3">
-									<div class="d-flex align-items-center">
-										<div class="icon-md bg-purple bg-opacity-10 text-purple rounded-circle flex-shrink-0"><i class="fas fa-briefcase fa-fw"></i></div>
-										<h6 class="mb-0 ms-2 fw-light">Post</h6>
-									</div>
-									<span class="mb-0 fw-bold">{{ collaborator.post ?? 'N/A' }}</span>
-								</div>
-
-								<!-- Team -->
-								<div class="d-flex justify-content-between align-items-center mb-3">
-									<div class="d-flex align-items-center">
-										<div class="icon-md bg-info bg-opacity-10 text-info rounded-circle flex-shrink-0"><i class="fas fa-users fa-fw"></i></div>
-										<h6 class="mb-0 ms-2 fw-light">Team</h6>
-									</div>
-									<span class="mb-0 fw-bold">{{ collaborator.team ?? 'N/A' }}</span>
-								</div>
-								
-								<!-- Enterprise Code -->
-								<div class="d-flex justify-content-between align-items-center">
-									<div class="d-flex align-items-center">
-										<div class="icon-md bg-warning bg-opacity-10 text-warning rounded-circle flex-shrink-0"><i class="bi bi-key fa-fw"></i></div>
-										<h6 class="mb-0 ms-2 fw-light">Enterprise Code</h6>
-									</div>
-									<span class="mb-0 fw-bold text-primary">{{ collaborator.enterpriseCode }}</span>
-								</div>
-							</div>
-
-							<!-- Card footer -->
-							<div class="card-footer bg-transparent border-top">
-								<div class="d-sm-flex justify-content-between align-items-center">
-									<!-- Buttons -->
-									<div class="text-end text-primary-hover">
-										<a href="{{ path('app_collaborator_show', {'idUser': collaborator.idUser}) }}" class="btn btn-sm btn-primary mb-0">
-											<i class="bi bi-eye me-1"></i>View Details
-										</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Card item END -->
-				{% else %}
-					<div class="col-12">
-						<div class="alert alert-info">
-							<i class="fas fa-info-circle me-2"></i>No collaborators found. <a href="{{ path('app_collaborator_new') }}">Create the first collaborator</a>.
-						</div>
-					</div>
-				{% endfor %}
-			</div>
+		<div class="card-body px-0" id="collaboratorListContainer">
+			{% include 'collaborator/_list.html.twig' with {'collaborators': collaborators} %}
 		</div>
 		<!-- Card body END -->
 	</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+(() => {
+    const form = document.getElementById('collaboratorSearchForm');
+    const input = document.getElementById('collaboratorSearchInput');
+    const container = document.getElementById('collaboratorListContainer');
+
+    if (!form || !input || !container) {
+        return;
+    }
+
+    let timer;
+    const fetchResults = async () => {
+        const params = new URLSearchParams({ q: input.value.trim() });
+
+        try {
+            const response = await fetch(`{{ path('app_collaborator_index') }}?${params.toString()}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            container.innerHTML = await response.text();
+        } catch (error) {
+            console.error('Collaborator search failed:', error);
+        }
+    };
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        fetchResults();
+    });
+
+    input.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(fetchResults, 300);
+    });
+})();
+</script>
 {% endblock %}

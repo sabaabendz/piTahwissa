@@ -27,7 +27,7 @@ final class CollaboratorController extends AbstractController
      * Web route: List all collaborators (filtered by enterprise_code for tenant isolation)
      */
     #[Route('/collaborator', name: 'app_collaborator_index', methods: ['GET'])]
-    public function index(CollaboratorRepository $collaboratorRepository): Response
+    public function index(Request $request, CollaboratorRepository $collaboratorRepository): Response
     {
         $user = $this->getUser();
         
@@ -42,11 +42,21 @@ final class CollaboratorController extends AbstractController
             throw $this->createAccessDeniedException('No enterprise code found for your account.');
         }
 
-        // Filter collaborators by enterprise code (tenant isolation)
-        $collaborators = $collaboratorRepository->findByEnterpriseCode($enterpriseCode);
+        $query = trim((string) $request->query->get('q', ''));
+
+        $collaborators = $query === ''
+            ? $collaboratorRepository->findByEnterpriseCode($enterpriseCode)
+            : $collaboratorRepository->searchByEnterpriseCode($enterpriseCode, $query);
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('collaborator/_list.html.twig', [
+                'collaborators' => $collaborators,
+            ]);
+        }
 
         return $this->render('collaborator/index.html.twig', [
             'collaborators' => $collaborators,
+            'query' => $query,
         ]);
     }
 

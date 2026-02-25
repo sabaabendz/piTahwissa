@@ -1,30 +1,29 @@
-<nav class="navbar navbar-expand-lg navbar-light border-bottom bg-white">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="{{ path('app_dashboard_index') }}">SmartTask</a>
+<nav class="navbar navbar-expand-lg fo-topbar border-0 shadow-sm">
+    <div class="container-fluid px-3 px-lg-4">
+        <a class="navbar-brand fw-bold text-white" href="{{ path('app_dashboard_index') }}">SmartTask</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#memberNavbar" aria-controls="memberNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="memberNavbar">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center">
                 <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">Dashboard</a>
+                    <a class="nav-link fo-nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">Dashboard</a>
                 </li>
 
                 {% if is_granted('ROLE_MANAGER') %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ app.request.get('_route') starts with 'app_collaborator' ? 'active' : '' }}" href="#" id="usersMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link fo-nav-link dropdown-toggle {{ app.request.get('_route') starts with 'app_collaborator' ? 'active' : '' }}" href="#" id="usersMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Users
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="usersMenu">
                             <li><a class="dropdown-item" href="{{ path('app_collaborator_index') }}">List Users</a></li>
-                            <li><a class="dropdown-item" href="{{ path('app_collaborator_new') }}">Add User</a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" href="#" id="projectsMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link fo-nav-link dropdown-toggle {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" href="#" id="projectsMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Projects
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="projectsMenu">
@@ -34,7 +33,7 @@
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ app.request.get('_route') starts with 'app_tache' ? 'active' : '' }}" href="#" id="tasksMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link fo-nav-link dropdown-toggle {{ app.request.get('_route') starts with 'app_tache' ? 'active' : '' }}" href="#" id="tasksMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Tasks
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="tasksMenu">
@@ -43,18 +42,16 @@
                         </ul>
                     </li>
 
+                    
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_dashboard_index') }}">Reports</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ app.request.get('_route') == 'app_front_profile_edit' ? 'active' : '' }}" href="{{ path('app_front_profile_edit') }}">Settings</a>
+                        <a class="nav-link fo-nav-link {{ app.request.get('_route') == 'app_front_profile_edit' ? 'active' : '' }}" href="{{ path('app_front_profile_edit') }}">Settings</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" href="{{ path('app_projet_index') }}">Projects</a>
+                        <a class="nav-link fo-nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" href="{{ path('app_projet_index') }}">Projects</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_dashboard_index') }}">Reports</a>
+                        <a class="nav-link fo-nav-link" href="{{ path('app_dashboard_index') }}">Reports</a>
                     </li>
                 {% endif %}
             </ul>
@@ -62,7 +59,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
                     {% set avatarPath = app.user and app.user.avatarName ? vich_uploader_asset(app.user, 'avatarFile') : asset('assets/images/avatar/01.jpg') %}
-                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="profileDropdownMember" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link fo-nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="profileDropdownMember" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="{{ avatarPath }}" alt="avatar" class="rounded-circle avatar-hover" width="32" height="32">
                         <span>{{ app.user ? app.user.name : 'Profile' }}</span>
                     </a>

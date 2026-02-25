@@ -12,3 +12,81 @@ body {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
 }
+
+.fo-body {
+    background: #f3f4f6;
+    color: #111827;
+    font-family: 'Heebo', 'Roboto', sans-serif;
+    min-height: 100vh;
+}
+
+.fo-topbar {
+    background: #1f2937;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fo-nav-link {
+    color: #d1d5db !important;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    padding: 0.45rem 0.75rem !important;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.fo-nav-link:hover,
+.fo-nav-link.active {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #f9fafb !important;
+}
+
+.fo-main {
+    width: 100%;
+    padding: 1.5rem 0;
+}
+
+.fo-container {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.fo-body .card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.9rem;
+}
+
+.fo-body .table {
+    color: #1f2937;
+}
+
+.fo-body .table > :not(caption) > * > * {
+    border-color: #e5e7eb;
+}
+
+.fo-body .text-muted {
+    color: #6b7280 !important;
+}
+
+.fo-body .form-control,
+.fo-body .form-select,
+.fo-body .form-control:focus,
+.fo-body .form-select:focus {
+    background-color: #ffffff;
+    color: #111827;
+}
+
+.fo-body .btn {
+    border-radius: 0.6rem;
+}
+
+.fo-body .btn-primary {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+.fo-body .btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
