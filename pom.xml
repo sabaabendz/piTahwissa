@@ -10,15 +10,12 @@
     <artifactId>workshop3a6</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <!-- ✅ ONLY ONE PROPERTIES BLOCK -->
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>21</maven.compiler.release>
         <javafx.version>21.0.2</javafx.version>
     </properties>
 
-    <!-- ✅ ONLY ONE DEPENDENCIES BLOCK -->
     <dependencies>
 
         <!-- MySQL -->
@@ -33,6 +30,7 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
+            <classifier>win</classifier>
         </dependency>
 
         <!-- JavaFX FXML -->
@@ -40,9 +38,10 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
+            <classifier>win</classifier>
         </dependency>
 
-        <!-- Gson for JSON parsing -->
+        <!-- Gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -53,18 +52,28 @@
 
     <build>
         <plugins>
-            <!-- JavaFX runtime plugin -->
+
+            <!-- Compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>21</release>
+                </configuration>
+            </plugin>
+
+            <!-- JavaFX Plugin -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>${javafx.version}</version>
+                <version>0.0.8</version>
                 <configuration>
                     <mainClass>main.Main</mainClass>
-                    <launcher>app</launcher>
-                    <jlinkZipName>app</jlinkZipName>
-                    <addModules>javafx.controls,javafx.fxml</addModules>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
+
 </project>

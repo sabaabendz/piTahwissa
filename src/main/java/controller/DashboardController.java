@@ -24,7 +24,7 @@ public class DashboardController {
     @FXML
     public void initialize() {
         System.out.println("✅ DashboardController initialisé");
-
+        
         // Récupérer automatiquement le rôle depuis la session
         String role = SessionManager.getInstance().getCurrentRole();
         if (role != null) {
@@ -64,10 +64,10 @@ public class DashboardController {
     @FXML
     private void handleLogout() {
         System.out.println("🚪 Déconnexion...");
-
+        
         // Nettoyer la session
         SessionManager.getInstance().logout();
-
+        
         try {
             // Charger la page de login
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/login.fxml"));

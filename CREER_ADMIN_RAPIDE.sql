@@ -4,7 +4,7 @@
 -- ===============================================
 
 -- Étape 1: Créer les rôles
-INSERT INTO role (id, name) VALUES
+INSERT INTO role (id, name) VALUES 
     (1, 'USER'),
     (2, 'AGENT'),
     (3, 'ADMIN')
@@ -18,7 +18,7 @@ INSERT INTO user (email, password, first_name, last_name, phone, city, country, 
 VALUES ('admin@tahwissa.com', 'admin123', 'Admin', 'Principal', '+216 70 000 001', 'Tunis', 'Tunisie', 3, 1, 1);
 
 -- Étape 4: Vérifier
-SELECT
+SELECT 
     u.email,
     CONCAT(u.first_name, ' ', u.last_name) as nom_complet,
     r.name as role,
@@ -34,4 +34,3 @@ WHERE u.email = 'admin@tahwissa.com';
 -- Password: admin123
 -- Rôle: ADMIN
 -- ===============================================
-

@@ -10,7 +10,7 @@ SELECT * FROM role;
 
 -- Si la table role est vide, exécutez d'abord ceci:
 /*
-INSERT INTO role (id, name) VALUES
+INSERT INTO role (id, name) VALUES 
     (1, 'USER'),
     (2, 'AGENT'),
     (3, 'ADMIN')
@@ -25,7 +25,7 @@ INSERT INTO user (email, password, first_name, last_name, phone, city, country, 
 VALUES ('admin@tahwissa.com', 'admin123', 'Admin', 'Principal', '+216 70 000 001', 'Tunis', 'Tunisie', 3, 1, 1);
 
 -- 4. VÉRIFIER que le compte a été créé
-SELECT
+SELECT 
     u.id,
     u.email,
     u.first_name,
@@ -69,7 +69,7 @@ VALUES ('user@tahwissa.com', 'user123', 'Mohamed', 'User', '+216 70 000 003', 'T
 -- ===================================================================
 -- VÉRIFICATION FINALE - Tous les comptes
 -- ===================================================================
-SELECT
+SELECT 
     u.id,
     u.email,
     CONCAT(u.first_name, ' ', u.last_name) as nom_complet,
@@ -84,21 +84,20 @@ ORDER BY u.role_id DESC;
 -- ===================================================================
 -- RÉSUMÉ DES COMPTES CRÉÉS:
 -- ===================================================================
---
+-- 
 -- ADMIN (Accès dashboard ✅)
 --   Email:    admin@tahwissa.com
 --   Password: admin123
 --   Rôle:     ADMIN (role_id = 3)
---
+-- 
 -- AGENT (Accès dashboard ✅)
 --   Email:    agent@tahwissa.com
 --   Password: agent123
 --   Rôle:     AGENT (role_id = 2)
---
+-- 
 -- USER (Accès dashboard ❌)
 --   Email:    user@tahwissa.com
 --   Password: user123
 --   Rôle:     USER (role_id = 1)
---
+-- 
 -- ===================================================================
-

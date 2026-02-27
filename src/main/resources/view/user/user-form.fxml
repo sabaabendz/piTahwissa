@@ -168,22 +168,6 @@
                wrapText="true"
                managed="false" visible="false"/>
 
-        <!-- Capture visage -->
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Button fx:id="captureFaceBtn"
-                    text="Capturer visage"
-                    onAction="#handleCaptureFace"
-                    style="-fx-background-color: #4F46E5;
-                           -fx-text-fill: white;
-                           -fx-font-weight: bold;
-                           -fx-background-radius: 5;
-                           -fx-padding: 8 18;
-                           -fx-cursor: hand;"/>
-            <Label fx:id="faceStatusLabel"
-                   text="Visage non capture"
-                   style="-fx-text-fill: #7F8C8D; -fx-font-size: 11px;"/>
-        </HBox>
-
         <Separator/>
 
         <!-- Boutons d'action -->

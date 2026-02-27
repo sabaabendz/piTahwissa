@@ -55,10 +55,9 @@ CREATE TABLE IF NOT EXISTS role (
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-INSERT INTO role (id, name) VALUES
+INSERT INTO role (id, name) VALUES 
     (1, 'USER'),
     (2, 'AGENT'),
     (3, 'ADMIN')
 ON DUPLICATE KEY UPDATE name=VALUES(name);
 */
-

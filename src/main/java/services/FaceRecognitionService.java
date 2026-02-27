@@ -254,4 +254,3 @@ public class FaceRecognitionService {
         return sb.toString();
     }
 }
-

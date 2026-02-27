@@ -25,7 +25,7 @@ VALUES (
 );
 
 -- Afficher le résultat
-SELECT
+SELECT 
     id,
     email,
     password,
@@ -45,7 +45,6 @@ WHERE email = 'user@tahwissa.com';
 -- Email:    user@tahwissa.com
 -- Password: user123
 -- Rôle:     USER
---
+-- 
 -- Après connexion → Redirigé vers la page "Coming Soon"
 -- ═══════════════════════════════════════════════════════════════════════
-

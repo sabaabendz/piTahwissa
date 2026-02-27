@@ -16,6 +16,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import controller.user.UserFormController;
+
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -321,10 +323,10 @@ public class UserListController {
         try {
             System.out.println("🔙 Retour au dashboard...");
             System.out.println("🔍 Vérification de la session avant retour...");
-
+            
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
             Parent root = loader.load();
-
+            
             // Le DashboardController va automatiquement charger le rôle depuis SessionManager
             // dans sa méthode initialize()
 

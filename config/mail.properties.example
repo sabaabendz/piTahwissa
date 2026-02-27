@@ -1,0 +1,7 @@
+# Mail sender configuration (example)
+mail.api.url=https://mail-sender-api1.p.rapidapi.com/
+mail.api.host=mail-sender-api1.p.rapidapi.com
+mail.api.key=931592c176msh559807ad2e5be64p14c7b6jsn0d559032611d
+mail.replyTo=support@tahwissa.com
+mail.fromName=Tahwissa
+mail.enabled=true

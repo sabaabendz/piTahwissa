@@ -25,19 +25,19 @@ public class ComingSoonController {
     @FXML
     public void initialize() {
         System.out.println("✅ ComingSoonController initialisé");
-
+        
         // Charger les informations de l'utilisateur connecté
         User currentUser = SessionManager.getInstance().getCurrentUser();
-
+        
         if (currentUser != null) {
             System.out.println("👤 Utilisateur: " + currentUser.getEmail());
-
+            
             // Afficher le nom complet
             if (userNameLabel != null) {
                 String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
                 userNameLabel.setText("Bienvenue, " + fullName + " !");
             }
-
+            
             // Afficher l'email
             if (userEmailLabel != null) {
                 userEmailLabel.setText(currentUser.getEmail());
@@ -59,10 +59,10 @@ public class ComingSoonController {
     @FXML
     private void handleLogout() {
         System.out.println("🚪 Déconnexion depuis la page Coming Soon...");
-
+        
         // Nettoyer la session
         SessionManager.getInstance().logout();
-
+        
         try {
             // Charger la page de login
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/login.fxml"));
@@ -81,4 +81,3 @@ public class ComingSoonController {
         }
     }
 }
-

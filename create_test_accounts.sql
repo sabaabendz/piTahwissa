@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS role (
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-INSERT INTO role (id, name) VALUES
+INSERT INTO role (id, name) VALUES 
     (1, 'USER'),
     (2, 'AGENT'),
     (3, 'ADMIN')
@@ -21,9 +21,9 @@ ON DUPLICATE KEY UPDATE name=VALUES(name);
 -- Email: admin@tahwissa.com
 -- Password: admin123
 INSERT INTO user (email, password, first_name, last_name, phone, city, country, role_id, is_verified, is_active)
-VALUES
+VALUES 
     ('admin@tahwissa.com', 'admin123', 'Admin', 'Principal', '+216 70 000 001', 'Tunis', 'Tunisie', 3, TRUE, TRUE)
-ON DUPLICATE KEY UPDATE
+ON DUPLICATE KEY UPDATE 
     password = 'admin123',
     first_name = 'Admin',
     last_name = 'Principal',
@@ -33,9 +33,9 @@ ON DUPLICATE KEY UPDATE
 -- Email: agent@tahwissa.com
 -- Password: agent123
 INSERT INTO user (email, password, first_name, last_name, phone, city, country, role_id, is_verified, is_active)
-VALUES
+VALUES 
     ('agent@tahwissa.com', 'agent123', 'Agent', 'Support', '+216 70 000 002', 'Tunis', 'Tunisie', 2, TRUE, TRUE)
-ON DUPLICATE KEY UPDATE
+ON DUPLICATE KEY UPDATE 
     password = 'agent123',
     first_name = 'Agent',
     last_name = 'Support',
@@ -45,16 +45,16 @@ ON DUPLICATE KEY UPDATE
 -- Email: user@tahwissa.com
 -- Password: user123
 INSERT INTO user (email, password, first_name, last_name, phone, city, country, role_id, is_verified, is_active)
-VALUES
+VALUES 
     ('user@tahwissa.com', 'user123', 'Mohamed', 'User', '+216 70 000 003', 'Tunis', 'Tunisie', 1, TRUE, TRUE)
-ON DUPLICATE KEY UPDATE
+ON DUPLICATE KEY UPDATE 
     password = 'user123',
     first_name = 'Mohamed',
     last_name = 'User',
     role_id = 1;
 
 -- 5. Vérifier que les utilisateurs ont été créés
-SELECT
+SELECT 
     u.id,
     u.email,
     u.first_name,
@@ -68,21 +68,20 @@ WHERE u.email IN ('admin@tahwissa.com', 'agent@tahwissa.com', 'user@tahwissa.com
 
 -- RÉSUMÉ DES COMPTES DE TEST:
 -- ═══════════════════════════════════════════════════════════════
---
+-- 
 -- 1. COMPTE ADMIN (Accès dashboard ✅)
 --    Email:    admin@tahwissa.com
 --    Password: admin123
 --    Rôle:     ADMIN
---
+-- 
 -- 2. COMPTE AGENT (Accès dashboard ✅)
 --    Email:    agent@tahwissa.com
 --    Password: agent123
 --    Rôle:     AGENT
---
+-- 
 -- 3. COMPTE USER (Accès dashboard ❌ - Bloqué)
 --    Email:    user@tahwissa.com
 --    Password: user123
 --    Rôle:     USER/VOYAGEUR
---
+-- 
 -- ═══════════════════════════════════════════════════════════════
-
