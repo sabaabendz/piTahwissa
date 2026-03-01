@@ -10,9 +10,9 @@ public class Reservation_transport {
     private String statut;
     private int idTransport;
     private int idUser;
+    private String transportDisplay;
+    private String userDisplay;
 
-    // constructeur vide
-    public Reservation_transport() {}
 
     // constructeur sans id
     public Reservation_transport(Date dateReservation, int nbPlacesReservees,
@@ -24,17 +24,10 @@ public class Reservation_transport {
         this.idUser = idUser;
     }
 
-    // constructeur complet
-    public Reservation_transport(int idReservation, Date dateReservation,
-                                 int nbPlacesReservees, String statut,
-                                 int idTransport, int idUser) {
-        this.idReservation = idReservation;
-        this.dateReservation = dateReservation;
-        this.nbPlacesReservees = nbPlacesReservees;
-        this.statut = statut;
-        this.idTransport = idTransport;
-        this.idUser = idUser;
+    public Reservation_transport() {
+
     }
+
 
     // getters & setters
 
@@ -84,6 +77,22 @@ public class Reservation_transport {
 
     public void setIdUser(int idUser) {
         this.idUser = idUser;
+    }
+
+    public String getTransportDisplay() {
+        return transportDisplay;
+    }
+
+    public void setTransportDisplay(String transportDisplay) {
+        this.transportDisplay = transportDisplay;
+    }
+
+    public String getUserDisplay() {
+        return userDisplay;
+    }
+
+    public void setUserDisplay(String userDisplay) {
+        this.userDisplay = userDisplay;
     }
 
     @Override

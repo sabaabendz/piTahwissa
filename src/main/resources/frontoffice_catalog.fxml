@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.FrontOfficeCatalogController"
+            styleClass="frontoffice-catalog-scroll"
+            stylesheets="@styles.css"
+            fitToWidth="true">
+    
+    <VBox spacing="25" styleClass="frontoffice-catalog-container">
+        <padding>
+            <Insets top="40" right="40" bottom="40" left="40"/>
+        </padding>
+
+        <!-- En-tête avec recherche -->
+        <VBox spacing="20" styleClass="frontoffice-catalog-header">
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <Label text="🌍 Explorez Nos Destinations" styleClass="frontoffice-catalog-title">
+                <font>
+                    <Font name="System Bold" size="36"/>
+                </font>
+            </Label>
+        </HBox>
+        
+        <Label text="Des voyages inoubliables vous attendent..." styleClass="frontoffice-catalog-subtitle">
+            <font>
+                <Font name="System" size="18"/>
+            </font>
+        </Label>
+        
+        <!-- Barre de recherche et filtres -->
+        <HBox spacing="20" alignment="CENTER_LEFT" styleClass="frontoffice-filter-bar">
+            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="frontoffice-search-bar" HBox.hgrow="ALWAYS">
+                <Label text="🔍" styleClass="search-icon">
+                    <font>
+                        <Font size="20"/>
+                    </font>
+                </Label>
+                <TextField fx:id="searchField" promptText="Où souhaitez-vous aller ?"
+                           styleClass="frontoffice-search-field" HBox.hgrow="ALWAYS">
+                    <font>
+                        <Font size="16"/>
+                    </font>
+                </TextField>
+            </HBox>
+            
+            <VBox spacing="5" alignment="CENTER_LEFT">
+                <Label text="Type de transport" styleClass="filter-label">
+                    <font>
+                        <Font name="System Bold" size="12"/>
+                    </font>
+                </Label>
+                <ComboBox fx:id="filterTypeCombo" prefWidth="180" styleClass="frontoffice-combo"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- Grid View des Transports -->
+    <VBox spacing="30">
+        <GridPane fx:id="transportGrid" hgap="25" vgap="25" styleClass="frontoffice-transport-grid">
+        </GridPane>
+    </VBox>
+
+    </VBox>
+</ScrollPane>

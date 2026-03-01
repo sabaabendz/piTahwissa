@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.ReservationTransportController"
+      spacing="15" styleClass="form-container"
+      stylesheets="@styles.css"
+      prefWidth="500" prefHeight="550">
+    
+    <padding>
+        <Insets top="25" right="30" bottom="25" left="30"/>
+    </padding>
+
+    <!-- Titre -->
+    <Label text="📝 Formulaire de Réservation" styleClass="form-title">
+        <font>
+            <Font name="System Bold" size="24"/>
+        </font>
+    </Label>
+
+    <Separator/>
+
+    <!-- Formulaire -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="form-scroll">
+        <VBox spacing="15">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <!-- Nombre de Places -->
+            <VBox spacing="5">
+                <Label text="Nombre de Places *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <Spinner fx:id="nbPlacesSpinner" prefWidth="150" editable="true" styleClass="form-input"/>
+            </VBox>
+
+            <!-- Statut -->
+            <VBox spacing="5">
+                <Label text="Statut *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <ComboBox fx:id="statutComboBox" styleClass="form-input" maxWidth="Infinity"/>
+            </VBox>
+
+            <!-- Transport -->
+            <VBox spacing="5">
+                <Label text="Transport *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <ComboBox fx:id="transportComboBox" styleClass="form-input" maxWidth="Infinity">
+                    <tooltip>
+                        <Tooltip text="Sélectionnez le transport pour cette réservation"/>
+                    </tooltip>
+                </ComboBox>
+            </VBox>
+
+            <!-- Utilisateur -->
+            <VBox spacing="5">
+                <Label text="Utilisateur *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <ComboBox fx:id="userComboBox" styleClass="form-input" maxWidth="Infinity">
+                    <tooltip>
+                        <Tooltip text="Sélectionnez l'utilisateur (données statiques)"/>
+                    </tooltip>
+                </ComboBox>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <Separator/>
+
+    <!-- Boutons -->
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button fx:id="cancelButton" text="Annuler" onAction="#handleCancelForm" 
+                styleClass="secondary-button" prefWidth="120">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+        <Button fx:id="saveButton" text="Enregistrer" onAction="#handleSaveForm" 
+                styleClass="primary-button" prefWidth="120">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+    </HBox>
+
+</VBox>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.FrontOfficeHomeController"
+            stylesheets="@styles.css">
+    
+    <!-- Barre de Navigation Supérieure -->
+    <top>
+        <VBox styleClass="frontoffice-navbar">
+            <!-- En-tête avec logo et titre -->
+            <HBox styleClass="frontoffice-header" alignment="CENTER_LEFT" spacing="15">
+                <padding>
+                    <Insets top="20" right="30" bottom="20" left="30"/>
+                </padding>
+                <Label text="✈" styleClass="frontoffice-logo">
+                    <font>
+                        <Font size="38"/>
+                    </font>
+                </Label>
+                <VBox spacing="5">
+                    <Label text="Voyage Loisir" styleClass="frontoffice-title">
+                        <font>
+                            <Font name="System Bold" size="28"/>
+                        </font>
+                    </Label>
+                    <Label text="Votre destination, notre passion" styleClass="frontoffice-slogan">
+                        <font>
+                            <Font size="12"/>
+                        </font>
+                    </Label>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <VBox alignment="CENTER_RIGHT" spacing="5">
+                    <Label fx:id="userLabel" text="Bienvenue, Voyageur" styleClass="frontoffice-user">
+                        <font>
+                            <Font name="System Bold" size="14"/>
+                        </font>
+                    </Label>
+                    <Label text="Réservez en toute confiance" styleClass="frontoffice-tagline">
+                        <font>
+                            <Font size="11"/>
+                        </font>
+                    </Label>
+                </VBox>
+            </HBox>
+            
+            <!-- Menu de Navigation -->
+            <HBox styleClass="frontoffice-nav-menu" spacing="0" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="10" right="30" bottom="10" left="30"/>
+                </padding>
+                <Button fx:id="catalogBtn" text="🏖️ Catalogue" styleClass="frontoffice-nav-button, active" 
+                        onAction="#showCatalog" prefWidth="180"/>
+                <Button fx:id="reservationsBtn" text="📋 Mes Réservations" styleClass="frontoffice-nav-button" 
+                        onAction="#showReservations" prefWidth="180"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <!-- Contenu Principal -->
+    <center>
+        <StackPane fx:id="contentArea" styleClass="frontoffice-content">
+        </StackPane>
+    </center>
+    
+    <!-- Pied de page -->
+    <bottom>
+        <HBox styleClass="frontoffice-footer" alignment="CENTER" spacing="20">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label text="© 2026 Voyage Loisir - Tous droits réservés" styleClass="footer-text">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.ReservationTransportController"
+      spacing="20" styleClass="transport-container"
+      stylesheets="@styles.css">
+    
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- En-tête -->
+    <HBox alignment="CENTER_LEFT" spacing="15" styleClass="page-header">
+        <Label text="📅 Gestion des Réservations de Transport" styleClass="page-title">
+            <font>
+                <Font name="System Bold" size="28"/>
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="backToTransportBtn" text="← Retour aux Transports" onAction="#handleBackToTransports" 
+                styleClass="secondary-button" visible="false" managed="false">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+        <Button text="🔄 Actualiser" onAction="#handleRefresh" styleClass="secondary-button">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+        <Button text="➕ Nouvelle Réservation" onAction="#handleAddReservation" styleClass="primary-button">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+    </HBox>
+
+    <!-- Filtres et recherche -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <!-- Recherche -->
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="search-bar" HBox.hgrow="ALWAYS">
+            <Label text="🔍" styleClass="search-icon">
+                <font>
+                    <Font size="18"/>
+                </font>
+            </Label>
+            <TextField fx:id="searchField" promptText="Rechercher par ID réservation ou ID transport..."
+                       styleClass="search-field" HBox.hgrow="ALWAYS">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </TextField>
+        </HBox>
+        
+        <!-- Filtre statut -->
+        <VBox spacing="5">
+            <Label text="Statut:" styleClass="form-label">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+            <ComboBox fx:id="filterStatutCombo" prefWidth="150" styleClass="form-input"/>
+        </VBox>
+    </HBox>
+
+    <!-- Tableau des réservations -->
+    <TableView fx:id="reservationTable" styleClass="transport-table" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="50" styleClass="table-column"/>
+            <TableColumn fx:id="dateColumn" text="Date Réservation" prefWidth="130" styleClass="table-column"/>
+            <TableColumn fx:id="nbPlacesColumn" text="Places" prefWidth="70" styleClass="table-column"/>
+            <TableColumn fx:id="statutColumn" text="Statut" prefWidth="120" styleClass="table-column"/>
+            <TableColumn fx:id="transportColumn" text="Transport" prefWidth="180" styleClass="table-column"/>
+            <TableColumn fx:id="userColumn" text="Utilisateur" prefWidth="130" styleClass="table-column"/>
+            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="120" styleClass="table-column"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+    </TableView>
+
+</VBox>

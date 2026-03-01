@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.TransportController"
+      spacing="15" styleClass="form-container"
+      stylesheets="@styles.css"
+      prefWidth="500" prefHeight="600">
+    
+    <padding>
+        <Insets top="25" right="30" bottom="25" left="30"/>
+    </padding>
+
+    <!-- Titre -->
+    <Label text="📝 Formulaire Transport" styleClass="form-title">
+        <font>
+            <Font name="System Bold" size="24"/>
+        </font>
+    </Label>
+
+    <Separator/>
+
+    <!-- Formulaire -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="form-scroll">
+        <VBox spacing="15">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <!-- Type de Transport -->
+            <VBox spacing="5">
+                <Label text="Type de Transport *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <ComboBox fx:id="typeComboBox" styleClass="form-input" maxWidth="Infinity"/>
+            </VBox>
+
+            <!-- Ville de Départ -->
+            <VBox spacing="5">
+                <Label text="Ville de Départ *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <TextField fx:id="villeDepartField" promptText="Ex: Paris" styleClass="form-input"/>
+            </VBox>
+
+            <!-- Ville d'Arrivée -->
+            <VBox spacing="5">
+                <Label text="Ville d'Arrivée *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <TextField fx:id="villeArriveeField" promptText="Ex: Londres" styleClass="form-input"/>
+            </VBox>
+
+            <!-- Date de Départ -->
+            <VBox spacing="5">
+                <Label text="Date de Départ *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <DatePicker fx:id="dateDepartPicker" styleClass="form-input" maxWidth="Infinity"/>
+            </VBox>
+
+            <!-- Durée -->
+            <VBox spacing="5">
+                <Label text="Durée (heures) *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <Spinner fx:id="dureeSpinner" prefWidth="150" editable="true" styleClass="form-input"/>
+            </VBox>
+
+            <!-- Prix -->
+            <VBox spacing="5">
+                <Label text="Prix (€) *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <TextField fx:id="prixField" promptText="Ex: 99.99" styleClass="form-input"/>
+            </VBox>
+
+            <!-- Nombre de Places -->
+            <VBox spacing="5">
+                <Label text="Nombre de Places *" styleClass="form-label">
+                    <font>
+                        <Font name="System Bold" size="14"/>
+                    </font>
+                </Label>
+                <Spinner fx:id="nbPlacesSpinner" prefWidth="150" editable="true" styleClass="form-input"/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <Separator/>
+
+    <!-- Boutons -->
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button fx:id="cancelButton" text="Annuler" onAction="#handleCancelForm" 
+                styleClass="secondary-button" prefWidth="120">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+        <Button fx:id="saveButton" text="Enregistrer" onAction="#handleSaveForm" 
+                styleClass="primary-button" prefWidth="120">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+    </HBox>
+
+</VBox>

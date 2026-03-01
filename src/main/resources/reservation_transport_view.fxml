@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.ReservationTransportController"
+      spacing="20" styleClass="view-container"
+      stylesheets="@styles.css"
+      prefWidth="450" prefHeight="480">
+    
+    <padding>
+        <Insets top="25" right="30" bottom="25" left="30"/>
+    </padding>
+
+    <!-- Titre -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="👁" styleClass="view-icon">
+            <font>
+                <Font size="32"/>
+            </font>
+        </Label>
+        <Label text="Détails de la Réservation" styleClass="view-title">
+            <font>
+                <Font name="System Bold" size="24"/>
+            </font>
+        </Label>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Détails -->
+    <VBox spacing="20" VBox.vgrow="ALWAYS">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+
+        <!-- ID -->
+        <HBox spacing="10" styleClass="detail-row">
+            <Label text="ID Réservation:" styleClass="detail-label" minWidth="140">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            <Label fx:id="viewIdLabel" text="-" styleClass="detail-value">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+        </HBox>
+
+        <!-- Date -->
+        <HBox spacing="10" styleClass="detail-row">
+            <Label text="Date Réservation:" styleClass="detail-label" minWidth="140">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            <Label fx:id="viewDateLabel" text="-" styleClass="detail-value">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+        </HBox>
+
+        <!-- Nombre de Places -->
+        <HBox spacing="10" styleClass="detail-row">
+            <Label text="Nombre de Places:" styleClass="detail-label" minWidth="140">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            <Label fx:id="viewNbPlacesLabel" text="-" styleClass="detail-value">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+        </HBox>
+
+        <!-- Statut -->
+        <HBox spacing="10" styleClass="detail-row">
+            <Label text="Statut:" styleClass="detail-label" minWidth="140">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            <Label fx:id="viewStatutLabel" text="-" styleClass="detail-value-highlight">
+                <font>
+                    <Font name="System Bold" size="16"/>
+                </font>
+            </Label>
+        </HBox>
+
+        <!-- Transport -->
+        <HBox spacing="10" styleClass="detail-row">
+            <Label text="Transport:" styleClass="detail-label" minWidth="140">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            <Label fx:id="viewTransportLabel" text="-" styleClass="detail-value" wrapText="true">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+        </HBox>
+
+        <!-- Utilisateur -->
+        <HBox spacing="10" styleClass="detail-row">
+            <Label text="Utilisateur:" styleClass="detail-label" minWidth="140">
+                <font>
+                    <Font name="System Bold" size="14"/>
+                </font>
+            </Label>
+            <Label fx:id="viewUserLabel" text="-" styleClass="detail-value">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+        </HBox>
+
+    </VBox>
+
+    <Separator/>
+
+    <!-- Bouton Retour -->
+    <HBox alignment="CENTER_RIGHT">
+        <Button text="← Retour à la liste" onAction="#handleCloseView" 
+                styleClass="secondary-button" prefWidth="160">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+    </HBox>
+
+</VBox>

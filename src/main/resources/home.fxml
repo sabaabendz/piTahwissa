@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.HomeController"
+            stylesheets="@styles.css">
+    
+    <!-- Barre de Navigation Supérieure -->
+    <top>
+        <VBox styleClass="navbar">
+            <!-- En-tête avec logo et titre -->
+            <HBox styleClass="header" alignment="CENTER_LEFT" spacing="15">
+                <padding>
+                    <Insets top="15" right="20" bottom="15" left="20"/>
+                </padding>
+                <Label text="✈" styleClass="logo">
+                    <font>
+                        <Font size="32"/>
+                    </font>
+                </Label>
+                <Label text="Voyage Loisir" styleClass="app-title">
+                    <font>
+                        <Font name="System Bold" size="24"/>
+                    </font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="userLabel" text="Utilisateur" styleClass="user-label">
+                    <font>
+                        <Font size="14"/>
+                    </font>
+                </Label>
+            </HBox>
+            
+            <!-- Menu de Navigation -->
+            <HBox styleClass="nav-menu" spacing="0" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="10" right="20" bottom="10" left="20"/>
+                </padding>
+                <Button fx:id="transportBtn" text="⚙️ Gestion" styleClass="nav-button, active" 
+                        onAction="#showTransports" prefWidth="150"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <!-- Contenu Principal -->
+    <center>
+        <StackPane fx:id="contentArea" styleClass="content-area">
+            <VBox alignment="CENTER" spacing="20">
+                <padding>
+                    <Insets top="50" right="50" bottom="50" left="50"/>
+                </padding>
+                
+                <!-- Section de Bienvenue -->
+                <VBox alignment="CENTER" spacing="15" styleClass="welcome-section">
+                    <Label fx:id="titleLabel" text="Bienvenue dans Voyage Loisir" 
+                           styleClass="main-title">
+                        <font>
+                            <Font name="System Bold" size="36"/>
+                        </font>
+                    </Label>
+                    <Label text="Sélectionnez une option dans le menu" 
+                           styleClass="subtitle">
+                        <font>
+                            <Font size="18"/>
+                        </font>
+                    </Label>
+                </VBox>
+            </VBox>
+        </StackPane>
+    </center>
+    
+    <!-- Pied de page -->
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER" spacing="10">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <Label text="© 2026 Voyage Loisir - Tous droits réservés" styleClass="footer-text">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+        </HBox>
+    </bottom>
+    
+</BorderPane>

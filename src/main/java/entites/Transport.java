@@ -15,8 +15,6 @@ public class Transport {
     private double prix;
     private int nbPlaces;
 
-    // constructeur vide
-    public Transport() {}
 
     // constructeur sans id
     public Transport(String typeTransport, String villeDepart, String villeArrivee,
@@ -33,21 +31,10 @@ public class Transport {
         this.nbPlaces = nbPlaces;
     }
 
-    // constructeur complet
-    public Transport(int idTransport, String typeTransport, String villeDepart, String villeArrivee,
-                     Date dateDepart, Time heureDepart,
-                     int duree, double prix, int nbPlaces) {
+    public Transport() {
 
-        this.idTransport = idTransport;
-        this.typeTransport = typeTransport;
-        this.villeDepart = villeDepart;
-        this.villeArrivee = villeArrivee;
-        this.dateDepart = dateDepart;
-        this.heureDepart = heureDepart;
-        this.duree = duree;
-        this.prix = prix;
-        this.nbPlaces = nbPlaces;
     }
+
 
     // getters & setters
     public int getIdTransport() { return idTransport; }

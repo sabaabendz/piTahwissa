@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.TransportController"
+      spacing="20" styleClass="transport-container"
+      stylesheets="@styles.css">
+    
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- En-tête -->
+    <HBox alignment="CENTER_LEFT" spacing="15" styleClass="page-header">
+        <Label text="🚗 Gestion des Transports" styleClass="page-title">
+            <font>
+                <Font name="System Bold" size="28"/>
+            </font>
+        </Label>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="🔄 Actualiser" onAction="#handleRefresh" styleClass="secondary-button">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+        <Button text="➕ Ajouter Transport" onAction="#handleAddTransport" styleClass="primary-button">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Button>
+    </HBox>
+
+    <!-- Barre de recherche -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="search-bar">
+        <Label text="🔍" styleClass="search-icon">
+            <font>
+                <Font size="18"/>
+            </font>
+        </Label>
+        <TextField fx:id="searchField" promptText="Rechercher par type, ville de départ ou d'arrivée..."
+                   styleClass="search-field" HBox.hgrow="ALWAYS">
+            <font>
+                <Font size="14"/>
+            </font>
+        </TextField>
+    </HBox>
+
+    <!-- Tableau des transports -->
+    <TableView fx:id="transportTable" styleClass="transport-table" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="50" styleClass="table-column"/>
+            <TableColumn fx:id="typeColumn" text="Type" prefWidth="100" styleClass="table-column"/>
+            <TableColumn fx:id="villeDepartColumn" text="Ville Départ" prefWidth="120" styleClass="table-column"/>
+            <TableColumn fx:id="villeArriveeColumn" text="Ville Arrivée" prefWidth="120" styleClass="table-column"/>
+            <TableColumn fx:id="dateDepartColumn" text="Date Départ" prefWidth="110" styleClass="table-column"/>
+            <TableColumn fx:id="heureDepartColumn" text="Heure" prefWidth="80" styleClass="table-column"/>
+            <TableColumn fx:id="dureeColumn" text="Durée (h)" prefWidth="80" styleClass="table-column"/>
+            <TableColumn fx:id="prixColumn" text="Prix (€)" prefWidth="90" styleClass="table-column"/>
+            <TableColumn fx:id="nbPlacesColumn" text="Places" prefWidth="70" styleClass="table-column"/>
+            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150" styleClass="table-column"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+    </TableView>
+
+</VBox>

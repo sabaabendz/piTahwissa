@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.FrontOfficeCatalogController"
+      spacing="20" styleClass="frontoffice-reservation-form"
+      stylesheets="@styles.css"
+      prefWidth="500" prefHeight="400">
+    
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <!-- Titre -->
+    <VBox spacing="10" alignment="CENTER ">
+        <Label text="🎫 Réserver Votre Voyage" styleClass="frontoffice-form-title">
+            <font>
+                <Font name="System Bold" size="28"/>
+            </font>
+        </Label>
+        <Label fx:id="transportInfoLabel" text="" styleClass="frontoffice-form-subtitle" wrapText="true" alignment="CENTER">
+            <font>
+                <Font size="14"/>
+            </font>
+        </Label>
+    </VBox>
+
+    <Separator/>
+
+    <!-- Formulaire -->
+    <VBox spacing="20" VBox.vgrow="ALWAYS">
+        <!-- Nombre de Places -->
+        <VBox spacing="8">
+            <Label text="Nombre de Places *" styleClass="frontoffice-form-label">
+                <font>
+                    <Font name="System Bold" size="15"/>
+                </font>
+            </Label>
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Spinner fx:id="nbPlacesSpinner" prefWidth="120" editable="true" styleClass="frontoffice-spinner"/>
+                <Label text="places à réserver" styleClass="form-hint">
+                    <font>
+                        <Font size="13"/>
+                    </font>
+                </Label>
+            </HBox>
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <!-- Info -->
+        <VBox spacing="8" styleClass="info-box">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="ℹ️ Informations" styleClass="info-title">
+                <font>
+                    <Font name="System Bold" size="13"/>
+                </font>
+            </Label>
+            <Label text="• Votre réservation sera en attente de confirmation" wrapText="true">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+            <Label text="• Vous recevrez une confirmation par email" wrapText="true">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+            <Label text="• Les places sont limitées, réservez vite !" wrapText="true">
+                <font>
+                    <Font size="12"/>
+                </font>
+            </Label>
+        </VBox>
+    </VBox>
+
+    <Separator/>
+
+    <!-- Boutons -->
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="← Retour" onAction="#handleBackToCatalog" 
+                styleClass="frontoffice-secondary-button" prefWidth="140" prefHeight="45">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Button>
+        <Button text="✓ Confirmer la Réservation" onAction="#handleConfirmReservation" 
+                styleClass="frontoffice-primary-button" prefWidth="240" prefHeight="45">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Button>
+    </HBox>
+
+</VBox>

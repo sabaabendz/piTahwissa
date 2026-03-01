@@ -82,5 +82,19 @@ public class Reservation_transportService implements IReservation_transportServi
 
         return reservations;
     }
+
+    public int getTotalPlacesConfirmees(int idTransport) throws SQLException {
+        String sql = "SELECT SUM(nb_places_reservees) as total FROM reservation_transport WHERE id_transport = ? AND statut = 'Confirm\u00e9e'";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, idTransport);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+        return 0;
+    }
 }
 

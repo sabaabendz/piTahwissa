@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.TransportCatalogController"
+      spacing="20" styleClass="catalog-container"
+      stylesheets="@styles.css">
+    
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- En-tête -->
+    <VBox spacing="15" styleClass="catalog-header">
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <Label text="✈️ Découvrez Nos Transports" styleClass="catalog-title">
+                <font>
+                    <Font name="System Bold" size="32"/>
+                </font>
+            </Label>
+        </HBox>
+        
+        <Label text="Réservez votre voyage en toute simplicité" styleClass="catalog-subtitle">
+            <font>
+                <Font size="16"/>
+            </font>
+        </Label>
+    </VBox>
+
+    <!-- Filtres -->
+    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="filter-bar">
+        <Label text="Filtrer par type:">
+            <font>
+                <Font name="System Bold" size="14"/>
+            </font>
+        </Label>
+        <ComboBox fx:id="filterTypeCombo" prefWidth="150" styleClass="form-input"/>
+        
+        <Region HBox.hgrow="ALWAYS"/>
+        
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="search-bar" prefWidth="350">
+            <Label text="🔍" styleClass="search-icon">
+                <font>
+                    <Font size="18"/>
+                </font>
+            </Label>
+            <TextField fx:id="searchField" promptText="Rechercher une destination..."
+                       styleClass="search-field" HBox.hgrow="ALWAYS">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </TextField>
+        </HBox>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Grid View des Transports -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="catalog-scroll">
+        <VBox spacing="20">
+            <GridPane fx:id="transportGrid" hgap="20" vgap="20" styleClass="transport-grid">
+            </GridPane>
+        </VBox>
+    </ScrollPane>
+
+</VBox>

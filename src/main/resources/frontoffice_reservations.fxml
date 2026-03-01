@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.FrontOfficeReservationsController"
+            stylesheets="@styles.css"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: transparent; -fx-background: #F5F7FA;">
+    
+    <VBox spacing="30" style="-fx-background-color: #F5F7FA;">
+        <padding>
+            <Insets top="40" right="40" bottom="40" left="40"/>
+        </padding>
+        
+        <!-- Header -->
+        <VBox spacing="10" alignment="CENTER">
+            <Label text="📋 Mes Réservations" styleClass="frontoffice-page-title">
+                <font>
+                    <Font name="System Bold" size="36"/>
+                </font>
+            </Label>
+            <Label text="Consultez l'historique de toutes vos réservations" styleClass="frontoffice-page-subtitle">
+                <font>
+                    <Font size="16"/>
+                </font>
+            </Label>
+        </VBox>
+        
+        <!-- Filter Section -->
+        <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 12;">
+            <Label text="Filtrer par statut:" style="-fx-font-size: 15px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;">
+                <font>
+                    <Font name="System Bold" size="15"/>
+                </font>
+            </Label>
+            <ComboBox fx:id="statusFilter" promptText="Tous les statuts" prefWidth="200" styleClass="frontoffice-combo"/>
+        </HBox>
+        
+        <!-- Reservations List Container -->
+        <VBox fx:id="reservationsContainer" spacing="20">
+        </VBox>
+        
+    </VBox>
+    
+</ScrollPane>
