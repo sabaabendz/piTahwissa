@@ -61,6 +61,10 @@
             <Button fx:id="btnReclamations" text="📝 Mes réclamations" maxWidth="Infinity" 
                     styleClass="nav-item" onAction="#loadReclamations"
                     style="-fx-text-alignment: LEFT;"/>
+
+            <Button fx:id="btnMap" text="🗺️ Carte" maxWidth="Infinity" 
+                    styleClass="nav-item" onAction="#loadMap"
+                    style="-fx-text-alignment: LEFT;"/>
             
             <Region VBox.vgrow="ALWAYS"/>
         </VBox>

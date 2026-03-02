@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
 <ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
@@ -101,6 +102,21 @@
                     <Label text="✅ Statut *" styleClass="form-label"/>
                     <ComboBox fx:id="cmbStatut" promptText="Sélectionner un statut"
                              styleClass="form-field" maxWidth="Infinity" style="-fx-font-size: 14px;"/>
+                </VBox>
+
+                <!-- Row 5: Image -->
+                <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2">
+                    <Label text="🖼️ Image de l'événement" styleClass="form-label"/>
+                    <HBox spacing="16" alignment="CENTER_LEFT">
+                        <StackPane style="-fx-background-color: #E2E8F0; -fx-background-radius: 8; -fx-min-width: 140; -fx-min-height: 100; -fx-pref-width: 140; -fx-pref-height: 100;">
+                            <ImageView fx:id="imgEvent" fitWidth="140" fitHeight="100" preserveRatio="true" pickOnBounds="true"/>
+                        </StackPane>
+                        <VBox spacing="8">
+                            <Button fx:id="btnChooseImage" text="Choisir une image" styleClass="btn, btn-secondary" onAction="#handleChooseImage"
+                                   style="-fx-min-width: 160px;"/>
+                            <Label fx:id="lblImageName" styleClass="text-muted" style="-fx-font-size: 12px;" wrapText="true" maxWidth="240"/>
+                        </VBox>
+                    </HBox>
                 </VBox>
             </GridPane>
 

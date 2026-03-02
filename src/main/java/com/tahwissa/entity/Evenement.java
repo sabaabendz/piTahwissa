@@ -15,6 +15,7 @@ public class Evenement {
     private int nbPlaces;
     private String categorie;
     private String statut;
+    private String imageFilename;
     private LocalDateTime dateCreation;
 
     public Evenement() {}
@@ -127,6 +128,14 @@ public class Evenement {
 
     public void setStatut(String statut) {
         this.statut = statut;
+    }
+
+    public String getImageFilename() {
+        return imageFilename;
+    }
+
+    public void setImageFilename(String imageFilename) {
+        this.imageFilename = imageFilename;
     }
 
     public LocalDateTime getDateCreation() {

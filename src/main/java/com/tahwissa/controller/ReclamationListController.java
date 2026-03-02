@@ -5,6 +5,7 @@ import com.tahwissa.service.ReclamationService;
 import com.tahwissa.utils.SessionManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,6 +16,7 @@ import javafx.scene.layout.StackPane;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class ReclamationListController {
     @FXML private TableView<Reclamation> tableReclamations;
@@ -32,28 +34,49 @@ public class ReclamationListController {
     @FXML private Button btnRefresh;
 
     private final ReclamationService reclamationService = new ReclamationService();
-    private final ObservableList<Reclamation> reclamations = FXCollections.observableArrayList();
+    private final ObservableList<Reclamation> masterList = FXCollections.observableArrayList();
+    private final FilteredList<Reclamation> filteredList = new FilteredList<>(masterList, r -> true);
 
     @FXML
     public void initialize() {
         setupTableColumns();
         loadReclamations();
-        
-        // Configurer le filtre de statut
+
+        // Filter combobox: all + statuses
         cmbFilterStatut.getItems().addAll("Tous", "EN_ATTENTE", "EN_COURS", "TRAITEE", "CLOTUREE");
         cmbFilterStatut.setValue("Tous");
-        
-        // Cacher la colonne utilisateur pour les non-admin
+
+        // Dynamic filter: apply whenever search or statut changes
+        txtSearch.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
+        cmbFilterStatut.valueProperty().addListener((o, oldVal, newVal) -> applyFilters());
+
+        // Hide user column for non-admin
         if (!SessionManager.getInstance().isAdmin()) {
             colUtilisateur.setVisible(false);
         }
-        
-        // Gérer la sélection dans le tableau
+
+        // Table selection
         tableReclamations.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             boolean isSelected = newSelection != null;
             btnEdit.setDisable(!isSelected);
             btnDelete.setDisable(!isSelected);
         });
+    }
+
+    private void applyFilters() {
+        String keyword = txtSearch.getText() == null ? "" : txtSearch.getText().trim().toLowerCase();
+        String statut = cmbFilterStatut.getValue() == null ? "Tous" : cmbFilterStatut.getValue();
+
+        Predicate<Reclamation> predicate = r -> {
+            boolean matchStatut = "Tous".equals(statut) || statut.equals(r.getStatut());
+            if (!matchStatut) return false;
+            if (keyword.isEmpty()) return true;
+            return (r.getTitre() != null && r.getTitre().toLowerCase().contains(keyword))
+                || (r.getDescription() != null && r.getDescription().toLowerCase().contains(keyword))
+                || (r.getType() != null && r.getType().toLowerCase().contains(keyword))
+                || (r.getNomUser() != null && r.getNomUser().toLowerCase().contains(keyword));
+        };
+        filteredList.setPredicate(predicate);
     }
 
     private void setupTableColumns() {
@@ -104,36 +127,18 @@ public class ReclamationListController {
             }
         });
         
-        tableReclamations.setItems(reclamations);
+        tableReclamations.setItems(filteredList);
     }
 
     private void loadReclamations() {
-        reclamations.clear();
-        reclamations.addAll(reclamationService.getAllReclamations());
+        masterList.clear();
+        masterList.addAll(reclamationService.getAllReclamations());
+        applyFilters();
     }
 
     @FXML
     private void handleSearch() {
-        String keyword = txtSearch.getText().trim();
-        reclamations.clear();
-        
-        if (keyword.isEmpty()) {
-            loadReclamations();
-        } else {
-            reclamations.addAll(reclamationService.searchReclamations(keyword));
-        }
-    }
-
-    @FXML
-    private void handleFilterStatut() {
-        String statut = cmbFilterStatut.getValue();
-        reclamations.clear();
-        
-        if (statut.equals("Tous")) {
-            loadReclamations();
-        } else {
-            reclamations.addAll(reclamationService.getReclamationsByStatut(statut));
-        }
+        applyFilters();
     }
 
     @FXML
@@ -191,6 +196,7 @@ public class ReclamationListController {
         txtSearch.clear();
         cmbFilterStatut.setValue("Tous");
         loadReclamations();
+        applyFilters();
     }
 
     private void loadForm(Reclamation reclamation) {

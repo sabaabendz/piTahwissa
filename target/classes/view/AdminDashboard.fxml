@@ -62,6 +62,10 @@
                     styleClass="nav-item" onAction="#loadReclamations"
                     style="-fx-text-alignment: LEFT;"/>
             
+            <Button fx:id="btnStatistiques" text="📊 Statistiques" maxWidth="Infinity" 
+                    styleClass="nav-item" onAction="#loadStatistiques"
+                    style="-fx-text-alignment: LEFT;"/>
+            
             <Region VBox.vgrow="ALWAYS"/>
         </VBox>
     </left>

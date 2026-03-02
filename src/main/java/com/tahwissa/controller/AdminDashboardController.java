@@ -17,6 +17,7 @@ public class AdminDashboardController {
     @FXML private Button btnEvenements;
     @FXML private Button btnReservations;
     @FXML private Button btnReclamations;
+    @FXML private Button btnStatistiques;
     @FXML private Button btnLogout;
 
     private final AuthService authService = new AuthService();
@@ -49,6 +50,12 @@ public class AdminDashboardController {
     }
 
     @FXML
+    private void loadStatistiques() {
+        loadContent("/view/Statistique.fxml");
+        updateActiveButton(btnStatistiques);
+    }
+
+    @FXML
     private void handleLogout() {
         authService.logout();
         try {
@@ -72,11 +79,11 @@ public class AdminDashboardController {
 
     private void updateActiveButton(Button activeButton) {
         // Réinitialiser tous les boutons
-        btnEvenements.getStyleClass().remove("menu-button-active");
-        btnReservations.getStyleClass().remove("menu-button-active");
-        btnReclamations.getStyleClass().remove("menu-button-active");
-        
-        // Activer le bouton sélectionné
-        activeButton.getStyleClass().add("menu-button-active");
+        btnEvenements.getStyleClass().remove("nav-item-active");
+        btnReservations.getStyleClass().remove("nav-item-active");
+        btnReclamations.getStyleClass().remove("nav-item-active");
+        btnStatistiques.getStyleClass().remove("nav-item-active");
+
+        activeButton.getStyleClass().add("nav-item-active");
     }
 }

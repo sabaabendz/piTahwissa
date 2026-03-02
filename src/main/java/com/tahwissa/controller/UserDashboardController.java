@@ -17,6 +17,7 @@ public class UserDashboardController {
     @FXML private Button btnEvenements;
     @FXML private Button btnReservations;
     @FXML private Button btnReclamations;
+    @FXML private Button btnMap;
     @FXML private Button btnLogout;
 
     private final AuthService authService = new AuthService();
@@ -49,6 +50,12 @@ public class UserDashboardController {
     }
 
     @FXML
+    private void loadMap() {
+        loadContent("/view/EventMap.fxml");
+        updateActiveButton(btnMap);
+    }
+
+    @FXML
     private void handleLogout() {
         authService.logout();
         try {
@@ -71,12 +78,10 @@ public class UserDashboardController {
     }
 
     private void updateActiveButton(Button activeButton) {
-        // Réinitialiser tous les boutons
-        btnEvenements.getStyleClass().remove("menu-button-active");
-        btnReservations.getStyleClass().remove("menu-button-active");
-        btnReclamations.getStyleClass().remove("menu-button-active");
-        
-        // Activer le bouton sélectionné
-        activeButton.getStyleClass().add("menu-button-active");
+        btnEvenements.getStyleClass().remove("nav-item-active");
+        btnReservations.getStyleClass().remove("nav-item-active");
+        btnReclamations.getStyleClass().remove("nav-item-active");
+        btnMap.getStyleClass().remove("nav-item-active");
+        activeButton.getStyleClass().add("nav-item-active");
     }
 }

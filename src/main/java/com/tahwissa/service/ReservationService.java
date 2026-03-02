@@ -1,5 +1,6 @@
 package com.tahwissa.service;
 
+import com.tahwissa.dao.EvenementDAO;
 import com.tahwissa.dao.ReservationEvenementDAO;
 import com.tahwissa.entity.ReservationEvenement;
 import com.tahwissa.utils.SessionManager;
@@ -8,6 +9,7 @@ import java.util.List;
 
 public class ReservationService {
     private final ReservationEvenementDAO reservationDAO = new ReservationEvenementDAO();
+    private final EvenementDAO evenementDAO = new EvenementDAO();
 
     public boolean createReservation(ReservationEvenement reservation) {
         return reservationDAO.create(reservation);
@@ -39,5 +41,15 @@ public class ReservationService {
 
     public ReservationEvenement getReservationById(int id) {
         return reservationDAO.findById(id);
+    }
+
+    /**
+     * Available places for an event (total capacity minus reserved CONFIRMEE + EN_ATTENTE).
+     */
+    public int getAvailablePlacesForEvent(int idEvenement) {
+        var evenement = evenementDAO.findById(idEvenement);
+        if (evenement == null) return 0;
+        int reserved = reservationDAO.getReservedPlacesForEvent(idEvenement);
+        return Math.max(0, evenement.getNbPlaces() - reserved);
     }
 }

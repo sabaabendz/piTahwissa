@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class ReservationFormController {
     @FXML private Label formTitle;
     @FXML private ComboBox<Evenement> cmbEvenement;
+    @FXML private Label lblPlacesDisponibles;
     @FXML private Spinner<Integer> spnPlaces;
     @FXML private ComboBox<String> cmbStatut;
     @FXML private Label messageLabel;
@@ -33,6 +34,8 @@ public class ReservationFormController {
         SpinnerValueFactory<Integer> placesFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 50, 1);
         spnPlaces.setValueFactory(placesFactory);
         spnPlaces.setEditable(true);
+
+        cmbEvenement.valueProperty().addListener((o, oldVal, newVal) -> updatePlacesForEvent());
         
         loadEvenements();
 
@@ -69,10 +72,51 @@ public class ReservationFormController {
         fillForm();
     }
 
+    /** Pre-select an event when opening the form from the event list (e.g. "Réserver" on a card). */
+    public void setEvenement(Evenement evenement) {
+        if (evenement == null) return;
+        loadEvenements();
+        for (Evenement item : cmbEvenement.getItems()) {
+            if (item.getIdEvenement() == evenement.getIdEvenement()) {
+                cmbEvenement.setValue(item);
+                updatePlacesForEvent();
+                return;
+            }
+        }
+        cmbEvenement.setValue(evenement);
+        updatePlacesForEvent();
+    }
+
+    private void updatePlacesForEvent() {
+        Evenement ev = cmbEvenement.getValue();
+        if (ev == null) {
+            lblPlacesDisponibles.setText("");
+            SpinnerValueFactory.IntegerSpinnerValueFactory factory = (SpinnerValueFactory.IntegerSpinnerValueFactory) spnPlaces.getValueFactory();
+            factory.setMin(1);
+            factory.setMax(50);
+            spnPlaces.getValueFactory().setValue(1);
+            return;
+        }
+        int available = reservationService.getAvailablePlacesForEvent(ev.getIdEvenement());
+        if (currentReservation != null && currentReservation.getIdEvenement() == ev.getIdEvenement()) {
+            available += currentReservation.getNbPlacesReservees();
+        }
+        lblPlacesDisponibles.setText(available + " place(s) disponible(s) pour cet événement.");
+        int max = Math.max(1, available);
+        SpinnerValueFactory.IntegerSpinnerValueFactory factory = (SpinnerValueFactory.IntegerSpinnerValueFactory) spnPlaces.getValueFactory();
+        factory.setMin(1);
+        factory.setMax(max);
+        int current = spnPlaces.getValue();
+        if (current > max) {
+            spnPlaces.getValueFactory().setValue(max);
+        }
+    }
+
     private void fillForm() {
         Evenement evenement = evenementService.getEvenementById(currentReservation.getIdEvenement());
         cmbEvenement.setValue(evenement);
         cmbEvenement.setDisable(true);
+        updatePlacesForEvent();
         spnPlaces.getValueFactory().setValue(currentReservation.getNbPlacesReservees());
         if (SessionManager.getInstance().isAdmin()) {
             cmbStatut.setValue(currentReservation.getStatut());
@@ -125,6 +169,15 @@ public class ReservationFormController {
         }
         if (!Validator.isPositiveInteger(spnPlaces.getValue())) {
             showError("Le nombre de places doit être positif");
+            return false;
+        }
+        Evenement ev = cmbEvenement.getValue();
+        int available = reservationService.getAvailablePlacesForEvent(ev.getIdEvenement());
+        if (currentReservation != null && currentReservation.getIdEvenement() == ev.getIdEvenement()) {
+            available += currentReservation.getNbPlacesReservees();
+        }
+        if (spnPlaces.getValue() > available) {
+            showError("Il ne reste que " + available + " place(s) disponible(s) pour cet événement.");
             return false;
         }
         return true;

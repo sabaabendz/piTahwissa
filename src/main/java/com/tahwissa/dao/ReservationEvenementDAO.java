@@ -153,6 +153,24 @@ public class ReservationEvenementDAO {
         return false;
     }
 
+    /**
+     * Sum of reserved places for an event (CONFIRMEE + EN_ATTENTE only; ANNULEE not counted).
+     */
+    public int getReservedPlacesForEvent(int idEvenement) {
+        String query = "SELECT COALESCE(SUM(nb_places_reservees), 0) FROM reservation_evenement WHERE id_evenement = ? AND statut IN ('CONFIRMEE', 'EN_ATTENTE')";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, idEvenement);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     private ReservationEvenement extractReservationFromResultSet(ResultSet rs) throws SQLException {
         ReservationEvenement reservation = new ReservationEvenement();
         reservation.setIdReservation(rs.getInt("id_reservation"));

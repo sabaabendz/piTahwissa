@@ -2,13 +2,18 @@ package com.tahwissa.controller;
 
 import com.tahwissa.entity.Evenement;
 import com.tahwissa.service.EvenementService;
+import com.tahwissa.utils.EventImageUtils;
 import com.tahwissa.utils.Validator;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -26,9 +31,13 @@ public class EventFormController {
     @FXML private ComboBox<String> cmbStatut;
     @FXML private Label messageLabel;
     @FXML private Button btnSubmit;
+    @FXML private ImageView imgEvent;
+    @FXML private Button btnChooseImage;
+    @FXML private Label lblImageName;
 
     private final EvenementService evenementService = new EvenementService();
     private Evenement currentEvenement;
+    private Path selectedImagePath;
 
     @FXML
     public void initialize() {
@@ -55,6 +64,28 @@ public class EventFormController {
         
         // Set default date to today
         dateEvent.setValue(LocalDate.now());
+
+        imgEvent.setPreserveRatio(true);
+        imgEvent.setFitWidth(140);
+        imgEvent.setFitHeight(100);
+        imgEvent.setImage(null);
+        lblImageName.setText("");
+    }
+
+    @FXML
+    private void handleChooseImage() {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Choisir une image");
+        fc.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png", "*.gif", "*.webp")
+        );
+        java.io.File file = fc.showOpenDialog(btnChooseImage.getScene().getWindow());
+        if (file != null) {
+            selectedImagePath = file.toPath();
+            Image img = new Image(file.toURI().toString());
+            imgEvent.setImage(img);
+            lblImageName.setText(file.getName());
+        }
     }
 
     public void setEvenement(Evenement evenement) {
@@ -75,6 +106,17 @@ public class EventFormController {
         spnPlaces.getValueFactory().setValue(currentEvenement.getNbPlaces());
         cmbCategorie.setValue(currentEvenement.getCategorie());
         cmbStatut.setValue(currentEvenement.getStatut());
+        selectedImagePath = null;
+        if (currentEvenement.getImageFilename() != null && !currentEvenement.getImageFilename().isBlank()) {
+            Image img = EventImageUtils.loadEventImage(currentEvenement.getImageFilename());
+            if (img != null) {
+                imgEvent.setImage(img);
+                lblImageName.setText(currentEvenement.getImageFilename());
+            }
+        } else {
+            imgEvent.setImage(null);
+            lblImageName.setText("");
+        }
     }
 
     @FXML
@@ -83,7 +125,11 @@ public class EventFormController {
 
         try {
             LocalTime heureEvent = LocalTime.of(spnHeure.getValue(), spnMinute.getValue());
-            
+            String imageFilename = null;
+            if (selectedImagePath != null) {
+                imageFilename = EventImageUtils.saveEventImage(selectedImagePath);
+            }
+
             if (currentEvenement == null) {
                 Evenement evenement = new Evenement(
                         txtTitre.getText().trim(),
@@ -96,6 +142,7 @@ public class EventFormController {
                         cmbCategorie.getValue(),
                         cmbStatut.getValue()
                 );
+                evenement.setImageFilename(imageFilename);
 
                 if (evenementService.createEvenement(evenement)) {
                     showSuccess("Événement créé avec succès");
@@ -113,6 +160,9 @@ public class EventFormController {
                 currentEvenement.setNbPlaces(spnPlaces.getValue());
                 currentEvenement.setCategorie(cmbCategorie.getValue());
                 currentEvenement.setStatut(cmbStatut.getValue());
+                if (selectedImagePath != null && imageFilename != null) {
+                    currentEvenement.setImageFilename(imageFilename);
+                }
 
                 if (evenementService.updateEvenement(currentEvenement)) {
                     showSuccess("Événement modifié avec succès");

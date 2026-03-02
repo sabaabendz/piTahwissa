@@ -11,7 +11,7 @@ import java.util.List;
 public class EvenementDAO {
     
     public boolean create(Evenement evenement) {
-        String query = "INSERT INTO evenement (titre, description, lieu, date_event, heure_event, prix, nb_places, categorie, statut, date_creation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO evenement (titre, description, lieu, date_event, heure_event, prix, nb_places, categorie, statut, image_filename, date_creation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             
@@ -24,7 +24,8 @@ public class EvenementDAO {
             stmt.setInt(7, evenement.getNbPlaces());
             stmt.setString(8, evenement.getCategorie());
             stmt.setString(9, evenement.getStatut());
-            stmt.setTimestamp(10, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setString(10, evenement.getImageFilename());
+            stmt.setTimestamp(11, Timestamp.valueOf(LocalDateTime.now()));
             
             int rowsAffected = stmt.executeUpdate();
             
@@ -93,7 +94,7 @@ public class EvenementDAO {
     }
 
     public boolean update(Evenement evenement) {
-        String query = "UPDATE evenement SET titre = ?, description = ?, lieu = ?, date_event = ?, heure_event = ?, prix = ?, nb_places = ?, categorie = ?, statut = ? WHERE id_evenement = ?";
+        String query = "UPDATE evenement SET titre = ?, description = ?, lieu = ?, date_event = ?, heure_event = ?, prix = ?, nb_places = ?, categorie = ?, statut = ?, image_filename = ? WHERE id_evenement = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             
@@ -106,7 +107,8 @@ public class EvenementDAO {
             stmt.setInt(7, evenement.getNbPlaces());
             stmt.setString(8, evenement.getCategorie());
             stmt.setString(9, evenement.getStatut());
-            stmt.setInt(10, evenement.getIdEvenement());
+            stmt.setString(10, evenement.getImageFilename());
+            stmt.setInt(11, evenement.getIdEvenement());
             
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -163,6 +165,11 @@ public class EvenementDAO {
         evenement.setNbPlaces(rs.getInt("nb_places"));
         evenement.setCategorie(rs.getString("categorie"));
         evenement.setStatut(rs.getString("statut"));
+        try {
+            evenement.setImageFilename(rs.getString("image_filename"));
+        } catch (SQLException ex) {
+            evenement.setImageFilename(null);
+        }
         
         try {
             Timestamp dateCreation = rs.getTimestamp("date_creation");

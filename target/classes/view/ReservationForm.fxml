@@ -47,6 +47,7 @@
                 <!-- Row 1: Places -->
                 <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
                     <Label text="👥 Nombre de places à réserver *" styleClass="form-label"/>
+                    <Label fx:id="lblPlacesDisponibles" styleClass="subtitle-text" style="-fx-font-size: 12px;"/>
                     <Spinner fx:id="spnPlaces" styleClass="form-field" maxWidth="Infinity" 
                             editable="true" style="-fx-font-size: 14px;"/>
                 </VBox>
