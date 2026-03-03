@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.tahwissa.controllers.MainLayoutController"
+            stylesheets="@/css/tahwissa-style.css">
+
+    <!-- Left Sidebar -->
+    <left>
+        <VBox styleClass="sidebar" spacing="10" minWidth="200" maxWidth="200">
+
+            <!-- Logo -->
+            <HBox alignment="CENTER" spacing="10" styleClass="logo-container">
+                <ImageView fitWidth="32" preserveRatio="true">
+                    <Image url="@/images/logo.png"/>
+                </ImageView>
+                <VBox spacing="2">
+                    <Label text="Tahwissa" styleClass="logo-title"/>
+                    <Label text="Travel Management" styleClass="logo-subtitle"/>
+                </VBox>
+            </HBox>
+
+            <!-- Modules -->
+            <VBox spacing="5" VBox.vgrow="ALWAYS">
+                <padding>
+                    <Insets top="10" bottom="10" left="10" right="10"/>
+                </padding>
+
+                <Label text="MODULES" styleClass="menu-section-title"/>
+
+                <Button fx:id="btnReservations"
+                        text="📋 Réservations"
+                        maxWidth="Infinity"
+                        styleClass="menu-button"/>
+
+                <Button fx:id="btnDestinations"
+                        text="📍 Destinations"
+                        maxWidth="Infinity"
+                        styleClass="menu-button"
+                        onAction="#showDestinations"/>
+
+                <Button fx:id="btnPointsInteret"
+                        text="🏖️ Points d'Intérêt"
+                        maxWidth="Infinity"
+                        styleClass="menu-button"
+                        onAction="#showPointsInteret"/>
+
+                <Button fx:id="btnClient"
+                        text="👤 Espace Client"
+                        maxWidth="Infinity"
+                        styleClass="menu-button"/>
+
+                <Button fx:id="btnUsers"
+                        text="👥 Utilisateurs"
+                        maxWidth="Infinity"
+                        styleClass="menu-button"/>
+
+                <MenuButton fx:id="btnEventMenu"
+                            text="📅 Gestion des Événements"
+                            maxWidth="Infinity"
+                            styleClass="menu-button">
+
+                    <items>
+                        <MenuItem text="🎫 Liste Événements" onAction="#showEventList"/>
+                        <MenuItem text="📝 Réservations" onAction="#showReservationList"/>
+                        <MenuItem text="📣 Réclamations" onAction="#showReclamationList"/>
+                        <MenuItem fx:id="menuItemCreateEvent" text="➕ Créer Événement" onAction="#showCreateEvent"/>
+                        <MenuItem text="➕ Créer Réservation d'un évenement" onAction="#showCreateresEvent"/>
+                        <MenuItem fx:id="menuItemStatistique" text="📊 Statistiques" onAction="#showStatistique"/>
+                        <MenuItem text="🗺 Carte des événements" onAction="#showCarte"/>
+                    </items>
+
+                </MenuButton>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <Button fx:id="darkModeBtn"
+                        text="🌙 Mode Nuit"
+                        maxWidth="Infinity"
+                        styleClass="menu-button"/>
+
+                <Button fx:id="btnParametres"
+                        text="⚙️ Paramètres"
+                        maxWidth="Infinity"
+                        styleClass="menu-button"/>
+
+                <Button fx:id="btnLogout"
+                        text="🚪 Déconnexion"
+                        maxWidth="Infinity"
+                        styleClass="menu-button"/>
+            </VBox>
+
+            <!-- User Profile -->
+            <VBox styleClass="user-profile" spacing="8">
+                <padding>
+                    <Insets top="10" bottom="10" left="10" right="10"/>
+                </padding>
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <StackPane styleClass="user-avatar" minWidth="40" minHeight="40">
+                        <Label fx:id="userAvatarLabel" text="A" styleClass="user-avatar-text"/>
+                    </StackPane>
+
+                    <VBox spacing="2">
+                        <Label fx:id="userNameLabel" text="Administrateur" styleClass="user-name"/>
+                        <Label fx:id="userEmailLabel" text="admin@tahwissa.com" styleClass="user-email"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+        </VBox>
+    </left>
+
+    <!-- Center: Stack between TabPane and ContentArea -->
+    <center>
+        <StackPane fx:id="contentArea" style="-fx-background-color: white;">
+            <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+                <Tab text="Agent Dashboard" fx:id="tabAgent">
+                    <fx:include source="ReservationContent.fxml" />
+                </Tab>
+                <Tab text="Admin Dashboard" fx:id="tabAdmin">
+                    <fx:include source="admin/AdminDashboard.fxml" />
+                </Tab>
+                <Tab text="Espace Client" fx:id="tabClient">
+                    <fx:include source="client/ClientDashboard.fxml" />
+                </Tab>
+                <Tab text="Gestion Utilisateurs" fx:id="tabUsers">
+                    <fx:include source="admin/user/user-list.fxml" />
+                </Tab>
+                <Tab text="Gestion evenements" fx:id="tabEvents">
+                    <fx:include source="admin/user/user-list.fxml" />
+                </Tab>
+            </TabPane>
+        </StackPane>
+    </center>
+
+    <!-- Bottom Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar" spacing="15" alignment="CENTER_LEFT">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <StackPane styleClass="status-indicator"/>
+                <Label text="✅ Connecté" styleClass="status-text"/>
+            </HBox>
+            <Separator orientation="VERTICAL"/>
+            <Label text="Base: gestionreservation" styleClass="status-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="dateTimeLabel" text="15/02/2026 16:03" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

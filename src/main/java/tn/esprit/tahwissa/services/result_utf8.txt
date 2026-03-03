@@ -1,0 +1,3 @@
+﻿Payload: {"sendto":"ghorbali02@gmail.com","name":"Tahwissa Reservation","replyTo":"support@tahwissa.com","ishtml":"true","title":"Mise a jour de votre reservation - Tahwissa","body":"\u003cb\u003eTest Email\u003c/b\u003e"}
+Status: 200
+Body: {"error":true,"message":"Email address ghorbali02@gmail.com not found","msg_for_subs":"If You think this is a problem, then please kindly contact with the api provider via email: sujoyk211@gmail.com , this problem will be fixed soon, error_type: temporary"}

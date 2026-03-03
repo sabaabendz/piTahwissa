@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.tahwissa.controllers.event.StatistiqueController"
+            fitToWidth="true" styleClass="dashboard-scroll"
+            style="-fx-background: #EBEFF5; -fx-background-color: #EBEFF5;">
+    <VBox styleClass="dashboard-root" spacing="0" stylesheets="@../../css/styles.css"
+          style="-fx-padding: 28px 32px 40px 32px; -fx-background-color: #EBEFF5;">
+        <VBox styleClass="dashboard-header" spacing="4" style="-fx-padding: 0 0 28px 0;">
+            <Label text="Dashboard" styleClass="dashboard-main-title"/>
+            <Label text="Indicateurs et réactions en temps réel" styleClass="dashboard-subtitle"/>
+        </VBox>
+
+        <Label text="Vue d'ensemble" styleClass="dashboard-section-badge"/>
+        <HBox fx:id="kpiRow" styleClass="dashboard-kpi-row" spacing="20" alignment="TOP_LEFT" style="-fx-padding: 0 0 28px 0;"/>
+
+        <Label text="Activité" styleClass="dashboard-section-badge"/>
+        <VBox styleClass="dashboard-trend-card" style="-fx-padding: 24px;">
+            <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 16px 0;">
+                <Label text="📈" styleClass="dashboard-card-icon"/>
+                <Label text="Réactions dans le temps" styleClass="dashboard-card-title"/>
+            </HBox>
+            <StackPane fx:id="paneTrend" styleClass="dashboard-trend-pane" minHeight="220" prefHeight="220"/>
+        </VBox>
+
+        <Label text="Répartitions" styleClass="dashboard-section-badge"/>
+        <HBox spacing="22" alignment="TOP_LEFT" style="-fx-padding: 0 0 28px 0;">
+            <VBox styleClass="dashboard-widget-card" style="-fx-min-width: 340px; -fx-pref-width: 360px;">
+                <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 16px 0;">
+                    <Label text="🥧" styleClass="dashboard-card-icon"/>
+                    <Label text="Likes / Dislikes" styleClass="dashboard-card-title"/>
+                </HBox>
+                <StackPane fx:id="panePieChart" styleClass="dashboard-widget-pane" minHeight="260" prefHeight="260"/>
+            </VBox>
+            <VBox styleClass="dashboard-widget-card" HBox.hgrow="ALWAYS" style="-fx-min-width: 360px;">
+                <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 16px 0;">
+                    <Label text="📊" styleClass="dashboard-card-icon"/>
+                    <Label text="Par événement" styleClass="dashboard-card-title"/>
+                </HBox>
+                <StackPane fx:id="paneBarChart" styleClass="dashboard-widget-pane" minHeight="260" prefHeight="260" VBox.vgrow="ALWAYS"/>
+            </VBox>
+            <VBox fx:id="paneSummaryPanels" styleClass="dashboard-summary-column" spacing="14" style="-fx-min-width: 270px; -fx-pref-width: 290px;">
+            </VBox>
+        </HBox>
+
+        <Label text="Détail" styleClass="dashboard-section-badge"/>
+        <VBox styleClass="dashboard-table-card" style="-fx-min-height: 240px; -fx-padding: 24px;">
+            <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 16px 0;">
+                <Label text="📋" styleClass="dashboard-card-icon"/>
+                <Label text="Détail par événement" styleClass="dashboard-card-title"/>
+            </HBox>
+            <TableView fx:id="tableReactions" styleClass="dashboard-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colEvent" text="Événement" prefWidth="420" sortable="true"/>
+                    <TableColumn fx:id="colLikes" text="Likes" prefWidth="130" sortable="true"/>
+                    <TableColumn fx:id="colDislikes" text="Dislikes" prefWidth="130" sortable="true"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </VBox>
+</ScrollPane>

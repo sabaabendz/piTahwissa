@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.tahwissa.controllers.event.ReservationListController"
+      spacing="20"   stylesheets="@styles.css">
+      style="-fx-padding: 24px;">
+
+    <!-- Header Section -->
+    <VBox spacing="16">
+        <Label text="Gestion des Réservations" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: -fx-text-primary;"/>
+        
+        <!-- Action Bar -->
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Button fx:id="btnCreate" text="+ Nouvelle réservation" styleClass="btn, btn-primary" 
+                   onAction="#handleCreate" style="-fx-min-width: 180px;"/>
+            <Button fx:id="btnEdit" text="✏️ Modifier" styleClass="btn, btn-tertiary" 
+                   onAction="#handleEdit" disable="true" style="-fx-min-width: 110px;"/>
+            <Button fx:id="btnDelete" text="🗑️ Supprimer" styleClass="btn, btn-danger" 
+                   onAction="#handleDelete" disable="true" style="-fx-min-width: 110px;"/>
+            
+            <Region HBox.hgrow="ALWAYS"/>
+            
+            <Button fx:id="btnRefresh" text="🔄 Actualiser" styleClass="btn, btn-outline" 
+                   onAction="#handleRefresh" style="-fx-min-width: 110px;"/>
+        </HBox>
+    </VBox>
+
+    <!-- Table Container -->
+    <VBox styleClass="card" VBox.vgrow="ALWAYS" style="-fx-padding: 0;">
+        <TableView fx:id="tableReservations" VBox.vgrow="ALWAYS" styleClass="table-view">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="60" sortable="true"/>
+                <TableColumn fx:id="colEvenement" text="Événement" prefWidth="280" sortable="true"/>
+                <TableColumn fx:id="colPlaces" text="Places réservées" prefWidth="120" sortable="false"/>
+                <TableColumn fx:id="colStatut" text="Statut" prefWidth="120" sortable="true"/>
+                <TableColumn fx:id="colDate" text="Date de réservation" prefWidth="150" sortable="true"/>
+                <TableColumn fx:id="colUtilisateur" text="Client" prefWidth="140" sortable="true"/>
+            </columns>
+        </TableView>
+    </VBox>
+</VBox>

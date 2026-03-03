@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.tahwissa.controllers.client.ClientDashboardController"
+            fitToWidth="true" styleClass="edge-to-edge"
+            stylesheets="@/css/tahwissa-style.css">
+    <VBox spacing="0" styleClass="content-area">
+        <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" />
+
+        <!-- Client Header Banner -->
+        <VBox styleClass="client-banner" spacing="5" alignment="CENTER">
+            <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+            <Label text="✈️ Bienvenue dans votre Espace Client" styleClass="client-banner-title"/>
+            <Label text="Découvrez nos voyages, réservez et gérez vos expériences" styleClass="client-banner-subtitle"/>
+        </VBox>
+
+        <!-- Navigation Tabs -->
+        <TabPane fx:id="clientTabPane" tabClosingPolicy="UNAVAILABLE" styleClass="client-tabs">
+
+            <!-- ==================== TAB ACCUEIL ==================== -->
+            <Tab text="🏠 Accueil">
+                <VBox spacing="20" style="-fx-padding: 20px;">
+                    <Label text="Bienvenue dans votre Espace Client"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1F2937;"/>
+
+                    <Label text="Découvrez nos voyages, réservez et gérez vos expériences"
+                           style="-fx-font-size: 14px; -fx-text-fill: #6B7280;"/>
+
+                    <GridPane hgap="20" vgap="20" style="-fx-padding: 20px 0;">
+                        <VBox style="-fx-background-color: white; -fx-background-radius: 12px;
+                                    -fx-padding: 20px; -fx-spacing: 10px; -fx-pref-width: 200px;
+                                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);"
+                              GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="📍" style="-fx-font-size: 32px;"/>
+                            <Label text="Destinations" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Label text="Explorez nos destinations" style="-fx-text-fill: #6B7280; -fx-font-size: 12px;"/>
+                        </VBox>
+
+                        <VBox style="-fx-background-color: white; -fx-background-radius: 12px;
+                                    -fx-padding: 20px; -fx-spacing: 10px; -fx-pref-width: 200px;
+                                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);"
+                              GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="🏖️" style="-fx-font-size: 32px;"/>
+                            <Label text="Points d'intérêt" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Label text="Découvrez les lieux à visiter" style="-fx-text-fill: #6B7280; -fx-font-size: 12px;"/>
+                        </VBox>
+
+                        <VBox style="-fx-background-color: white; -fx-background-radius: 12px;
+                                    -fx-padding: 20px; -fx-spacing: 10px; -fx-pref-width: 200px;
+                                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);"
+                              GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Label text="✈️" style="-fx-font-size: 32px;"/>
+                            <Label text="Voyages" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Label text="Réservez votre prochain voyage" style="-fx-text-fill: #6B7280; -fx-font-size: 12px;"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+            </Tab>
+
+            <!-- ==================== TAB DESTINATIONS (NOUVEAU) ==================== -->
+            <Tab text="📍 Destinations" closable="false">
+                <fx:include source="client_destinations.fxml" />
+            </Tab>
+
+            <!-- ==================== TAB POINTS D'INTÉRÊT (NOUVEAU) ==================== -->
+            <Tab text="🏖️ Points d'Intérêt" closable="false">
+                <fx:include source="client_points_interet.fxml" />
+            </Tab>
+
+            <!-- ==================== TAB OFFRES & VOYAGES ==================== -->
+            <Tab text="🌍 Offres &amp; Voyages">
+                <VBox spacing="20">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <!-- Search & Filter Bar -->
+                    <HBox spacing="15" alignment="CENTER_LEFT" styleClass="client-search-bar">
+                        <padding><Insets top="12" right="15" bottom="12" left="15"/></padding>
+                        <Label text="🔍" style="-fx-font-size: 18px;"/>
+                        <TextField fx:id="searchVoyageField" promptText="Rechercher un voyage, une destination..."
+                                   styleClass="client-search-field" HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="categorieFilter" promptText="Catégorie" prefWidth="160"/>
+                        <ComboBox fx:id="prixFilter" promptText="Prix" prefWidth="140"/>
+                        <Button text="🔄 Actualiser" styleClass="btn-secondary" onAction="#handleRefreshVoyages"/>
+                    </HBox>
+
+                    <!-- Stats Summary -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <VBox styleClass="client-stat-mini" alignment="CENTER" spacing="3">
+                            <Label fx:id="totalVoyagesLabel" text="0" styleClass="client-stat-number"/>
+                            <Label text="Voyages disponibles" styleClass="client-stat-caption"/>
+                        </VBox>
+                        <VBox styleClass="client-stat-mini" alignment="CENTER" spacing="3">
+                            <Label fx:id="totalDestLabel" text="0" styleClass="client-stat-number"/>
+                            <Label text="Destinations" styleClass="client-stat-caption"/>
+                        </VBox>
+                        <VBox styleClass="client-stat-mini" alignment="CENTER" spacing="3">
+                            <Label fx:id="prixMinLabel" text="0 DT" styleClass="client-stat-number"/>
+                            <Label text="À partir de" styleClass="client-stat-caption"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Voyage Cards Container -->
+                    <ScrollPane fitToWidth="true" styleClass="edge-to-edge" VBox.vgrow="ALWAYS" prefHeight="500">
+                        <FlowPane fx:id="voyageCardsContainer" hgap="20" vgap="20" alignment="CENTER"
+                                  style="-fx-padding: 10;">
+                            <!-- Cards will be dynamically generated -->
+                        </FlowPane>
+                    </ScrollPane>
+                </VBox>
+            </Tab>
+
+            <!-- ==================== TAB RÉSERVATION ==================== -->
+            <Tab text="📝 Réserver">
+                <VBox spacing="20">
+                    <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
+
+                    <Label text="Effectuer une Réservation" styleClass="page-title"/>
+                    <Label text="Sélectionnez un voyage et remplissez les informations" styleClass="card-subtitle"/>
+
+                    <HBox spacing="25" alignment="TOP_CENTER">
+                        <!-- Left: Reservation Form -->
+                        <VBox styleClass="card" spacing="15" prefWidth="450" HBox.hgrow="ALWAYS">
+                            <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+                            <Label text="📋 Formulaire de réservation" styleClass="card-title"/>
+
+                            <VBox spacing="8">
+                                <Label text="Voyage *" styleClass="form-label"/>
+                                <ComboBox fx:id="voyageComboBox" promptText="Sélectionner un voyage" maxWidth="Infinity"
+                                          styleClass="client-form-field"/>
+                            </VBox>
+
+                            <VBox spacing="8">
+                                <Label text="Date de départ *" styleClass="form-label"/>
+                                <DatePicker fx:id="dateReservationPicker" promptText="Choisir une date" maxWidth="Infinity"
+                                            styleClass="client-form-field"/>
+                            </VBox>
+
+                            <VBox spacing="8">
+                                <Label text="Nombre de personnes *" styleClass="form-label"/>
+                                <Spinner fx:id="nbrPersonnesSpinner" min="1" max="20" initialValue="1"
+                                         maxWidth="Infinity" styleClass="client-form-field"/>
+                            </VBox>
+
+                            <VBox spacing="8">
+                                <Label text="Méthode de paiement" styleClass="form-label"/>
+                                <ComboBox fx:id="methodePaiementCombo" promptText="Choisir la méthode" maxWidth="Infinity"
+                                          styleClass="client-form-field"/>
+                            </VBox>
+
+                            <!-- Price Summary -->
+                            <VBox styleClass="client-price-summary" spacing="8">
+                                <padding><Insets top="12" right="15" bottom="12" left="15"/></padding>
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label text="Prix unitaire:" style="-fx-text-fill: #6B7280;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="prixUnitaireLabel" text="0.00 DT" style="-fx-font-weight: 600;"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label text="Personnes:" style="-fx-text-fill: #6B7280;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="nbrPersonnesLabel" text="1"/>
+                                </HBox>
+                                <Separator/>
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label text="Total:" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="totalPriceLabel" text="0.00 DT"
+                                           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #10B981;"/>
+                                </HBox>
+                            </VBox>
+
+                            <Button text="✅ Confirmer la Réservation" styleClass="btn-reserve" maxWidth="Infinity"
+                                    onAction="#handleConfirmReservation"/>
+                        </VBox>
+
+                        <!-- Right: Selected Voyage Preview -->
+                        <VBox fx:id="voyagePreviewBox" styleClass="card" spacing="10" prefWidth="380"
+                              alignment="TOP_CENTER" visible="false" managed="false">
+                            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                            <Label text="🌟 Aperçu du voyage" styleClass="card-title"/>
+                            <VBox fx:id="voyagePreviewContent" spacing="10" alignment="TOP_CENTER">
+                                <!-- Dynamically populated -->
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ==================== TAB HISTORIQUE ==================== -->
+            <Tab text="📜 Historique">
+                <VBox spacing="20">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Historique des Réservations" styleClass="page-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="historyStatusFilter" promptText="Filtrer par statut" prefWidth="180"/>
+                        <Button text="🔄 Actualiser" styleClass="btn-secondary" onAction="#handleRefreshHistory"/>
+                    </HBox>
+
+                    <!-- History Stats -->
+                    <HBox spacing="15">
+                        <VBox styleClass="client-history-stat" spacing="3" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label fx:id="totalResLabel" text="0" styleClass="client-stat-number"/>
+                            <Label text="Total" styleClass="client-stat-caption"/>
+                        </VBox>
+                        <VBox styleClass="client-history-stat-pending" spacing="3" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label fx:id="pendingResLabel" text="0" styleClass="client-stat-number"/>
+                            <Label text="En attente" styleClass="client-stat-caption"/>
+                        </VBox>
+                        <VBox styleClass="client-history-stat-confirmed" spacing="3" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label fx:id="confirmedResLabel" text="0" styleClass="client-stat-number"/>
+                            <Label text="Confirmées" styleClass="client-stat-caption"/>
+                        </VBox>
+                        <VBox styleClass="client-history-stat-cancelled" spacing="3" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label fx:id="cancelledResLabel" text="0" styleClass="client-stat-number"/>
+                            <Label text="Annulées" styleClass="client-stat-caption"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Reservations Container (cards) -->
+                    <ScrollPane fitToWidth="true" styleClass="edge-to-edge" VBox.vgrow="ALWAYS" prefHeight="450">
+                        <VBox fx:id="historyCardsContainer" spacing="12" style="-fx-padding: 5;">
+                            <!-- Reservation history cards will be dynamically generated -->
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+            </Tab>
+
+            <!-- ==================== TAB PAIEMENTS ==================== -->
+            <Tab text="💳 Paiements">
+                <VBox spacing="20">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Mes Paiements" styleClass="page-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="🔄 Actualiser" styleClass="btn-secondary" onAction="#handleRefreshPaiements"/>
+                    </HBox>
+
+                    <!-- Payment Stats -->
+                    <HBox spacing="15">
+                        <VBox styleClass="client-stat-mini" spacing="3" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label fx:id="totalPaidLabel" text="0.00 DT" styleClass="client-stat-number"/>
+                            <Label text="Total Payé" styleClass="client-stat-caption"/>
+                        </VBox>
+                        <VBox styleClass="client-stat-mini" spacing="3" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label fx:id="pendingPayLabel" text="0.00 DT" styleClass="client-stat-number"/>
+                            <Label text="En Attente" styleClass="client-stat-caption"/>
+                        </VBox>
+                        <VBox styleClass="client-stat-mini" spacing="3" alignment="CENTER" HBox.hgrow="ALWAYS">
+                            <Label fx:id="totalPayCountLabel" text="0" styleClass="client-stat-number"/>
+                            <Label text="Transactions" styleClass="client-stat-caption"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Payment Table -->
+                    <VBox styleClass="card" VBox.vgrow="ALWAYS">
+                        <VBox styleClass="card-header" spacing="5">
+                            <Label text="Détails des paiements" styleClass="card-title"/>
+                        </VBox>
+                        <TableView fx:id="paiementsTable" VBox.vgrow="ALWAYS" prefHeight="350">
+                            <columns>
+                                <TableColumn text="Réf." fx:id="payRefCol" prefWidth="100"/>
+                                <TableColumn text="Voyage" fx:id="payVoyageCol" prefWidth="180"/>
+                                <TableColumn text="Montant" fx:id="payMontantCol" prefWidth="120"/>
+                                <TableColumn text="Date" fx:id="payDateCol" prefWidth="140"/>
+                                <TableColumn text="Méthode" fx:id="payMethodeCol" prefWidth="120"/>
+                                <TableColumn text="Statut" fx:id="payStatutCol" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- ==================== TAB ÉVÉNEMENTS ==================== -->
+            <Tab text="🎉 Gestion Événements">
+                <VBox spacing="30" style="-fx-padding: 30;">
+                    <Label text="Gestion des Événements"
+                           style="-fx-font-size: 22px; -fx-font-weight: bold;" />
+
+                    <HBox spacing="20" alignment="CENTER">
+                        <Button text="🎫 Liste Événements"
+                                prefWidth="220" prefHeight="80"
+                                styleClass="btn-large"
+                                onAction="#showEventList"/>
+
+                        <Button text="📝 Réservations"
+                                prefWidth="220" prefHeight="80"
+                                styleClass="btn-large"
+                                onAction="#showReservationList"/>
+
+                        <Button text="📣 Réclamations"
+                                prefWidth="220" prefHeight="80"
+                                styleClass="btn-large"
+                                onAction="#showReclamationList"/>
+
+                        <Button text="➕ Créer Événement"
+                                fx:id="btnCreateEvent"
+                                prefWidth="220" prefHeight="80"
+                                styleClass="btn-large"
+                                onAction="#showCreateEvent"/>
+
+                        <Button text="Carte des evenements"
+                                prefWidth="220" prefHeight="80"
+                                styleClass="btn-large"
+                                onAction="#showCarte"/>
+                    </HBox>
+
+                    <AnchorPane fx:id="eventContentContainer"
+                                VBox.vgrow="ALWAYS"
+                                style="-fx-background-color: white; -fx-padding: 20;" />
+                </VBox>
+            </Tab>
+
+            <!-- ==================== TAB ASSISTANT GROK ==================== -->
+            <Tab text="🤖 Assistant Voyage (Grok)">
+                <VBox spacing="10" style="-fx-padding: 15;" VBox.vgrow="ALWAYS">
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background: #f5f7fa;" prefHeight="400">
+                        <VBox fx:id="chatMessagesContainer" spacing="8" style="-fx-padding: 10;" />
+                    </ScrollPane>
+                    <HBox spacing="8" alignment="CENTER_LEFT" style="-fx-padding: 8 0 0 0;">
+                        <TextField fx:id="chatInputField" promptText="Posez votre question..." HBox.hgrow="ALWAYS" styleClass="client-form-field"/>
+                        <Button fx:id="sendChatButton" text="Envoyer" styleClass="btn-primary" onAction="#handleSendChatMessage"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </VBox>
+</ScrollPane>
