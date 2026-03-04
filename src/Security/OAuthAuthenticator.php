@@ -56,7 +56,7 @@ class OAuthAuthenticator extends OAuth2Authenticator implements AuthenticationEn
         $accessToken = $this->fetchAccessToken($client);
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $request, $clientKey): User {
+            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $clientKey): User {
                 $oauthUser = $client->fetchUserFromToken($accessToken);
 
                 $email = null;

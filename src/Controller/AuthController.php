@@ -2,13 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Manager;
-use App\Entity\Collaborator;
-use App\Form\ManagerType;
-use App\Form\CollaboratorType;
-use App\Repository\ManagerRepository;
 use App\Repository\UserRepository;
-use App\Service\EnterpriseCodeGenerator;
 use App\Service\FaceRecognitionService;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,10 +28,7 @@ final class AuthController extends AbstractController
         private readonly FaceRecognitionService $faceRecognitionService,
         private readonly LoggerInterface $logger,
         private readonly Security $security,
-
-        private readonly EnterpriseCodeGenerator $enterpriseCodeGenerator,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ManagerRepository $managerRepository
+        private readonly EntityManagerInterface $entityManager
     ) {
     }
 

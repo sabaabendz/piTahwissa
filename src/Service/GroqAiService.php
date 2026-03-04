@@ -55,7 +55,7 @@ Be specific and practical. No explanations, just the JSON array.";
             $data = $response->toArray(false);
 
             if ($statusCode >= 400) {
-                $detail = is_array($data) ? json_encode($data) : 'Unknown API error';
+                $detail = json_encode($data);
                 throw new \RuntimeException('Groq API request failed: ' . $detail);
             }
 

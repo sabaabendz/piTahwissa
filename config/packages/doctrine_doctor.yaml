@@ -1,0 +1,3 @@
+when@dev:
+    doctrine_doctor:
+        enabled: true

@@ -21,7 +21,7 @@ class Tache
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id = 0;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le libellé est requis.')]
@@ -31,7 +31,7 @@ class Tache
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: [self::PRIORITE_BASSE, self::PRIORITE_MOYENNE, self::PRIORITE_HAUTE])]
-    private ?string $priorite = self::PRIORITE_MOYENNE;
+    private string $priorite = self::PRIORITE_MOYENNE;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank(message: 'La date limite est requise.')]
@@ -40,7 +40,7 @@ class Tache
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: [self::ETAT_A_FAIRE, self::ETAT_EN_COURS, self::ETAT_TERMINE])]
-    private ?string $etat = self::ETAT_A_FAIRE;
+    private string $etat = self::ETAT_A_FAIRE;
 
     #[ORM\ManyToOne(targetEntity: Projet::class, inversedBy: 'taches')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -49,7 +49,7 @@ class Tache
 
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id > 0 ? $this->id : null;
     }
 
     public function getLibelle(): ?string
@@ -63,7 +63,7 @@ class Tache
         return $this;
     }
 
-    public function getPriorite(): ?string
+    public function getPriorite(): string
     {
         return $this->priorite;
     }
@@ -85,7 +85,7 @@ class Tache
         return $this;
     }
 
-    public function getEtat(): ?string
+    public function getEtat(): string
     {
         return $this->etat;
     }

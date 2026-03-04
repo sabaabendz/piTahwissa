@@ -4,6 +4,7 @@ namespace App\Controller\FrontOffice;
 
 use App\Entity\Collaborator;
 use App\Entity\Manager;
+use App\Entity\User;
 use App\Repository\CollaboratorRepository;
 use App\Repository\ManagerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,10 +20,9 @@ class CollaboratorNetworkController extends AbstractController
         ManagerRepository $managerRepository,
         CollaboratorRepository $collaboratorRepository
     ): Response {
-        /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        
-        if (!$user) {
+
+        if (!$user instanceof User) {
             throw $this->createAccessDeniedException('You must be logged in to access this page.');
         }
 

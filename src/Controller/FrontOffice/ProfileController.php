@@ -2,6 +2,7 @@
 
 namespace App\Controller\FrontOffice;
 
+use App\Entity\User;
 use App\Form\UserProfileType;
 use App\Service\FaceRecognitionService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,6 +26,11 @@ class ProfileController extends AbstractController
         LoggerInterface $logger,
     ): Response {
         $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('Authenticated user not found.');
+        }
+
         $form = $this->createForm(UserProfileType::class, $user);
         $form->handleRequest($request);
 
@@ -44,7 +50,7 @@ class ProfileController extends AbstractController
                     $this->addFlash('success', 'Face ID configured successfully.');
                 } catch (\Throwable $e) {
                     $logger->warning('Face ID enrollment failed', [
-                        'user' => method_exists($user, 'getEmail') ? $user->getEmail() : null,
+                        'user' => $user->getEmail(),
                         'error' => $e->getMessage(),
                     ]);
 

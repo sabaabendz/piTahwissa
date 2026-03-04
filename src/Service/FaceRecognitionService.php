@@ -81,10 +81,6 @@ class FaceRecognitionService
                 throw new \RuntimeException((string) $detail);
             }
 
-            if (!is_array($content)) {
-                throw new \RuntimeException('Unexpected Face ID response.');
-            }
-
             return $content;
         } catch (ExceptionInterface $e) {
             $this->logger->error('Face ID request failed', [

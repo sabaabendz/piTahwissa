@@ -19,7 +19,7 @@ class Projet
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id = 0;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le nom du projet est requis.')]
@@ -41,7 +41,7 @@ class Projet
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: [self::STATUT_EN_ATTENTE, self::STATUT_ACTIF, self::STATUT_TERMINE])]
-    private ?string $statut = self::STATUT_EN_ATTENTE;
+    private string $statut = self::STATUT_EN_ATTENTE;
 
     #[ORM\OneToMany(targetEntity: Tache::class, mappedBy: 'projet', cascade: ['remove'], orphanRemoval: true)]
     private Collection $taches;
@@ -53,7 +53,7 @@ class Projet
 
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id > 0 ? $this->id : null;
     }
 
     public function getNom(): ?string
@@ -100,7 +100,7 @@ class Projet
         return $this;
     }
 
-    public function getStatut(): ?string
+    public function getStatut(): string
     {
         return $this->statut;
     }

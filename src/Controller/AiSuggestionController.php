@@ -37,10 +37,6 @@ class AiSuggestionController extends AbstractController
 
             $suggestions = $aiService->suggestTasks($description, $projectName);
 
-            if (!is_array($suggestions)) {
-                return $this->json(['error' => 'AI service returned invalid data'], 500);
-            }
-
             return $this->json(['suggestions' => $suggestions]);
         } catch (\Throwable $e) {
             $this->logger->error('AI suggestion failed', [
@@ -83,8 +79,11 @@ class AiSuggestionController extends AbstractController
             $tache->setPriorite($data['priorite'] ?? Tache::PRIORITE_MOYENNE);
 
             $days = max(1, (int) ($data['days'] ?? 7));
-            $startDate = $projet->getDateDebut() ?? new \DateTimeImmutable('today');
-            $dateLimite = (clone $startDate)->modify("+{$days} days");
+            $startDate = $projet->getDateDebut();
+            $baseDate = $startDate instanceof \DateTimeInterface
+                ? \DateTimeImmutable::createFromInterface($startDate)
+                : new \DateTimeImmutable('today');
+            $dateLimite = $baseDate->modify("+{$days} days");
             $tache->setDateLimite($dateLimite);
             $tache->setEtat(Tache::ETAT_A_FAIRE);
             $tache->setProjet($projet);
