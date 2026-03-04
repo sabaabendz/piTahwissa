@@ -17,6 +17,10 @@ class GroqAiService
 
     public function suggestTasks(string $projectDescription, string $projectName): array
     {
+        if (trim($this->apiKey) === '') {
+            throw new \RuntimeException('GROQ API key is not configured.');
+        }
+
         $prompt = "Based on this project description, suggest 3-5 specific tasks that need to be completed. 
 Project Name: {$projectName}
 Description: {$projectDescription}
@@ -47,7 +51,14 @@ Be specific and practical. No explanations, just the JSON array.";
                 ],
             ]);
 
-            $data = $response->toArray();
+            $statusCode = $response->getStatusCode();
+            $data = $response->toArray(false);
+
+            if ($statusCode >= 400) {
+                $detail = is_array($data) ? json_encode($data) : 'Unknown API error';
+                throw new \RuntimeException('Groq API request failed: ' . $detail);
+            }
+
             $content = $data['choices'][0]['message']['content'] ?? '';
             
             $content = trim($content);
@@ -64,12 +75,12 @@ Be specific and practical. No explanations, just the JSON array.";
             $tasks = json_decode($content, true);
             
             if (!is_array($tasks)) {
-                return [];
+                throw new \RuntimeException('Invalid AI response format.');
             }
 
             return $tasks;
-        } catch (\Exception $e) {
-            return [];
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('AI suggestion service error: ' . $e->getMessage(), 0, $e);
         }
     }
 }

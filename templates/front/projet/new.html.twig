@@ -109,6 +109,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     let acceptedTasks = [];
+    const suggestTasksUrl = '{{ path('ai_suggest_tasks') }}';
+    const acceptTaskUrlTemplate = '{{ path('ai_accept_task', {'projetId': '__PROJET_ID__'}) }}';
+
+    async function parseJsonResponse(response) {
+        const raw = await response.text();
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            throw new Error(`Réponse non JSON (status ${response.status}).`);
+        }
+    }
     
     suggestBtn.addEventListener('click', async function(e) {
         e.preventDefault();
@@ -128,18 +139,26 @@ document.addEventListener('DOMContentLoaded', function() {
         suggestBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Génération...';
         
         try {
-            console.log('Sending request to /api/ai/suggest-tasks');
+            console.log('Sending request to', suggestTasksUrl);
             
-            const response = await fetch('/api/ai/suggest-tasks', {
+            const response = await fetch(suggestTasksUrl, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
                 body: JSON.stringify({description, projectName})
             });
             
             console.log('Response status:', response.status);
             
-            const data = await response.json();
+            const data = await parseJsonResponse(response);
             console.log('Response data:', data);
+
+            if (!response.ok) {
+                const message = data?.error || data?.message || `Erreur API (${response.status})`;
+                throw new Error(message);
+            }
             
             if (data.suggestions && data.suggestions.length > 0) {
                 displaySuggestions(data.suggestions);
@@ -242,9 +261,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (projetId) {
                             for (const task of acceptedTasks) {
                                 console.log('Creating task:', task);
-                                await fetch(`/api/ai/accept-task/${projetId}`, {
+                                await fetch(acceptTaskUrlTemplate.replace('__PROJET_ID__', projetId), {
                                     method: 'POST',
-                                    headers: {'Content-Type': 'application/json'},
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    },
                                     body: JSON.stringify(task)
                                 });
                             }

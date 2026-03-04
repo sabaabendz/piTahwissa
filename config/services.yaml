@@ -32,8 +32,9 @@ services:
 
     App\Service\GroqAiService:
         arguments:
-            $groqApiKey: '%env(GROQ_API_KEY)%'
+            $groqApiKey: '%env(default::GROQ_API_KEY)%'
 
     App\Service\EmailNotificationService:
         arguments:
             $adminEmail: '%env(ADMIN_EMAIL)%'
+    
