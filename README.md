@@ -65,8 +65,7 @@ Main modules include:
 ## Contributors
 
 - Mohsen Nabli
-- Team Members (if applicable)
-
+- Ismail Karoui
 ---
 
 ## Academic Context
