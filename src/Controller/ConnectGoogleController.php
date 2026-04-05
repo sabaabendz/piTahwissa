@@ -16,14 +16,6 @@ class ConnectGoogleController extends AbstractController
     #[Route('/connect/google', name: 'connect_google_start', methods: ['GET'])]
     public function connectAction(Request $request, ClientRegistry $clientRegistry): RedirectResponse
     {
-        // 1. Check for 'role' parameter
-        $role = $request->query->get('role');
-
-        // 2. Validate and store in session if present
-        if ($role && in_array($role, ['manager', 'collaborator'])) {
-            $request->getSession()->set('_oauth_auth_role', $role);
-        }
-
         return $clientRegistry
             ->getClient('google')
             ->redirect(['email', 'profile'], []);

@@ -4,74 +4,56 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Constraints\Length;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class UserProfileType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class, [
-                'label' => 'Nom complet',
+            ->add('firstName', TextType::class, [
+                'label' => 'First name',
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
             ])
-            ->add('email', EmailType::class, [
-                'label' => 'Adresse Email',
+            ->add('lastName', TextType::class, [
+                'label' => 'Last name',
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
             ])
-            ->add('avatarFile', VichImageType::class, [
-                'label' => 'Photo de profil',
+            ->add('phone', TextType::class, [
                 'required' => false,
-                'allow_delete' => false,
-                'download_uri' => false,
-                'image_uri' => false,
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'form-label'],
-                'constraints' => [
-                    new File([
-                        'maxSize' => '2M',
-                        'mimeTypes' => [
-                            'image/jpeg',
-                            'image/png',
-                            'image/jpg',
-                        ],
-                        'mimeTypesMessage' => 'Please upload a valid JPG or PNG image.',
-                    ]),
-                ],
             ])
-            ->add('plainPassword', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'mapped' => false,
+            ->add('avatarUrl', TextType::class, [
+                'label' => 'Avatar URL',
                 'required' => false,
-                'first_options' => [
-                    'label' => 'Nouveau mot de passe (laisser vide pour ne pas changer)',
-                    'attr' => ['class' => 'form-control', 'autocomplete' => 'new-password'],
-                    'label_attr' => ['class' => 'form-label'],
-                    'help' => 'Minimum 8 caractères',
-                ],
-                'second_options' => [
-                    'label' => 'Confirmer le nouveau mot de passe',
-                    'attr' => ['class' => 'form-control', 'autocomplete' => 'new-password'],
-                    'label_attr' => ['class' => 'form-label'],
-                ],
-                'invalid_message' => 'Les mots de passe ne correspondent pas.',
-                'constraints' => [
-                    new Length([
-                        'min' => 8,
-                        'minMessage' => 'Votre mot de passe doit comporter au moins {{ limit }} caractères',
-                        'max' => 4096,
-                    ]),
-                ],
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'form-label'],
+            ])
+            ->add('description', TextareaType::class, [
+                'required' => false,
+                'attr' => ['class' => 'form-control', 'rows' => 4],
+                'label_attr' => ['class' => 'form-label'],
+            ])
+            ->add('address', TextType::class, [
+                'required' => false,
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'form-label'],
+            ])
+            ->add('city', TextType::class, [
+                'required' => false,
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'form-label'],
+            ])
+            ->add('country', TextType::class, [
+                'required' => false,
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'form-label'],
             ]);
     }
 

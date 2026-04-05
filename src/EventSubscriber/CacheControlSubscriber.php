@@ -40,14 +40,10 @@ class CacheControlSubscriber implements EventSubscriberInterface
         // Protected routes that should not be cached
         $protectedRoutes = [
             'app_dashboard_index',
-            'app_manager_index',
-            'app_manager_new',
-            'app_manager_show',
-            'app_manager_edit',
-            'app_collaborator_index',
-            'app_collaborator_new',
-            'app_collaborator_show',
-            'app_collaborator_edit',
+            'app_dashboard',
+            'app_front_profile_edit',
+            'app_admin_dashboard',
+            'app_admin_users_index',
         ];
 
         // If user is authenticated and on a protected route, prevent caching

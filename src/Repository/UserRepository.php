@@ -2,8 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Collaborator;
-use App\Entity\Manager;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,54 +16,59 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    public function searchByTerm(string $term): array
+    public function findByEmail(string $email): ?User
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.name LIKE :term OR u.email LIKE :term')
-            ->setParameter('term', '%' . $term . '%')
-            ->orderBy('u.name', 'ASC')
+            ->andWhere('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /** @return User[] */
+    public function findActiveUsers(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.isActive = :active')
+            ->setParameter('active', true)
+            ->orderBy('u.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * @param string|null $role all|admin|manager|collaborator
+     * @return User[]
      */
+    public function findByRole(string $roleName): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->leftJoin('u.role', 'r')
+            ->andWhere('r.name = :roleName')
+            ->setParameter('roleName', strtoupper($roleName))
+            ->orderBy('u.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /** @return User[] */
     public function findByRoleAndSearch(?string $role = 'all', ?string $term = null): array
     {
-        $normalizedRole = $role ?? 'all';
-
         $qb = $this->createQueryBuilder('u')
-            ->orderBy('u.name', 'ASC');
+            ->leftJoin('u.role', 'r')
+            ->addSelect('r')
+            ->orderBy('u.createdAt', 'DESC');
 
         if ($term !== null && trim($term) !== '') {
-            $qb
-                ->andWhere('u.name LIKE :term OR u.email LIKE :term')
-                ->setParameter('term', '%' . trim($term) . '%');
+            $termLike = '%' . trim($term) . '%';
+            $qb->andWhere('u.email LIKE :term OR u.firstName LIKE :term OR u.lastName LIKE :term')
+                ->setParameter('term', $termLike);
         }
 
-        if ($normalizedRole === 'manager') {
-            $qb->andWhere('u INSTANCE OF ' . Manager::class);
-        } elseif ($normalizedRole === 'collaborator') {
-            $qb->andWhere('u INSTANCE OF ' . Collaborator::class);
-        } elseif ($normalizedRole === 'admin') {
-            $qb->andWhere('u.roles LIKE :adminRole')
-                ->setParameter('adminRole', '%ROLE_ADMIN%');
+        if ($role !== null && strtolower($role) !== 'all') {
+            $normalized = strtoupper($role);
+
+            $qb->andWhere('r.name = :role')
+                ->setParameter('role', $normalized);
         }
 
         return $qb->getQuery()->getResult();

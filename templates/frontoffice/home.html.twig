@@ -12,21 +12,20 @@
 
 <div class="row">
     <div class="col-12">
-        <h2 class="h3 mb-4 text-center">Gestion des projets</h2>
-        <p class="lead text-center">Bienvenue. Gérez vos projets et tâches depuis le frontoffice.</p>
+        <h2 class="h3 mb-4 text-center">Gestion des utilisateurs</h2>
+        <p class="lead text-center">Bienvenue. Gérez vos equipes et votre profil depuis le frontoffice.</p>
         <div class="row g-4 mt-2">
             <div class="col-md-6">
                 <div class="card card-body bg-primary bg-opacity-10 p-4 h-100 border-0 shadow-sm">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h5 class="mb-1">Projets</h5>
-                            <p class="mb-0 small text-muted">Créer, modifier, consulter et supprimer des projets.</p>
+                            <h5 class="mb-1">Utilisateurs</h5>
+                            <p class="mb-0 small text-muted">Consultez et administrez les utilisateurs de votre organisation.</p>
                             <div class="mt-3">
-                                <a href="{{ path('app_projet_index') }}" class="btn btn-primary btn-sm">Voir les projets</a>
-                                <a href="{{ path('app_projet_new') }}" class="btn btn-outline-primary btn-sm">Nouveau projet</a>
+                                <a href="{{ path('app_admin_users_index') }}" class="btn btn-primary btn-sm">Voir les utilisateurs</a>
                             </div>
                         </div>
-                        <div class="icon-lg rounded-circle bg-primary text-white"><i class="bi bi-folder"></i></div>
+                        <div class="icon-lg rounded-circle bg-primary text-white"><i class="bi bi-people"></i></div>
                     </div>
                 </div>
             </div>
@@ -34,14 +33,13 @@
                 <div class="card card-body bg-success bg-opacity-10 p-4 h-100 border-0 shadow-sm">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h5 class="mb-1">Tâches</h5>
-                            <p class="mb-0 small text-muted">Chaque tâche est liée à un projet. Gérez vos tâches ici.</p>
+                            <h5 class="mb-1">Profil</h5>
+                            <p class="mb-0 small text-muted">Mettez a jour votre profil utilisateur.</p>
                             <div class="mt-3">
-                                <a href="{{ path('app_tache_index') }}" class="btn btn-success btn-sm">Voir les tâches</a>
-                                <a href="{{ path('app_tache_new') }}" class="btn btn-outline-success btn-sm">Nouvelle tâche</a>
+                                <a href="{{ path('app_front_profile_edit') }}" class="btn btn-success btn-sm">Mon profil</a>
                             </div>
                         </div>
-                        <div class="icon-lg rounded-circle bg-success text-white"><i class="bi bi-list-task"></i></div>
+                        <div class="icon-lg rounded-circle bg-success text-white"><i class="bi bi-person-bounding-box"></i></div>
                     </div>
                 </div>
             </div>

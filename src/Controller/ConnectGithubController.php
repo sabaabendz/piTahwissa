@@ -16,12 +16,6 @@ class ConnectGithubController extends AbstractController
     #[Route('/connect/github', name: 'connect_github_start', methods: ['GET'])]
     public function connectAction(Request $request, ClientRegistry $clientRegistry): RedirectResponse
     {
-        $role = $request->query->get('role');
-
-        if ($role && in_array($role, ['manager', 'collaborator'], true)) {
-            $request->getSession()->set('_oauth_auth_role', $role);
-        }
-
         return $clientRegistry
             ->getClient('github')
             ->redirect(['read:user', 'user:email'], []);

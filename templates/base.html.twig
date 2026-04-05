@@ -16,6 +16,7 @@
             <link rel="stylesheet" href="{{ asset('assets/vendor/overlay-scrollbar/css/overlayscrollbars.min.css') }}">
             <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
             <link rel="stylesheet" href="{{ asset('assets/css/branding.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/tahwissa-auth.css') }}">
 
             <style>
                 :root {
@@ -66,7 +67,7 @@
                         </button>
 
                         <div class="dropdown">
-                            {% set avatarPath = app.user and app.user.avatarName ? vich_uploader_asset(app.user, 'avatarFile') : asset('assets/images/avatar/01.jpg') %}
+                            {% set avatarPath = app.user and app.user.avatarUrl ? app.user.avatarUrl : asset('assets/images/avatar/01.jpg') %}
                             <a class="d-flex align-items-center text-decoration-none" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="{{ avatarPath }}" alt="avatar" class="rounded-circle avatar-hover" width="40" height="40">
                             </a>
@@ -90,37 +91,16 @@
                 </div>
                 <div class="offcanvas-body px-0">
                     <nav class="navbar-nav">
-                        {% if is_granted('ROLE_MANAGER') %}
+                        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_AGENT') %}
                             <div class="px-3 text-uppercase text-muted small fw-semibold mt-2">Core</div>
                             <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">
                                 <i class="bi bi-speedometer2 me-2"></i>Dashboard
                             </a>
 
                             <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">User Management</div>
-                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/collaborator' ? 'active' : '' }}" data-bs-toggle="collapse" href="#usersMenu" role="button" aria-expanded="false">
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/admin/users' ? 'active' : '' }}" href="{{ path('app_admin_users_index') }}">
                                 <i class="bi bi-people me-2"></i>Users
                             </a>
-                            <div class="collapse" id="usersMenu">
-                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo == '/collaborator' ? 'active' : '' }}" href="{{ path('app_collaborator_index') }}">List Users</a>
-                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/collaborator/new' ? 'active' : '' }}" href="{{ path('app_collaborator_new') }}">Add User</a>
-                            </div>
-
-                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Project Management</div>
-                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/projet' ? 'active' : '' }}" data-bs-toggle="collapse" href="#projectsMenu" role="button" aria-expanded="false">
-                                <i class="bi bi-kanban me-2"></i>Projects
-                            </a>
-                            <div class="collapse" id="projectsMenu">
-                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo == '/projet/' or app.request.pathInfo == '/projet' ? 'active' : '' }}" href="{{ path('app_projet_index') }}">List Projects</a>
-                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/projet/new' ? 'active' : '' }}" href="{{ path('app_projet_new') }}">Create Project</a>
-                            </div>
-
-                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/tache' ? 'active' : '' }}" data-bs-toggle="collapse" href="#tasksMenu" role="button" aria-expanded="false">
-                                <i class="bi bi-list-check me-2"></i>Tasks
-                            </a>
-                            <div class="collapse" id="tasksMenu">
-                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo == '/tache/' or app.request.pathInfo == '/tache' ? 'active' : '' }}" href="{{ path('app_tache_index') }}">List Tasks</a>
-                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/tache/new' ? 'active' : '' }}" href="{{ path('app_tache_new') }}">Create Task</a>
-                            </div>
 
                             <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Insights</div>
                             <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">
@@ -130,14 +110,12 @@
                                 <i class="bi bi-gear me-2"></i>Settings
                             </a>
                         {% else %}
-                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-2">Projects</div>
-                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/projet' ? 'active' : '' }}" href="{{ path('app_projet_index') }}">
-                                <i class="bi bi-kanban me-2"></i>Projects
-                            </a>
-
-                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Reports</div>
+                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-2">Reports</div>
                             <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">
                                 <i class="bi bi-bar-chart me-2"></i>Reports & Statistics
+                            </a>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/profile' ? 'active' : '' }}" href="{{ path('app_front_profile_edit') }}">
+                                <i class="bi bi-gear me-2"></i>Settings
                             </a>
                         {% endif %}
                     </nav>
@@ -155,6 +133,7 @@
             <script src="{{ asset('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
             <script src="{{ asset('assets/vendor/overlay-scrollbar/js/overlayscrollbars.min.js') }}"></script>
             <script src="{{ asset('assets/js/functions.js') }}"></script>
+            <script src="{{ asset('js/tahwissa-auth.js') }}"></script>
         {% endblock %}
     </body>
 </html>

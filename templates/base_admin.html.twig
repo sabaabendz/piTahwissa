@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 	<title>{% block title %}SmartTask Manager - Admin{% endblock %}</title>
 
@@ -86,49 +86,30 @@
 	<!-- Theme CSS -->
 	<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/branding.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset('css/tahwissa-auth.css') }}">
 
 	{% block stylesheets %}{% endblock %}
 </head>
 
 <body>
-	{% set page_body %}
+<div class="dashboard-body">
+	{% include 'partials/_sidebar.html.twig' %}
+
+	<div class="main-content">
+		{% set topbarTitle = block('topbar_title')|trim %}
+		{% set topbarSubtitle = block('topbar_subtitle')|trim %}
+		{% set topbarActions = block('topbar_actions')|trim %}
+		{% include 'partials/_topbar.html.twig' with {
+			title: topbarTitle is not empty ? topbarTitle : 'Tableau de bord',
+			subtitle: topbarSubtitle,
+			actions: topbarActions
+		} %}
+
+		{% include 'partials/_flash_messages.html.twig' %}
+
 		{% block body %}{% endblock %}
-	{% endset %}
-
-<!-- **************** MAIN CONTENT START **************** -->
-<main>
-	{% if is_granted('ROLE_ADMIN') %}
-		{% include 'partials/_sidebar.html.twig' %}
-
-		<!-- Page content START -->
-		<div class="page-content">
-
-			{% include 'partials/_topbar.html.twig' %}
-
-			<!-- Page main content START -->
-			<div class="page-content-wrapper border">
-
-				{% include 'partials/_flash_messages.html.twig' %}
-
-				{{ page_body }}
-
-			</div>
-			<!-- Page main content END -->
-		</div>
-		<!-- Page content END -->
-	{% else %}
-		<div class="page-content">
-			{% include 'partials/_member_topnav.html.twig' %}
-
-			<div class="page-content-wrapper border-0">
-				{% include 'partials/_flash_messages.html.twig' %}
-				<div class="container py-4">{{ page_body }}</div>
-			</div>
-		</div>
-	{% endif %}
-
-</main>
-<!-- **************** MAIN CONTENT END **************** -->
+	</div>
+</div>
 
 <!-- Back to top -->
 <div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
@@ -143,8 +124,13 @@
 
 <!-- Template Functions -->
 <script src="{{ asset('assets/js/functions.js') }}"></script>
+<script src="{{ asset('js/tahwissa-auth.js') }}"></script>
 
 {% block javascripts %}{% endblock %}
 
 </body>
 </html>
+
+{% block topbar_title %}{% endblock %}
+{% block topbar_subtitle %}{% endblock %}
+{% block topbar_actions %}{% endblock %}

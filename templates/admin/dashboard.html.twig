@@ -6,6 +6,7 @@
 <div class="row">
     <div class="col-12 mb-3">
         <h1 class="h3 mb-2 mb-sm-0">Dashboard</h1>
+        <p class="text-muted mb-0">User administration overview.</p>
     </div>
 </div>
 <div class="row g-4 mb-4">
@@ -13,77 +14,53 @@
         <div class="card card-body bg-primary bg-opacity-10 p-4 h-100">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h2 class="mb-0 fw-bold">{{ totalProjets }}</h2>
-                    <span class="mb-0 h6 fw-light">Projets</span>
+                    <h2 class="mb-0 fw-bold">{{ totalUsers }}</h2>
+                    <span class="mb-0 h6 fw-light">Users</span>
                 </div>
-                <div class="icon-lg rounded-circle bg-primary text-white mb-0"><i class="bi bi-folder"></i></div>
+                <div class="icon-lg rounded-circle bg-primary text-white mb-0"><i class="bi bi-people"></i></div>
             </div>
-            <a href="{{ path('app_admin_projet_index') }}" class="stretched-link"></a>
+            <a href="{{ path('app_admin_users_index') }}" class="stretched-link"></a>
         </div>
     </div>
     <div class="col-md-6 col-xxl-3">
         <div class="card card-body bg-success bg-opacity-10 p-4 h-100">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h2 class="mb-0 fw-bold">{{ totalTaches }}</h2>
-                    <span class="mb-0 h6 fw-light">Tâches</span>
+                    <h2 class="mb-0 fw-bold">{{ totalAgents }}</h2>
+                    <span class="mb-0 h6 fw-light">Agents</span>
                 </div>
-                <div class="icon-lg rounded-circle bg-success text-white mb-0"><i class="bi bi-list-task"></i></div>
+                <div class="icon-lg rounded-circle bg-success text-white mb-0"><i class="bi bi-person-badge"></i></div>
             </div>
-            <a href="{{ path('app_admin_tache_index') }}" class="stretched-link"></a>
+        </div>
+    </div>
+    <div class="col-md-6 col-xxl-3">
+        <div class="card card-body bg-info bg-opacity-10 p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0 fw-bold">{{ totalRegularUsers }}</h2>
+                    <span class="mb-0 h6 fw-light">Users</span>
+                </div>
+                <div class="icon-lg rounded-circle bg-info text-white mb-0"><i class="bi bi-person-lines-fill"></i></div>
+            </div>
         </div>
     </div>
 </div>
 <div class="row g-4">
-    <div class="col-lg-6">
-        <div class="card shadow h-100">
-            <div class="card-header border-bottom d-flex justify-content-between align-items-center p-4">
-                <h5 class="card-header-title mb-0">Statistiques des projets par statut</h5>
-            </div>
-            <div class="card-body p-4">
-                <div id="statutChart" style="min-height: 300px;"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="card shadow h-100">
-            <div class="card-header border-bottom d-flex justify-content-between align-items-center p-4">
-                <h5 class="card-header-title mb-0">Derniers projets</h5>
-                <a href="{{ path('app_admin_projet_index') }}" class="btn btn-link p-0 mb-0">Voir tout</a>
-            </div>
-            <div class="card-body p-4">
-                {% if projets is empty %}
-                    <p class="mb-0">Aucun projet.</p>
-                {% else %}
-                    <ul class="list-group list-group-flush">
-                        {% for p in projets %}
-                            <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
-                                <a href="{{ path('app_admin_projet_show', { id: p.id }) }}">{{ p.nom }}</a>
-                                <span class="badge bg-{{ p.statut == 'termine' ? 'success' : (p.statut == 'actif' ? 'primary' : 'secondary') }}">{{ p.statut == 'termine' ? 'Terminé' : (p.statut == 'actif' ? 'Actif' : 'En attente') }}</span>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row g-4 mt-2">
     <div class="col-lg-12">
         <div class="card shadow h-100">
             <div class="card-header border-bottom d-flex justify-content-between align-items-center p-4">
-                <h5 class="card-header-title mb-0">Dernières tâches</h5>
-                <a href="{{ path('app_admin_tache_index') }}" class="btn btn-link p-0 mb-0">Voir tout</a>
+                <h5 class="card-header-title mb-0">Latest Users</h5>
+                <a href="{{ path('app_admin_users_index') }}" class="btn btn-link p-0 mb-0">View all</a>
             </div>
             <div class="card-body p-4">
-                {% if taches is empty %}
-                    <p class="mb-0">Aucune tâche.</p>
+                {% if users is empty %}
+                    <p class="mb-0">No users found.</p>
                 {% else %}
                     <ul class="list-group list-group-flush">
-                        {% for t in taches %}
+                        {% for user in users %}
                             <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
-                                <a href="{{ path('app_admin_tache_show', { id: t.id }) }}">{{ t.libelle }}</a>
-                                <span class="badge bg-secondary">{{ t.projet.nom }}</span>
+                                <span>{{ (user.firstName ?: '') ~ ' ' ~ (user.lastName ?: '')|trim ?: user.email }} <small class="text-muted">({{ user.email }})</small></span>
+                                <span class="badge bg-{{ user.isActive ? 'success' : 'secondary' }}">{{ user.isActive ? 'Enabled' : 'Disabled' }}</span>
                             </li>
                         {% endfor %}
                     </ul>
@@ -94,61 +71,4 @@
 </div>
 {% endblock %}
 
-{% block javascripts %}
-<script src="{{ asset('assets/vendor/apexcharts/js/apexcharts.min.js') }}"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var options = {
-        series: [{{ statutStats.en_attente }}, {{ statutStats.actif }}, {{ statutStats.termine }}],
-        chart: {
-            type: 'pie',
-            height: 300,
-            toolbar: {
-                show: false
-            }
-        },
-        labels: ['En attente', 'Actif', 'Terminé'],
-        colors: ['#6c757d', '#0d6efd', '#198754'],
-        legend: {
-            position: 'bottom',
-            fontSize: '14px',
-            fontFamily: 'inherit',
-            labels: {
-                colors: '#6c757d'
-            }
-        },
-        dataLabels: {
-            enabled: true,
-            formatter: function(val, opts) {
-                return opts.w.config.series[opts.seriesIndex];
-            },
-            style: {
-                fontSize: '14px',
-                fontFamily: 'inherit'
-            }
-        },
-        tooltip: {
-            y: {
-                formatter: function(val) {
-                    return val + ' projet' + (val > 1 ? 's' : '');
-                }
-            }
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200
-                },
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }]
-    };
-
-    var chart = new ApexCharts(document.querySelector("#statutChart"), options);
-    chart.render();
-});
-</script>
-{% endblock %}
+{% block javascripts %}{% endblock %}

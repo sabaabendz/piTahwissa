@@ -1,138 +1,36 @@
-<nav class="navbar sidebar navbar-expand-xl navbar-dark bg-dark">
-    <div class="d-flex align-items-center">
-        <a class="navbar-brand" href="{{ path('app_dashboard_index') }}">
-            <span class="navbar-brand-text">
-                <i class="bi bi-rocket-takeoff brand-icon"></i>
-                <span class="brand-name">SmartTask</span><span class="brand-dot">.</span>
-            </span>
-        </a>
-    </div>
-    
-    <div class="offcanvas offcanvas-start flex-row custom-scrollbar h-100" data-bs-backdrop="true" tabindex="-1" id="offcanvasSidebar">
-        <div class="offcanvas-body sidebar-content d-flex flex-column bg-dark">
-            <ul class="navbar-nav flex-column" id="navbar-sidebar">
-                
-                <li class="nav-item">
-                    <a href="{{ path('app_dashboard_index') }}" class="nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}">
-                        <i class="bi bi-house fa-fw me-2"></i>Dashboard
-                    </a>
-                </li>
-                
-                {% if is_granted('ROLE_ADMIN') %}
-                    
-                    <li class="nav-item ms-2 my-2">Admin</li>
-                    
-                    <li class="nav-item">
-                        <a href="{{ path('app_admin_users_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_admin_users' ? 'active' : '' }}">
-                            <i class="bi bi-people-fill fa-fw me-2"></i>User Management
-                        </a>
-                    </li>
+<aside class="sidebar">
+    <a href="{{ path('app_dashboard_index') }}" class="sidebar-brand">
+        <div class="brand-icon">ST</div>
+        <div class="brand-text">Tahwissa<small>Panneau Admin</small></div>
+    </a>
 
-                    <li class="nav-item">
-                        <a href="{{ path('app_admin_projet_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_admin_projet' ? 'active' : '' }}">
-                            <i class="bi bi-folder fa-fw me-2"></i>Projects
-                        </a>
-                    </li>
+    <ul class="sidebar-nav">
+        <li class="nav-section">Principal</li>
+        <li>
+            <a href="{{ path('app_dashboard_index') }}" class="{{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}">
+                <span class="nav-icon"><i class="fas fa-th-large"></i></span> Dashboard
+            </a>
+        </li>
 
-                    <li class="nav-item">
-                        <a href="{{ path('app_admin_tache_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_admin_tache' ? 'active' : '' }}">
-                            <i class="bi bi-list-task fa-fw me-2"></i>Tasks
-                        </a>
-                    </li>
-                    
-                {% elseif is_granted('ROLE_MANAGER') %}
-                    
-                    <li class="nav-item ms-2 my-2">Team Management</li>
-                    
-                    <li class="nav-item">
-                        <a href="{{ path('app_collaborator_index') }}" class="nav-link {{ app.request.get('_route') == 'app_collaborator_index' ? 'active' : '' }}">
-                            <i class="fas fa-user-graduate fa-fw me-2"></i>My Collaborators
-                        </a>
-                    </li>
-                    
-                    <li class="nav-item ms-2 my-2">Project Management</li>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" 
-                           data-bs-toggle="collapse" href="#collapseProjects" role="button" aria-expanded="false">
-                            <i class="fas fa-project-diagram fa-fw me-2"></i>Projects
-                        </a>
-                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_projet' ? 'show' : '' }}" 
-                            id="collapseProjects" data-bs-parent="#navbar-sidebar">
-                            <li class="nav-item">
-                                <a class="nav-link {{ app.request.get('_route') == 'app_projet_index' ? 'active' : '' }}" 
-                                   href="{{ path('app_projet_index') }}">All Projects</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ app.request.get('_route') == 'app_projet_new' ? 'active' : '' }}" 
-                                   href="{{ path('app_projet_new') }}">Create Project</a>
-                            </li>
-                        </ul>
-                    </li>
+        <li class="nav-section">Gestion</li>
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_AGENT') %}
+            <li>
+                <a href="{{ path('app_admin_users_index') }}" class="{{ app.request.get('_route') starts with 'app_admin_users' ? 'active' : '' }}">
+                    <span class="nav-icon"><i class="fas fa-users"></i></span> Utilisateurs
+                </a>
+            </li>
+        {% endif %}
+        <li>
+            <a href="{{ path('app_front_profile_edit') }}" class="{{ app.request.get('_route') == 'app_front_profile_edit' ? 'active' : '' }}">
+                <span class="nav-icon"><i class="fas fa-user-cog"></i></span> Profil
+            </a>
+        </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link {{ app.request.get('_route') starts with 'app_tache' ? 'active' : '' }}" 
-                           data-bs-toggle="collapse" href="#collapseTasks" role="button" aria-expanded="false">
-                            <i class="fas fa-tasks fa-fw me-2"></i>Tasks
-                        </a>
-                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'app_tache' ? 'show' : '' }}" 
-                            id="collapseTasks" data-bs-parent="#navbar-sidebar">
-                            <li class="nav-item">
-                                <a class="nav-link {{ app.request.get('_route') == 'app_tache_index' ? 'active' : '' }}" 
-                                   href="{{ path('app_tache_index') }}">All Tasks</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ app.request.get('_route') == 'app_tache_new' ? 'active' : '' }}" 
-                                   href="{{ path('app_tache_new') }}">Create Task</a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item ms-2 my-2">Reports</li>
-                    <li class="nav-item">
-                        <a href="{{ path('app_dashboard_index') }}" class="nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}">
-                            <i class="bi bi-bar-chart fa-fw me-2"></i>Reports & Statistics
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="{{ path('app_front_profile_edit') }}" class="nav-link {{ app.request.get('_route') == 'app_front_profile_edit' ? 'active' : '' }}">
-                            <i class="bi bi-gear fa-fw me-2"></i>Settings
-                        </a>
-                    </li>
-                    
-                {% elseif is_granted('ROLE_COLLABORATOR') %}
-                    
-                    <li class="nav-item ms-2 my-2">Projects</li>
-
-                    <li class="nav-item">
-                        <a href="{{ path('app_projet_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}">
-                            <i class="fas fa-project-diagram fa-fw me-2"></i>Projects
-                        </a>
-                    </li>
-
-                    <li class="nav-item ms-2 my-2">Reports</li>
-                    <li class="nav-item">
-                        <a href="{{ path('app_dashboard_index') }}" class="nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}">
-                            <i class="bi bi-bar-chart fa-fw me-2"></i>Reports & Statistics
-                        </a>
-                    </li>
-                    
-                {% endif %}
-                
-            </ul>
-            
-            <div class="px-3 mt-auto pt-3">
-                <div class="d-flex align-items-center justify-content-center text-primary-hover">
-                    <a class="h5 mb-0 text-body" href="{{ path('app_dashboard_index') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Home">
-                        <i class="bi bi-globe me-3"></i>
-                    </a>
-                    <a class="h5 mb-0 text-body" href="{{ path('app_front_profile_edit') }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Profile">
-                        <i class="bi bi-person-fill"></i>
-                    </a>
-                </div>
-            </div>
-            
-        </div>
-    </div>
-</nav>
+        <li class="nav-section">Système</li>
+        <li>
+            <a href="{{ path('app_logout') }}">
+                <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span> Déconnexion
+            </a>
+        </li>
+    </ul>
+</aside>

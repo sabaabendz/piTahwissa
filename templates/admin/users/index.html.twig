@@ -1,49 +1,91 @@
 {% extends 'base_admin.html.twig' %}
 
-{% block title %}User Management - Admin{% endblock %}
+{% block title %}Utilisateurs - Tahwissa Admin{% endblock %}
+{% block topbar_title %}Utilisateurs{% endblock %}
+{% block topbar_subtitle %}Gérer les comptes utilisateurs de la plateforme{% endblock %}
+{% block topbar_actions %}
+<a class="btn btn-primary btn-sm" href="{{ path('app_admin_users_new') }}">
+        <i class="fas fa-user-plus"></i> Ajouter
+</a>
+{% endblock %}
 
 {% block body %}
-<div class="container-fluid p-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="h3 mb-2">User Management</h1>
-            <p class="text-muted mb-0">Manage users, role visibility, and account status from one page.</p>
-        </div>
-    </div>
+{% set stats = stats|default({total: users|length, user: 0, agent: 0, admin: 0, blocked: 0}) %}
 
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-4">
-                    <label for="adminUserRoleFilter" class="form-label">Role</label>
-                    <select id="adminUserRoleFilter" class="form-select">
-                        <option value="all" {{ selectedRole == 'all' ? 'selected' : '' }}>All</option>
-                        <option value="admin" {{ selectedRole == 'admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="manager" {{ selectedRole == 'manager' ? 'selected' : '' }}>Manager</option>
-                        <option value="collaborator" {{ selectedRole == 'collaborator' ? 'selected' : '' }}>Collaborator</option>
-                    </select>
-                </div>
-                <div class="col-md-8">
-                    <label for="adminUserQuery" class="form-label">Search</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input
-                            type="text"
-                            id="adminUserQuery"
-                            class="form-control"
-                            placeholder="Search by name or email"
-                            value="{{ query|default('') }}"
-                        >
-                    </div>
-                </div>
-            </div>
+<div class="dashboard-card" style="margin-bottom:24px;padding:16px 24px;">
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <span style="font-weight:600;font-size:0.9rem;color:var(--text-muted);"><i class="fas fa-filter"></i> Filtres:</span>
+                <a href="{{ path('app_admin_users_index', { role: 'all' }) }}" class="btn btn-sm" style="background:{{ selectedRole == 'all' ? 'var(--primary)' : '#f1f5f9' }};color:{{ selectedRole == 'all' ? 'white' : 'var(--text-dark)' }};padding:6px 16px;font-size:0.8rem;">Tous ({{ stats.total }})</a>
+                <a href="{{ path('app_admin_users_index', { role: 'user' }) }}" class="btn btn-sm" style="background:{{ selectedRole == 'user' ? 'var(--primary)' : '#f1f5f9' }};color:{{ selectedRole == 'user' ? 'white' : 'var(--text-dark)' }};padding:6px 16px;font-size:0.8rem;">Clients ({{ stats.user }})</a>
+                <a href="{{ path('app_admin_users_index', { role: 'agent' }) }}" class="btn btn-sm" style="background:{{ selectedRole == 'agent' ? 'var(--primary)' : '#f1f5f9' }};color:{{ selectedRole == 'agent' ? 'white' : 'var(--text-dark)' }};padding:6px 16px;font-size:0.8rem;">Agents ({{ stats.agent }})</a>
+                <a href="{{ path('app_admin_users_index', { role: 'admin' }) }}" class="btn btn-sm" style="background:{{ selectedRole == 'admin' ? 'var(--primary)' : '#f1f5f9' }};color:{{ selectedRole == 'admin' ? 'white' : 'var(--text-dark)' }};padding:6px 16px;font-size:0.8rem;">Admins ({{ stats.admin }})</a>
+                <span class="btn btn-sm" style="background:rgba(255,23,68,0.1);color:var(--danger);padding:6px 16px;font-size:0.8rem;cursor:default;">Bloqués ({{ stats.blocked }})</span>
         </div>
-    </div>
-
-    <div id="adminUsersListContainer">
-        {% include 'admin/users/_table.html.twig' with {'users': users} %}
-    </div>
 </div>
 
-<script src="{{ asset('assets/js/admin-user-management.js') }}"></script>
+<div class="dashboard-card">
+        <table class="data-table" id="usersTable">
+                <thead>
+                        <tr>
+                                <th><input type="checkbox" style="accent-color:var(--primary);"></th>
+                                <th>Utilisateur</th>
+                                <th>Rôle</th>
+                                <th>Téléphone</th>
+                                <th>Inscription</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                        </tr>
+                </thead>
+                <tbody>
+                        {% for user in users %}
+                                {% set firstInitial = user.firstName ? user.firstName|slice(0, 1)|upper : '' %}
+                                {% set lastInitial = user.lastName ? user.lastName|slice(0, 1)|upper : '' %}
+                                {% set initials = firstInitial ~ lastInitial %}
+                                {% set roleName = (user.role ? user.role.name : 'USER')|upper %}
+                                <tr>
+                                        <td><input type="checkbox" style="accent-color:var(--primary);"></td>
+                                        <td>
+                                                <div class="user-cell">
+                                                        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#42A5F5,#1565C0);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.85rem;">{{ initials != '' ? initials : 'U' }}</div>
+                                                        <div>
+                                                                <div class="name">{{ user.name }}</div>
+                                                                <div class="email">{{ user.email }}</div>
+                                                        </div>
+                                                </div>
+                                        </td>
+                                        <td>
+                                                {% if roleName == 'ADMIN' %}
+                                                        <span class="badge badge-warning" style="color:#d4a000;">Admin</span>
+                                                {% elseif roleName == 'AGENT' %}
+                                                        <span class="badge badge-purple">Agent</span>
+                                                {% else %}
+                                                        <span class="badge badge-primary">Client</span>
+                                                {% endif %}
+                                        </td>
+                                        <td>{{ user.phone ?: '-' }}</td>
+                                        <td>{{ user.createdAt ? user.createdAt|date('d/m/Y') : '-' }}</td>
+                                        <td>
+                                                {% if user.isActive %}
+                                                        <span class="badge badge-success">Actif</span>
+                                                {% else %}
+                                                        <span class="badge badge-danger">Bloqué</span>
+                                                {% endif %}
+                                        </td>
+                                        <td>
+                                                <a class="action-btn edit" title="Modifier" href="{{ path('app_admin_users_edit', { id: user.id }) }}"><i class="fas fa-pen"></i></a>
+                                                <a class="action-btn" title="Voir" href="{{ path('app_admin_users_show', { id: user.id }) }}"><i class="fas fa-eye"></i></a>
+                                                <form method="post" action="{{ path('app_admin_users_delete', { id: user.id }) }}" style="display:inline-block;" onsubmit="return confirm('Supprimer cet utilisateur ?');">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete-user-' ~ user.id) }}">
+                                                        <button type="submit" class="action-btn delete" title="Supprimer"><i class="fas fa-trash"></i></button>
+                                                </form>
+                                        </td>
+                                </tr>
+                        {% else %}
+                                <tr>
+                                        <td colspan="7" style="text-align:center;">Aucun utilisateur trouvé.</td>
+                                </tr>
+                        {% endfor %}
+                </tbody>
+        </table>
+</div>
 {% endblock %}

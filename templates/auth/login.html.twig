@@ -2,248 +2,251 @@
 
 {% block title %}Login - SmartTask Manager{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/tahwissa-auth.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
 {% block body %}
-<section class="p-0 d-flex align-items-center position-relative overflow-hidden">
-	
-	<div class="container-fluid">
-		<div class="row">
-			<!-- left -->
-			<div class="col-12 col-lg-6 d-md-flex align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100">
-				<div class="p-3 p-lg-5">
-					<!-- Title -->
-					<div class="text-center">
-						<h2 class="fw-bold">Welcome to SmartTask Manager</h2>
-						<p class="mb-0 h6 fw-light">Intelligent Task & Meeting Management Platform</p>
-					</div>
-					<!-- SVG Image -->
-					<img src="{{ asset('assets/images/element/02.svg') }}" class="mt-5" alt="">
-					<!-- Info -->
-					<div class="d-sm-flex mt-5 align-items-center justify-content-center">
-						<!-- Avatar group -->
-						<ul class="avatar-group mb-2 mb-sm-0">
-							<li class="avatar avatar-sm">
-								<img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/01.jpg') }}" alt="avatar">
-							</li>
-							<li class="avatar avatar-sm">
-								<img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/02.jpg') }}" alt="avatar">
-							</li>
-							<li class="avatar avatar-sm">
-								<img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/03.jpg') }}" alt="avatar">
-							</li>
-							<li class="avatar avatar-sm">
-								<img class="avatar-img rounded-circle" src="{{ asset('assets/images/avatar/04.jpg') }}" alt="avatar">
-							</li>
-						</ul>
-						<!-- Content -->
-						<p class="mb-0 h6 fw-light ms-0 ms-sm-3">Join our team of managers and collaborators!</p>
-					</div>
-				</div>
-			</div>
+<div class="sky-bg">
+    <div class="sun"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="cloud cloud-4"></div>
+    <div class="plane plane-1">✈️</div>
+    <div class="plane plane-2">🛩️</div>
+    <div class="particles" id="particles"></div>
 
-			<!-- Right -->
-			<div class="col-12 col-lg-6 m-auto">
-				<div class="row my-5">
-					<div class="col-sm-10 col-xl-8 m-auto">
-						<!-- Title -->
-						<span class="mb-0 fs-1">👋</span>
-						<h1 class="fs-2">Login to SmartTask Manager!</h1>
-						<p class="lead mb-4">Nice to see you! Please log in with your account.</p>
-						<div id="faceLoginMessage"></div>
-						<input type="hidden" id="faceLoginCsrf" value="{{ csrf_token('face_login') }}">
+    <div class="auth-page">
+        <div class="auth-container" style="max-width: 560px;">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="logo">
+                        <span>✈️ SmartTask</span>
+                    </div>
+                    <h2>Bon Retour ! 👋</h2>
+                    <p>Connectez-vous pour continuer votre session</p>
+                </div>
 
-						<!-- Form START (novalidate: no browser validation, PHP only) -->
-						<form method="post" novalidate>
-							{% if error %}
-								<div class="alert alert-danger alert-dismissible fade show" role="alert">
-									<i class="bi bi-exclamation-triangle me-2"></i>{{ error.messageKey|trans(error.messageData, 'security') }}
-									<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-								</div>
-							{% endif %}
+                <div id="faceLoginMessage"></div>
+                <input type="hidden" id="faceLoginCsrf" value="{{ csrf_token('face_login') }}">
 
-							<!-- Email -->
-							<div class="mb-4">
-								<label for="inputEmail" class="form-label">Email address</label>
-								<div class="input-group input-group-lg">
-									<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="bi bi-envelope-fill"></i></span>
-									<input type="text" 
-										   class="form-control border-0 bg-light rounded-end ps-1" 
-										   placeholder="E-mail" 
-										   id="inputEmail" 
-										   name="_username" 
-										   value="{{ last_username }}" 
-										   autocomplete="email"
-										   autofocus>
-								</div>
-							</div>
-							<!-- Password -->
-							<div class="mb-4">
-								<label for="inputPassword" class="form-label">Password</label>
-								<div class="input-group input-group-lg">
-									<span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i class="fas fa-lock"></i></span>
-									<input type="password" 
-										   class="form-control border-0 bg-light rounded-end ps-1" 
-										   placeholder="password" 
-										   id="inputPassword" 
-										   name="_password"
-										   autocomplete="current-password">
-								</div>
-							</div>
-							<!-- Check box -->
-							<div class="mb-4 d-flex justify-content-between mb-4">
-								<div class="form-check">
-									<input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me" value="on">
-									<label class="form-check-label" for="remember_me">Remember me</label>
-								</div>
-								<div class="text-primary-hover">
-									<a href="{{ path('app_forgot_password') }}" class="text-secondary">
-										<u>Forgot password?</u>
-									</a>
-								</div>
-							</div>
-							<!-- Button -->
-							<div class="align-items-center mt-0">
-								<div class="mb-3 d-flex justify-content-center">
-									<div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
-								</div>
-								<div class="d-grid">
-									<button class="btn btn-primary mb-0" type="submit">Login</button>
-								</div>
-								<div class="d-grid mt-3">
-									<a href="{{ path('connect_google_start') }}" data-turbo="false" class="btn btn-outline-secondary" type="button">
-										<svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" class="me-2"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 6.168-2.172l-2.908-2.258c-.806.54-1.837.86-3.26.86-2.51 0-4.656-1.696-5.424-4.07H.638v2.331C2.33 15.98 5.5 18 9 18z"/><path fill="#FBBC05" d="M3.576 10.711c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.638C.232 6.46 0 7.988 0 9.5s.232 3.04.638 4.54l2.938-2.258 3.04 2.318z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.5 0 2.33 2.02.638 4.96l2.938 2.258C4.344 5.276 6.49 3.58 9 3.58z"/></svg>
-										Continue with Google
-									</a>
-								</div>
-								<div class="d-grid mt-2">
-									<a href="{{ path('connect_github_start') }}" data-turbo="false" class="btn btn-outline-secondary" type="button">
-										<i class="fab fa-github me-2"></i>
-										Continue with GitHub
-									</a>
-								</div>
-							</div>
+                <form method="post" novalidate>
+                    {% if error %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>{{ error.messageKey|trans(error.messageData, 'security') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
 
-							<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-							<input type="hidden" name="_target_path" value="{{ path('app_dashboard_index') }}">
-						</form>
-						<!-- Form END -->
+                    <div class="form-group">
+                        <label for="inputEmail">Email</label>
+                        <div style="position: relative;">
+                            <i class="fas fa-envelope form-icon" style="top: 50%; transform: translateY(-50%);"></i>
+                            <input
+                                type="text"
+                                id="inputEmail"
+                                name="_username"
+                                class="form-input"
+                                placeholder="votre@email.com"
+                                value="{{ last_username }}"
+                                autocomplete="email"
+                                autofocus
+                            >
+                        </div>
+                    </div>
 
-						<div class="my-4 text-center text-muted">or</div>
+                    <div class="form-group">
+                        <label for="inputPassword">Mot de passe</label>
+                        <div style="position: relative;">
+                            <i class="fas fa-lock form-icon" style="top: 50%; transform: translateY(-50%);"></i>
+                            <input
+                                type="password"
+                                id="inputPassword"
+                                name="_password"
+                                class="form-input"
+                                placeholder="••••••••"
+                                autocomplete="current-password"
+                            >
+                            <button type="button" class="password-toggle" id="togglePasswordBtn" aria-label="Afficher le mot de passe">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
 
-						<div class="card border-0 bg-light p-3">
-							<h6 class="mb-3"><i class="bi bi-person-bounding-box me-2"></i>Face ID Login</h6>
-							<video id="faceLoginVideo" class="w-100 rounded border mb-2" autoplay playsinline style="max-height: 220px; object-fit: cover;"></video>
-							<canvas id="faceLoginCanvas" class="d-none"></canvas>
-							<div class="d-grid gap-2">
-								<button type="button" id="faceLoginStart" class="btn btn-outline-primary btn-sm">Start Camera</button>
-								<button type="button" id="faceLoginSubmit" class="btn btn-outline-success btn-sm" disabled>Login with Face ID</button>
-							</div>
-							<div id="faceLoginStatus" class="small text-muted mt-2">Start camera to continue.</div>
-						</div>
+                    <div class="d-flex justify-content-between align-items-center mb-4" style="margin-top: -8px;">
+                        <div class="form-check m-0">
+                            <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me" value="on">
+                            <label class="form-check-label" for="remember_me">Remember me</label>
+                        </div>
+                        <a href="{{ path('app_forgot_password') }}" class="forgot-link" style="margin: 0;">Mot de passe oublié ?</a>
+                    </div>
 
-						
+                    <div class="mb-3 d-flex justify-content-center">
+                        <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
+                    </div>
 
-						<!-- Sign up link -->
-						<div class="mt-4 text-center">
-							<span>Don't have an account? <a href="{{ path('app_register') }}">Signup here</a></span>
-						</div>
-					</div>
-				</div> <!-- Row END -->
-			</div>
-		</div> <!-- Row END -->
-	</div>
-</section>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 14px;">
+                        <i class="fas fa-sign-in-alt"></i> Se Connecter
+                    </button>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <input type="hidden" name="_target_path" value="{{ path('app_dashboard_index') }}">
+                </form>
+
+                <div class="auth-divider">ou continuer avec</div>
+
+                <div class="d-grid gap-2">
+                    <a href="{{ path('connect_google_start') }}" data-turbo="false" class="btn btn-outline" style="justify-content: center;">
+                        <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 6.168-2.172l-2.908-2.258c-.806.54-1.837.86-3.26.86-2.51 0-4.656-1.696-5.424-4.07H.638v2.331C2.33 15.98 5.5 18 9 18z"/><path fill="#FBBC05" d="M3.576 10.711c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.638C.232 6.46 0 7.988 0 9.5s.232 3.04.638 4.54l2.938-2.258 3.04 2.318z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.5 0 2.33 2.02.638 4.96l2.938 2.258C4.344 5.276 6.49 3.58 9 3.58z"/></svg>
+                        Continue with Google
+                    </a>
+                    <a href="{{ path('connect_github_start') }}" data-turbo="false" class="btn btn-outline" style="justify-content: center;">
+                        <i class="fab fa-github"></i>
+                        Continue with GitHub
+                    </a>
+                </div>
+
+                <div class="auth-divider">ou utiliser Face ID</div>
+
+                <div class="glass-card-solid p-3" style="border-radius: 14px;">
+                    <h6 class="mb-3"><i class="bi bi-person-bounding-box me-2"></i>Face ID Login</h6>
+                    <video id="faceLoginVideo" class="w-100 rounded border mb-2" autoplay playsinline style="max-height: 220px; object-fit: cover;"></video>
+                    <canvas id="faceLoginCanvas" class="d-none"></canvas>
+                    <div class="d-grid gap-2">
+                        <button type="button" id="faceLoginStart" class="btn btn-outline">Start Camera</button>
+                        <button type="button" id="faceLoginSubmit" class="btn btn-primary" disabled>Login with Face ID</button>
+                    </div>
+                    <div id="faceLoginStatus" class="small text-muted mt-2">Start camera to continue.</div>
+                </div>
+
+                <div class="auth-footer">
+                    Don't have an account? <a href="{{ path('app_register') }}">Signup here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
+<script src="{{ asset('js/tahwissa-auth.js') }}"></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
-	(() => {
-		const video = document.getElementById('faceLoginVideo');
-		const canvas = document.getElementById('faceLoginCanvas');
-		const startButton = document.getElementById('faceLoginStart');
-		const submitButton = document.getElementById('faceLoginSubmit');
-		const status = document.getElementById('faceLoginStatus');
-		const message = document.getElementById('faceLoginMessage');
-		const emailInput = document.getElementById('inputEmail');
-						const csrfInput = document.getElementById('faceLoginCsrf');
+    (() => {
+        const video = document.getElementById('faceLoginVideo');
+        const canvas = document.getElementById('faceLoginCanvas');
+        const startButton = document.getElementById('faceLoginStart');
+        const submitButton = document.getElementById('faceLoginSubmit');
+        const status = document.getElementById('faceLoginStatus');
+        const message = document.getElementById('faceLoginMessage');
+        const emailInput = document.getElementById('inputEmail');
+        const csrfInput = document.getElementById('faceLoginCsrf');
+        const passwordInput = document.getElementById('inputPassword');
+        const togglePasswordBtn = document.getElementById('togglePasswordBtn');
 
-						if (!video || !canvas || !startButton || !submitButton || !status || !message || !emailInput || !csrfInput) {
-			return;
-		}
+        if (togglePasswordBtn && passwordInput) {
+            togglePasswordBtn.addEventListener('click', () => {
+                const icon = togglePasswordBtn.querySelector('i');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    if (icon) {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    }
+                } else {
+                    passwordInput.type = 'password';
+                    if (icon) {
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                }
+            });
+        }
 
-		let stream;
+        if (!video || !canvas || !startButton || !submitButton || !status || !message || !emailInput || !csrfInput) {
+            return;
+        }
 
-		const showMessage = (text, level = 'danger') => {
-			message.innerHTML = `<div class="alert alert-${level} alert-dismissible fade show" role="alert">${text}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
-		};
+        let stream;
 
-		startButton.addEventListener('click', async () => {
-			try {
-				stream = await navigator.mediaDevices.getUserMedia({ video: true });
-				video.srcObject = stream;
-				submitButton.disabled = false;
-				status.textContent = 'Camera ready. Look at the camera and click login.';
-				status.className = 'small text-success mt-2';
-			} catch (error) {
-				status.textContent = 'Unable to access camera.';
-				status.className = 'small text-danger mt-2';
-			}
-		});
+        const showMessage = (text, level = 'danger') => {
+            message.innerHTML = `<div class="alert alert-${level} alert-dismissible fade show" role="alert">${text}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+        };
 
-		submitButton.addEventListener('click', async () => {
-			const email = emailInput.value.trim();
-			if (!email) {
-				showMessage('Please enter your email first.', 'warning');
-				return;
-			}
+        startButton.addEventListener('click', async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                submitButton.disabled = false;
+                status.textContent = 'Camera ready. Look at the camera and click login.';
+                status.className = 'small text-success mt-2';
+            } catch (error) {
+                status.textContent = 'Unable to access camera.';
+                status.className = 'small text-danger mt-2';
+            }
+        });
 
-			if (!video.videoWidth || !video.videoHeight) {
-				showMessage('Camera is not ready yet.', 'warning');
-				return;
-			}
+        submitButton.addEventListener('click', async () => {
+            const email = emailInput.value.trim();
+            if (!email) {
+                showMessage('Please enter your email first.', 'warning');
+                return;
+            }
 
-			canvas.width = video.videoWidth;
-			canvas.height = video.videoHeight;
-			const ctx = canvas.getContext('2d');
-			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-			const image = canvas.toDataURL('image/jpeg', 0.92);
+            if (!video.videoWidth || !video.videoHeight) {
+                showMessage('Camera is not ready yet.', 'warning');
+                return;
+            }
 
-			status.textContent = 'Verifying face...';
-			status.className = 'small text-primary mt-2';
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                showMessage('Camera capture is unavailable in this browser.', 'danger');
+                return;
+            }
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const image = canvas.toDataURL('image/jpeg', 0.92);
 
-			try {
-				const response = await fetch('{{ path('app_face_login') }}', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-Requested-With': 'XMLHttpRequest'
-					},
-									body: JSON.stringify({
-										email,
-										image,
-										_csrf_token: csrfInput.value
-									})
-				});
+            status.textContent = 'Verifying face...';
+            status.className = 'small text-primary mt-2';
 
-				const data = await response.json();
+            try {
+                const response = await fetch('{{ path('app_face_login') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        image,
+                        _csrf_token: csrfInput.value
+                    })
+                });
 
-				if (!response.ok) {
-					showMessage(data.message || 'Face login failed.', 'danger');
-					status.textContent = 'Face login failed.';
-					status.className = 'small text-danger mt-2';
-					return;
-				}
+                const data = await response.json();
 
-				showMessage('Face login successful. Redirecting...', 'success');
-				status.textContent = 'Face detected and matched.';
-				status.className = 'small text-success mt-2';
-				window.location.href = data.redirect || '{{ path('app_dashboard_index') }}';
-			} catch (error) {
-				showMessage('Face ID service timeout/unavailable. Use password login.', 'warning');
-				status.textContent = 'Service unavailable.';
-				status.className = 'small text-warning mt-2';
-			}
-		});
-	})();
+                if (!response.ok) {
+                    showMessage(data.message || 'Face login failed.', 'danger');
+                    status.textContent = 'Face login failed.';
+                    status.className = 'small text-danger mt-2';
+                    return;
+                }
+
+                showMessage('Face login successful. Redirecting...', 'success');
+                status.textContent = 'Face detected and matched.';
+                status.className = 'small text-success mt-2';
+                window.location.href = data.redirect || '{{ path('app_dashboard_index') }}';
+            } catch (error) {
+                showMessage('Face ID service timeout/unavailable. Use password login.', 'warning');
+                status.textContent = 'Service unavailable.';
+                status.className = 'small text-warning mt-2';
+            }
+        });
+    })();
 </script>
 {% endblock %}

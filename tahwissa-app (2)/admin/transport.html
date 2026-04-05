@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahwissa Admin | Transport</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-brand"><div class="brand-icon">✈️</div><div class="brand-text">Tahwissa<small>Panneau Admin</small></div></a>
+  <ul class="sidebar-nav">
+    <li class="nav-section">Principal</li>
+    <li><a href="index.html"><span class="nav-icon"><i class="fas fa-th-large"></i></span> Dashboard</a></li>
+    <li class="nav-section">Gestion</li>
+    <li><a href="users.html"><span class="nav-icon"><i class="fas fa-users"></i></span> Utilisateurs</a></li>
+    <li><a href="reservations.html"><span class="nav-icon"><i class="fas fa-ticket-alt"></i></span> Réservations</a></li>
+    <li><a href="transport.html" class="active"><span class="nav-icon"><i class="fas fa-bus"></i></span> Transport</a></li>
+    <li><a href="events.html"><span class="nav-icon"><i class="fas fa-calendar-star"></i></span> Événements</a></li>
+    <li><a href="poi.html"><span class="nav-icon"><i class="fas fa-map-marker-alt"></i></span> Points d'Intérêt</a></li>
+    <li class="nav-section">Système</li>
+    <li><a href="../login.html"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span> Déconnexion</a></li>
+  </ul>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <div>
+      <h1><i class="fas fa-bus" style="color:var(--secondary);margin-right:10px;"></i>Transport</h1>
+      <p style="color:var(--text-muted);font-size:0.9rem;">Gérer les moyens de transport disponibles</p>
+    </div>
+    <div class="top-bar-right">
+      <div class="search-box"><i class="fas fa-search" style="color:var(--text-muted);"></i><input type="text" placeholder="Rechercher..."></div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('addTransport')"><i class="fas fa-plus"></i> Ajouter</button>
+    </div>
+  </div>
+
+  <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card blue"><div class="stat-icon"><i class="fas fa-bus"></i></div><div class="stat-info"><h3>38</h3><p>Bus</p></div></div>
+    <div class="stat-card purple"><div class="stat-icon"><i class="fas fa-shuttle-van"></i></div><div class="stat-info"><h3>15</h3><p>Minibus</p></div></div>
+    <div class="stat-card green"><div class="stat-icon"><i class="fas fa-train"></i></div><div class="stat-info"><h3>8</h3><p>Trains</p></div></div>
+    <div class="stat-card orange"><div class="stat-icon"><i class="fas fa-plane"></i></div><div class="stat-info"><h3>3</h3><p>Avions</p></div></div>
+  </div>
+
+  <!-- Transport Cards Grid -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">
+    <div class="dashboard-card" style="transition:var(--transition);cursor:pointer;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(0,0,0,0.12)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+        <div style="display:flex;gap:14px;align-items:center;">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#42A5F5,#1565C0);border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.3rem;"><i class="fas fa-bus"></i></div>
+          <div><h3 style="font-size:1rem;font-weight:700;">Bus Premium Alger</h3><p style="font-size:0.8rem;color:var(--text-muted);">Alger → Oran</p></div>
+        </div>
+        <span class="badge badge-success">Actif</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.85rem;color:var(--text-muted);">
+        <div><i class="fas fa-users" style="width:20px;color:var(--primary);"></i> 48 places</div>
+        <div><i class="fas fa-money-bill" style="width:20px;color:var(--success);"></i> 2,500 DA</div>
+        <div><i class="fas fa-clock" style="width:20px;color:var(--accent);"></i> 5h trajet</div>
+        <div><i class="fas fa-star" style="width:20px;color:#FFD600;"></i> 4.8/5</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid #f1f5f9;">
+        <button class="btn btn-sm btn-outline" style="flex:1;justify-content:center;font-size:0.8rem;padding:8px;"><i class="fas fa-pen"></i> Modifier</button>
+        <button class="btn btn-sm" style="flex:1;justify-content:center;font-size:0.8rem;padding:8px;background:rgba(255,23,68,0.1);color:var(--danger);border:1px solid rgba(255,23,68,0.2);border-radius:50px;"><i class="fas fa-trash"></i> Supprimer</button>
+      </div>
+    </div>
+
+    <div class="dashboard-card" style="transition:var(--transition);cursor:pointer;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(0,0,0,0.12)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+        <div style="display:flex;gap:14px;align-items:center;">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#7C4DFF,#B388FF);border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.3rem;"><i class="fas fa-shuttle-van"></i></div>
+          <div><h3 style="font-size:1rem;font-weight:700;">Minibus Kabylie</h3><p style="font-size:0.8rem;color:var(--text-muted);">Tizi Ouzou → Djurdjura</p></div>
+        </div>
+        <span class="badge badge-success">Actif</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.85rem;color:var(--text-muted);">
+        <div><i class="fas fa-users" style="width:20px;color:var(--primary);"></i> 18 places</div>
+        <div><i class="fas fa-money-bill" style="width:20px;color:var(--success);"></i> 1,500 DA</div>
+        <div><i class="fas fa-clock" style="width:20px;color:var(--accent);"></i> 2h trajet</div>
+        <div><i class="fas fa-star" style="width:20px;color:#FFD600;"></i> 4.6/5</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid #f1f5f9;">
+        <button class="btn btn-sm btn-outline" style="flex:1;justify-content:center;font-size:0.8rem;padding:8px;"><i class="fas fa-pen"></i> Modifier</button>
+        <button class="btn btn-sm" style="flex:1;justify-content:center;font-size:0.8rem;padding:8px;background:rgba(255,23,68,0.1);color:var(--danger);border:1px solid rgba(255,23,68,0.2);border-radius:50px;"><i class="fas fa-trash"></i> Supprimer</button>
+      </div>
+    </div>
+
+    <div class="dashboard-card" style="transition:var(--transition);cursor:pointer;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(0,0,0,0.12)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+        <div style="display:flex;gap:14px;align-items:center;">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#00C853,#00E676);border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.3rem;"><i class="fas fa-train"></i></div>
+          <div><h3 style="font-size:1rem;font-weight:700;">Train Express</h3><p style="font-size:0.8rem;color:var(--text-muted);">Alger → Constantine</p></div>
+        </div>
+        <span class="badge badge-warning">Maintenance</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.85rem;color:var(--text-muted);">
+        <div><i class="fas fa-users" style="width:20px;color:var(--primary);"></i> 200 places</div>
+        <div><i class="fas fa-money-bill" style="width:20px;color:var(--success);"></i> 3,000 DA</div>
+        <div><i class="fas fa-clock" style="width:20px;color:var(--accent);"></i> 4h trajet</div>
+        <div><i class="fas fa-star" style="width:20px;color:#FFD600;"></i> 4.9/5</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid #f1f5f9;">
+        <button class="btn btn-sm btn-outline" style="flex:1;justify-content:center;font-size:0.8rem;padding:8px;"><i class="fas fa-pen"></i> Modifier</button>
+        <button class="btn btn-sm" style="flex:1;justify-content:center;font-size:0.8rem;padding:8px;background:rgba(255,23,68,0.1);color:var(--danger);border:1px solid rgba(255,23,68,0.2);border-radius:50px;"><i class="fas fa-trash"></i> Supprimer</button>
+      </div>
+    </div>
+
+    <div class="dashboard-card" style="transition:var(--transition);cursor:pointer;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px rgba(0,0,0,0.12)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+        <div style="display:flex;gap:14px;align-items:center;">
+          <div style="width:52px;height:52px;background:linear-gradient(135deg,#FF6D00,#FF9100);border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.3rem;"><i class="fas fa-plane"></i></div>
+          <div><h3 style="font-size:1rem;font-weight:700;">Vol Air Tahwissa</h3><p style="font-size:0.8rem;color:var(--text-muted);">Alger → Djanet</p></div>
+        </div>
+        <span class="badge badge-success">Actif</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:0.85rem;color:var(--text-muted);">
+        <div><i class="fas fa-users" style="width:20px;color:var(--primary);"></i> 120 places</div>
+        <div><i class="fas fa-money-bill" style="width:20px;color:var(--success);"></i> 15,000 DA</div>
+        <div><i class="fas fa-clock" style="width:20px;color:var(--accent);"></i> 2h30 vol</div>
+        <div><i class="fas fa-star" style="width:20px;color:#FFD600;"></i> 4.7/5</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid #f1f5f9;">
+        <button class="btn btn-sm btn-outline" style="flex:1;justify-content:center;font-size:0.8rem;padding:8px;"><i class="fas fa-pen"></i> Modifier</button>
+        <button class="btn btn-sm" style="flex:1;justify-content:center;font-size:0.8rem;padding:8px;background:rgba(255,23,68,0.1);color:var(--danger);border:1px solid rgba(255,23,68,0.2);border-radius:50px;"><i class="fas fa-trash"></i> Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="addTransport" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+  <div style="background:white;border-radius:var(--radius-lg);padding:36px;max-width:520px;width:90%;animation:scaleIn 0.3s ease-out;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+      <h2 style="font-size:1.3rem;font-weight:700;"><i class="fas fa-bus" style="color:var(--secondary);margin-right:8px;"></i>Nouveau Transport</h2>
+      <button onclick="closeModal('addTransport')" style="background:none;border:none;font-size:1.3rem;cursor:pointer;"><i class="fas fa-times"></i></button>
+    </div>
+    <form>
+      <div class="form-group"><label>Nom</label><input class="form-input" style="padding-left:14px;" placeholder="Ex: Bus Premium Alger"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group"><label>Type</label><select class="form-input" style="padding-left:14px;"><option>Bus</option><option>Minibus</option><option>Train</option><option>Avion</option></select></div>
+        <div class="form-group"><label>Capacité</label><input type="number" class="form-input" style="padding-left:14px;" placeholder="48"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group"><label>Départ</label><input class="form-input" style="padding-left:14px;" placeholder="Alger"></div>
+        <div class="form-group"><label>Arrivée</label><input class="form-input" style="padding-left:14px;" placeholder="Oran"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group"><label>Prix (DA)</label><input type="number" class="form-input" style="padding-left:14px;" placeholder="2500"></div>
+        <div class="form-group"><label>Durée</label><input class="form-input" style="padding-left:14px;" placeholder="5h"></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+        <button type="button" onclick="closeModal('addTransport')" class="btn btn-outline btn-sm">Annuler</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-check"></i> Ajouter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+function openModal(id){document.getElementById(id).style.display='flex';}
+function closeModal(id){document.getElementById(id).style.display='none';}
+</script>
+</body>
+</html>

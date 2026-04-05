@@ -2,8 +2,7 @@
 
 namespace App\Controller;
 
-use App\Repository\ManagerRepository;
-use App\Repository\CollaboratorRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,22 +10,16 @@ use Symfony\Component\Routing\Attribute\Route;
 final class DashboardController extends AbstractController
 {
     #[Route('/dashboard', name: 'app_dashboard_index', methods: ['GET'])]
+    #[Route('/dashboard', name: 'app_dashboard', methods: ['GET'])]
     public function index(
-        ManagerRepository $managerRepository,
-        CollaboratorRepository $collaboratorRepository,
-        \App\Repository\ProjetRepository $projetRepository,
-        \App\Repository\TacheRepository $tacheRepository
+        UserRepository $userRepository
     ): Response {
-        $managersCount = $managerRepository->count([]);
-        $collaboratorsCount = $collaboratorRepository->count([]);
-        $projectsCount = $projetRepository->count([]);
-        $tasksCount = $tacheRepository->count([]);
+        $agentsCount = count($userRepository->findByRole('AGENT'));
+        $usersCount = count($userRepository->findByRole('USER'));
 
         $response = $this->render('dashboard/index.html.twig', [
-            'managers_count' => $managersCount,
-            'collaborators_count' => $collaboratorsCount,
-            'projects_count' => $projectsCount,
-            'tasks_count' => $tasksCount,
+            'agents_count' => $agentsCount,
+            'users_count' => $usersCount,
             'meetings_count' => 0, // Placeholder
         ]);
 

@@ -1,0 +1,24 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Edit User - Admin{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Edit User</h1>
+            <p class="text-muted mb-0">Update account information, status and role.</p>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            {{ include('admin/users/_form.html.twig', {
+                form: form,
+                user: user,
+                button_label: 'Update user'
+            }) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

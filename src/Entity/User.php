@@ -4,98 +4,95 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-#[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: "user")]
-#[ORM\InheritanceType("JOINED")]
-#[ORM\DiscriminatorColumn(name: "type", type: "string")]
-#[ORM\DiscriminatorMap([
-    "user" => User::class,
-    "collaborator" => Collaborator::class,
-    "manager" => Manager::class,
-])]
-class User implements UserInterface,PasswordAuthenticatedUserInterface
+#[ORM\Table(name: 'user')]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['email'], message: 'This email is already used.')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: "iduser", type: "integer")]
-    private ?int $idUser = null;
+    #[ORM\Column(name: 'id', type: 'integer')]
+    private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Name is required.')]
-    #[Assert\Length(min: 2, max: 255)]
-    private ?string $name = null;
-
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'email', type: 'string', length: 100, unique: true)]
     #[Assert\NotBlank(message: 'Email is required.')]
-    #[Assert\Email(message: 'The email {{ value }} is not a valid email.', mode: 'strict')]
-    #[Assert\Length(max: 255)]
+    #[Assert\Email(message: 'Please provide a valid email address.')]
+    #[Assert\Length(max: 100)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\PasswordStrength(minScore: 2, message: 'Your password is too weak. Please add numbers, symbols, or mix case.')]
+    #[ORM\Column(name: 'password', type: 'string', length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(length: 100, nullable: true, unique: true)]
-    private ?string $googleId = null;
+    #[ORM\Column(name: 'first_name', type: 'string', length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
+    private ?string $firstName = null;
 
-    #[ORM\Column(length: 100, nullable: true, unique: true)]
-    private ?string $linkedinId = null;
+    #[ORM\Column(name: 'last_name', type: 'string', length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
+    private ?string $lastName = null;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private array $roles = [];
+    #[ORM\Column(name: 'phone', type: 'string', length: 20, nullable: true)]
+    #[Assert\Length(max: 20)]
+    private ?string $phone = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $isEnabled = true;
+    #[ORM\Column(name: 'avatar_url', type: 'string', length: 500, nullable: true)]
+    private ?string $avatarUrl = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $resetToken = null;
+    #[ORM\Column(name: 'description', type: 'text', nullable: true)]
+    #[Assert\Length(max: 2000)]
+    private ?string $description = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $resetTokenExpiresAt = null;
+    #[ORM\Column(name: 'address', type: 'string', length: 200, nullable: true)]
+    #[Assert\Length(max: 200)]
+    private ?string $address = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $avatarName = null;
+    #[ORM\Column(name: 'city', type: 'string', length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
+    private ?string $city = null;
 
-    #[Vich\UploadableField(mapping: 'avatars', fileNameProperty: 'avatarName')]
-    private ?File $avatarFile = null;
+    #[ORM\Column(name: 'country', type: 'string', length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
+    private ?string $country = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'latitude', type: 'decimal', precision: 10, scale: 8, nullable: true)]
+    #[Assert\Range(min: -90, max: 90, notInRangeMessage: 'Latitude must be between {{ min }} and {{ max }}.')]
+    private ?string $latitude = null;
+
+    #[ORM\Column(name: 'longitude', type: 'decimal', precision: 11, scale: 8, nullable: true)]
+    #[Assert\Range(min: -180, max: 180, notInRangeMessage: 'Longitude must be between {{ min }} and {{ max }}.')]
+    private ?string $longitude = null;
+
+    #[ORM\Column(name: 'is_verified', type: 'boolean', options: ['default' => false])]
+    private bool $isVerified = false;
+
+    #[ORM\Column(name: 'is_active', type: 'boolean', options: ['default' => true])]
+    private bool $isActive = true;
+
+    #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'users')]
+    #[ORM\JoinColumn(name: 'role_id', referencedColumnName: 'id', nullable: true)]
+    #[Assert\NotNull(message: 'Please select a role.')]
+    private ?Role $role = null;
+
+    #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(name: 'updated_at', type: 'datetime_immutable')]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $faceEmbedding = null;
-
-   
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     public function getIdUser(): ?int
     {
-        return $this->idUser;
-    }
-
-    public function setIdUser(int $idUser): static
-    {
-        $this->idUser = $idUser;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
+        return $this->id;
     }
 
     public function getEmail(): ?string
@@ -115,136 +112,189 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(?string $password): static
+    public function setPassword(string $password): static
     {
         $this->password = $password;
 
         return $this;
     }
 
-    public function getGoogleId(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->googleId;
+        return $this->firstName;
     }
 
-    public function setGoogleId(?string $googleId): static
+    public function setFirstName(?string $firstName): static
     {
-        $this->googleId = $googleId;
+        $this->firstName = $firstName;
 
         return $this;
     }
 
-    public function getLinkedinId(): ?string
+    public function getLastName(): ?string
     {
-        return $this->linkedinId;
+        return $this->lastName;
     }
 
-    public function setLinkedinId(?string $linkedinId): static
+    public function setLastName(?string $lastName): static
     {
-        $this->linkedinId = $linkedinId;
+        $this->lastName = $lastName;
 
         return $this;
     }
 
-    public function getRoles(): array
+    public function getPhone(): ?string
     {
-        // Ensure roles is always an array (handle NULL from database)
-        $roles = $this->roles ?? [];
-        
-        // Guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->phone;
     }
 
-    public function setRoles(array $roles): static
+    public function setPhone(?string $phone): static
     {
-        $this->roles = $roles;
+        $this->phone = $phone;
 
         return $this;
     }
 
-    public function addRole(string $role): static
+    public function getAvatarUrl(): ?string
     {
-        if (!in_array($role, $this->roles, true)) {
-            $this->roles[] = $role;
-        }
+        return $this->avatarUrl;
+    }
+
+    public function setAvatarUrl(?string $avatarUrl): static
+    {
+        $this->avatarUrl = $avatarUrl;
 
         return $this;
     }
 
-    public function removeRole(string $role): static
+    public function getDescription(): ?string
     {
-        $this->roles = array_values(array_diff($this->roles, [$role]));
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): static
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(?string $city): static
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(?string $country): static
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?string
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?string $latitude): static
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?string
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?string $longitude): static
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }
 
     public function isEnabled(): bool
     {
-        return $this->isEnabled;
+        return $this->isActive;
     }
 
     public function setEnabled(bool $isEnabled): static
     {
-        $this->isEnabled = $isEnabled;
+        $this->isActive = $isEnabled;
 
         return $this;
     }
 
-    public function getResetToken(): ?string
+    public function getRole(): ?Role
     {
-        return $this->resetToken;
+        return $this->role;
     }
 
-    public function setResetToken(?string $resetToken): static
+    public function setRole(?Role $role): static
     {
-        $this->resetToken = $resetToken;
+        $this->role = $role;
 
         return $this;
     }
 
-    public function getResetTokenExpiresAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->resetTokenExpiresAt;
+        return $this->createdAt;
     }
 
-    public function setResetTokenExpiresAt(?\DateTimeImmutable $resetTokenExpiresAt): static
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
     {
-        $this->resetTokenExpiresAt = $resetTokenExpiresAt;
-
-        return $this;
-    }
-
-    public function isResetTokenExpired(): bool
-    {
-        return $this->resetTokenExpiresAt === null || $this->resetTokenExpiresAt < new \DateTimeImmutable();
-    }
-
-    public function getAvatarName(): ?string
-    {
-        return $this->avatarName;
-    }
-
-    public function setAvatarName(?string $avatarName): static
-    {
-        $this->avatarName = $avatarName;
-
-        return $this;
-    }
-
-    public function getAvatarFile(): ?File
-    {
-        return $this->avatarFile;
-    }
-
-    public function setAvatarFile(?File $avatarFile = null): static
-    {
-        $this->avatarFile = $avatarFile;
-
-        if ($avatarFile !== null) {
-            $this->updatedAt = new \DateTimeImmutable();
-        }
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -261,86 +311,59 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getName(): string
+    {
+        $fullName = trim((string) ($this->firstName . ' ' . $this->lastName));
+
+        return $fullName !== '' ? $fullName : (string) $this->email;
+    }
+
+    public function setName(string $name): static
+    {
+        $parts = preg_split('/\s+/', trim($name), 2);
+        $this->firstName = $parts[0] ?? null;
+        $this->lastName = $parts[1] ?? null;
+
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+        $roleName = strtoupper((string) ($this->role?->getName() ?? 'USER'));
+
+        if ($roleName === 'ADMIN') {
+            return ['ROLE_ADMIN'];
+        }
+
+        if ($roleName === 'AGENT') {
+            return ['ROLE_AGENT'];
+        }
+
+        return ['ROLE_USER'];
+    }
+
     public function eraseCredentials(): void
     {
     }
 
     public function getUserIdentifier(): string
     {
-        return $this->email ?? '';
+        return (string) $this->email;
     }
 
-    public function getFaceEmbedding(): ?array
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
     {
-        return $this->faceEmbedding;
+        $now = new \DateTimeImmutable();
+        if ($this->createdAt === null) {
+            $this->createdAt = $now;
+        }
+        $this->updatedAt = $now;
     }
 
-    public function setFaceEmbedding(?array $faceEmbedding): static
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
     {
-        $this->faceEmbedding = $faceEmbedding;
-
-        return $this;
-    }
-
-    public function __serialize(): array
-    {
-        return [
-            'idUser' => $this->idUser,
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => $this->password,
-            'googleId' => $this->googleId,
-            'linkedinId' => $this->linkedinId,
-            'roles' => $this->roles,
-            'isEnabled' => $this->isEnabled,
-            'resetToken' => $this->resetToken,
-            'resetTokenExpiresAt' => $this->resetTokenExpiresAt,
-            'avatarName' => $this->avatarName,
-            'updatedAt' => $this->updatedAt,
-            'faceEmbedding' => $this->faceEmbedding,
-        ];
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $read = static function (array $payload, string $property) {
-            if (array_key_exists($property, $payload)) {
-                return $payload[$property];
-            }
-
-            $prefixed = [
-                "\0*\0{$property}",
-                "\0" . self::class . "\0{$property}",
-            ];
-
-            foreach ($prefixed as $key) {
-                if (array_key_exists($key, $payload)) {
-                    return $payload[$key];
-                }
-            }
-
-            foreach ($payload as $key => $value) {
-                if (str_ends_with((string) $key, "\0{$property}")) {
-                    return $value;
-                }
-            }
-
-            return null;
-        };
-
-        $this->idUser = $read($data, 'idUser');
-        $this->name = $read($data, 'name');
-        $this->email = $read($data, 'email');
-        $this->password = $read($data, 'password');
-        $this->googleId = $read($data, 'googleId');
-        $this->linkedinId = $read($data, 'linkedinId');
-        $this->roles = $read($data, 'roles') ?? [];
-        $this->isEnabled = $read($data, 'isEnabled') ?? true;
-        $this->resetToken = $read($data, 'resetToken');
-        $this->resetTokenExpiresAt = $read($data, 'resetTokenExpiresAt');
-        $this->avatarName = $read($data, 'avatarName');
-        $this->updatedAt = $read($data, 'updatedAt');
-        $this->faceEmbedding = $read($data, 'faceEmbedding');
-        $this->avatarFile = null;
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }

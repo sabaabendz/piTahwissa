@@ -2,8 +2,8 @@
 
 namespace App\Controller\Admin;
 
-use App\Repository\ProjetRepository;
-use App\Repository\TacheRepository;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,26 +12,25 @@ use Symfony\Component\Routing\Attribute\Route;
 class DashboardController extends AbstractController
 {
     #[Route('/', name: 'app_admin_dashboard', methods: ['GET'])]
-    public function index(ProjetRepository $projetRepository, TacheRepository $tacheRepository): Response
+    public function index(
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager
+    ): Response
     {
-        $projets = $projetRepository->findBy([], ['id' => 'DESC'], 5);
-        $taches = $tacheRepository->findBy([], ['id' => 'DESC'], 5);
-        $totalProjets = $projetRepository->count([]);
-        $totalTaches = $tacheRepository->count([]);
-        
-        // Statistiques des projets par statut
-        $statutStats = [
-            'en_attente' => $projetRepository->count(['statut' => 'en_attente']),
-            'actif' => $projetRepository->count(['statut' => 'actif']),
-            'termine' => $projetRepository->count(['statut' => 'termine']),
-        ];
+        $users = $userRepository->findBy([], ['id' => 'DESC'], 8);
+        $totalUsers = $userRepository->count([]);
+        $totalAgents = $entityManager->createQuery('SELECT COUNT(u.id) FROM App\\Entity\\User u JOIN u.role r WHERE r.name = :name')
+            ->setParameter('name', 'AGENT')
+            ->getSingleScalarResult();
+        $totalRegularUsers = $entityManager->createQuery('SELECT COUNT(u.id) FROM App\\Entity\\User u JOIN u.role r WHERE r.name = :name')
+            ->setParameter('name', 'USER')
+            ->getSingleScalarResult();
         
         return $this->render('admin/dashboard.html.twig', [
-            'projets' => $projets,
-            'taches' => $taches,
-            'totalProjets' => $totalProjets,
-            'totalTaches' => $totalTaches,
-            'statutStats' => $statutStats,
+            'users' => $users,
+            'totalUsers' => $totalUsers,
+            'totalAgents' => $totalAgents,
+            'totalRegularUsers' => $totalRegularUsers,
         ]);
     }
 }

@@ -15,7 +15,7 @@ class UserEnabledChecker implements UserCheckerInterface
             return;
         }
 
-        if (!$user->isEnabled()) {
+        if (!$user->isActive()) {
             throw new CustomUserMessageAuthenticationException(
                 'Your account has been disabled. Please contact the administrator.'
             );

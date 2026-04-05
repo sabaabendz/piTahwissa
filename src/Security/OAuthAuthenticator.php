@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Role;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -75,46 +76,27 @@ class OAuthAuthenticator extends OAuth2Authenticator implements AuthenticationEn
                     throw new AuthenticationException('Email not provided by ' . ucfirst($clientKey));
                 }
 
-                // 1) Find existing user by specific OAuth ID
-                $existingUser = null;
-                if ($clientKey === 'google') {
-                    $existingUser = $this->entityManager->getRepository(User::class)
-                        ->findOneBy([$clientKey . 'Id' => $externalId]);
-                }
-
-                if ($existingUser) {
-                    return $existingUser;
-                }
-
-                // 2) Find existing user by email
+                // 1) Find existing user by email
                 $existingUser = $this->entityManager->getRepository(User::class)
                     ->findOneBy(['email' => $email]);
 
                 if ($existingUser) {
-                    if ($clientKey === 'google') {
-                        $setter = 'set' . ucfirst($clientKey) . 'Id';
-                        $existingUser->$setter($externalId);
-                        $this->entityManager->persist($existingUser);
-                        $this->entityManager->flush();
-                    }
-
                     return $existingUser;
                 }
 
-                // 3) Create new user (registration via OAuth)
-                $user = new \App\Entity\Collaborator();
-                $user->setPost('New Member');
-                $user->setTeam('General');
-                $user->setEnterpriseCode('P_' . uniqid());
-                $user->setRoles(['ROLE_COLLABORATOR']);
-
-                $user->setEmail($email);
-                $user->setName($name ?? $email);
-                if ($clientKey === 'google') {
-                    $setter = 'set' . ucfirst($clientKey) . 'Id';
-                    $user->$setter($externalId);
+                // 2) Create new user with USER role
+                $role = $this->entityManager->getRepository(Role::class)->find(1);
+                if (!$role) {
+                    throw new AuthenticationException('Default role USER (id=1) not found.');
                 }
-                $user->setPassword(null);
+
+                $user = new User();
+                $user->setEmail($email);
+                $user->setName((string) ($name ?? $email));
+                $user->setIsActive(true);
+                $user->setIsVerified(true);
+                $user->setRole($role);
+                $user->setPassword(password_hash(bin2hex(random_bytes(16)), PASSWORD_BCRYPT));
 
                 // Validate user entity
                 $errors = $this->validator->validate($user);

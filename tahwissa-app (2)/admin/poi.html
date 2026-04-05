@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahwissa Admin | Points d'Intérêt</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-brand"><div class="brand-icon">✈️</div><div class="brand-text">Tahwissa<small>Panneau Admin</small></div></a>
+  <ul class="sidebar-nav">
+    <li class="nav-section">Principal</li>
+    <li><a href="index.html"><span class="nav-icon"><i class="fas fa-th-large"></i></span> Dashboard</a></li>
+    <li class="nav-section">Gestion</li>
+    <li><a href="users.html"><span class="nav-icon"><i class="fas fa-users"></i></span> Utilisateurs</a></li>
+    <li><a href="reservations.html"><span class="nav-icon"><i class="fas fa-ticket-alt"></i></span> Réservations</a></li>
+    <li><a href="transport.html"><span class="nav-icon"><i class="fas fa-bus"></i></span> Transport</a></li>
+    <li><a href="events.html"><span class="nav-icon"><i class="fas fa-calendar-star"></i></span> Événements</a></li>
+    <li><a href="poi.html" class="active"><span class="nav-icon"><i class="fas fa-map-marker-alt"></i></span> Points d'Intérêt</a></li>
+    <li class="nav-section">Système</li>
+    <li><a href="../login.html"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span> Déconnexion</a></li>
+  </ul>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <div>
+      <h1><i class="fas fa-map-marker-alt" style="color:var(--danger);margin-right:10px;"></i>Points d'Intérêt</h1>
+      <p style="color:var(--text-muted);font-size:0.9rem;">Gérer les lieux touristiques et attractions</p>
+    </div>
+    <div class="top-bar-right">
+      <button class="btn btn-primary btn-sm" onclick="openModal('addPOI')"><i class="fas fa-plus"></i> Ajouter un lieu</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
+    <!-- POI 1 -->
+    <div class="dashboard-card" style="overflow:hidden;padding:0;transition:var(--transition);" onmouseenter="this.style.transform='translateY(-6px)'" onmouseleave="this.style.transform=''">
+      <div style="height:180px;background:linear-gradient(135deg,#1565C0,#42A5F5);display:flex;align-items:center;justify-content:center;font-size:4.5rem;position:relative;">
+        🕌
+        <div style="position:absolute;top:12px;left:12px;display:flex;gap:6px;">
+          <span class="badge" style="background:rgba(0,0,0,0.4);color:white;backdrop-filter:blur(4px);">📍 Alger</span>
+        </div>
+        <div style="position:absolute;bottom:12px;right:12px;background:rgba(255,214,0,0.95);padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:700;color:#333;">⭐ 4.9</div>
+      </div>
+      <div style="padding:20px;">
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">La Casbah d'Alger</h3>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;">Site UNESCO, quartier historique avec architecture ottomane unique.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+          <span class="badge badge-primary" style="font-size:0.7rem;">Historique</span>
+          <span class="badge badge-purple" style="font-size:0.7rem;">UNESCO</span>
+          <span class="badge badge-success" style="font-size:0.7rem;">Gratuit</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sm btn-outline" style="flex:1;justify-content:center;font-size:0.8rem;padding:7px;"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm" style="flex:1;justify-content:center;font-size:0.8rem;padding:7px;background:rgba(255,23,68,0.1);color:var(--danger);border:1px solid rgba(255,23,68,0.2);border-radius:50px;"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>
+    <!-- POI 2 -->
+    <div class="dashboard-card" style="overflow:hidden;padding:0;transition:var(--transition);" onmouseenter="this.style.transform='translateY(-6px)'" onmouseleave="this.style.transform=''">
+      <div style="height:180px;background:linear-gradient(135deg,#FF6D00,#FFD600);display:flex;align-items:center;justify-content:center;font-size:4.5rem;position:relative;">
+        🏛️
+        <div style="position:absolute;top:12px;left:12px;"><span class="badge" style="background:rgba(0,0,0,0.4);color:white;backdrop-filter:blur(4px);">📍 Tipaza</span></div>
+        <div style="position:absolute;bottom:12px;right:12px;background:rgba(255,214,0,0.95);padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:700;color:#333;">⭐ 4.7</div>
+      </div>
+      <div style="padding:20px;">
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">Ruines de Tipaza</h3>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;">Ruines romaines au bord de la mer, patrimoine mondial exceptionnel.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+          <span class="badge badge-primary" style="font-size:0.7rem;">Romain</span>
+          <span class="badge badge-purple" style="font-size:0.7rem;">UNESCO</span>
+          <span class="badge badge-warning" style="font-size:0.7rem;">200 DA</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sm btn-outline" style="flex:1;justify-content:center;font-size:0.8rem;padding:7px;"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm" style="flex:1;justify-content:center;font-size:0.8rem;padding:7px;background:rgba(255,23,68,0.1);color:var(--danger);border:1px solid rgba(255,23,68,0.2);border-radius:50px;"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>
+    <!-- POI 3 -->
+    <div class="dashboard-card" style="overflow:hidden;padding:0;transition:var(--transition);" onmouseenter="this.style.transform='translateY(-6px)'" onmouseleave="this.style.transform=''">
+      <div style="height:180px;background:linear-gradient(135deg,#00C853,#42A5F5);display:flex;align-items:center;justify-content:center;font-size:4.5rem;position:relative;">
+        🏔️
+        <div style="position:absolute;top:12px;left:12px;"><span class="badge" style="background:rgba(0,0,0,0.4);color:white;backdrop-filter:blur(4px);">📍 Kabylie</span></div>
+        <div style="position:absolute;bottom:12px;right:12px;background:rgba(255,214,0,0.95);padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:700;color:#333;">⭐ 4.8</div>
+      </div>
+      <div style="padding:20px;">
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">Parc du Djurdjura</h3>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;">Parc national avec sommets enneigés, gorges et faune protégée.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+          <span class="badge badge-success" style="font-size:0.7rem;">Nature</span>
+          <span class="badge badge-primary" style="font-size:0.7rem;">Randonnée</span>
+          <span class="badge badge-warning" style="font-size:0.7rem;">500 DA</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sm btn-outline" style="flex:1;justify-content:center;font-size:0.8rem;padding:7px;"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm" style="flex:1;justify-content:center;font-size:0.8rem;padding:7px;background:rgba(255,23,68,0.1);color:var(--danger);border:1px solid rgba(255,23,68,0.2);border-radius:50px;"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>
+    <!-- POI 4 -->
+    <div class="dashboard-card" style="overflow:hidden;padding:0;transition:var(--transition);" onmouseenter="this.style.transform='translateY(-6px)'" onmouseleave="this.style.transform=''">
+      <div style="height:180px;background:linear-gradient(135deg,#7C4DFF,#FF6D00);display:flex;align-items:center;justify-content:center;font-size:4.5rem;position:relative;">
+        🏜️
+        <div style="position:absolute;top:12px;left:12px;"><span class="badge" style="background:rgba(0,0,0,0.4);color:white;backdrop-filter:blur(4px);">📍 Djanet</span></div>
+        <div style="position:absolute;bottom:12px;right:12px;background:rgba(255,214,0,0.95);padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:700;color:#333;">⭐ 5.0</div>
+      </div>
+      <div style="padding:20px;">
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">Tassili n'Ajjer</h3>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;">Plateau rocheux avec peintures rupestres millénaires et paysages lunaires.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+          <span class="badge badge-purple" style="font-size:0.7rem;">UNESCO</span>
+          <span class="badge badge-primary" style="font-size:0.7rem;">Désert</span>
+          <span class="badge badge-warning" style="font-size:0.7rem;">1000 DA</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sm btn-outline" style="flex:1;justify-content:center;font-size:0.8rem;padding:7px;"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm" style="flex:1;justify-content:center;font-size:0.8rem;padding:7px;background:rgba(255,23,68,0.1);color:var(--danger);border:1px solid rgba(255,23,68,0.2);border-radius:50px;"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="addPOI" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+  <div style="background:white;border-radius:var(--radius-lg);padding:36px;max-width:520px;width:90%;animation:scaleIn 0.3s ease-out;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+      <h2 style="font-size:1.3rem;font-weight:700;"><i class="fas fa-map-marker-alt" style="color:var(--danger);margin-right:8px;"></i>Nouveau Point d'Intérêt</h2>
+      <button onclick="closeModal('addPOI')" style="background:none;border:none;font-size:1.3rem;cursor:pointer;"><i class="fas fa-times"></i></button>
+    </div>
+    <form>
+      <div class="form-group"><label>Nom du lieu</label><input class="form-input" style="padding-left:14px;" placeholder="Ex: La Casbah d'Alger"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group"><label>Ville</label><input class="form-input" style="padding-left:14px;" placeholder="Alger"></div>
+        <div class="form-group"><label>Catégorie</label><select class="form-input" style="padding-left:14px;"><option>Historique</option><option>Nature</option><option>Plage</option><option>Désert</option><option>Montagne</option></select></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group"><label>Prix entrée (DA)</label><input type="number" class="form-input" style="padding-left:14px;" placeholder="0"></div>
+        <div class="form-group"><label>Note</label><input type="number" class="form-input" style="padding-left:14px;" placeholder="4.5" step="0.1" min="0" max="5"></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea class="form-input" style="padding:14px;min-height:80px;resize:vertical;" placeholder="Description du lieu..."></textarea></div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <button type="button" onclick="closeModal('addPOI')" class="btn btn-outline btn-sm">Annuler</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-check"></i> Ajouter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+function openModal(id){document.getElementById(id).style.display='flex';}
+function closeModal(id){document.getElementById(id).style.display='none';}
+</script>
+</body>
+</html>

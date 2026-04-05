@@ -1,201 +1,57 @@
+{% extends 'base_auth.html.twig' %}
+
+{% block title %}Sign Up - SmartTask Manager{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/tahwissa-auth.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="sky-bg">
+    <div class="sun"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="cloud cloud-4"></div>
+    <div class="plane plane-1">✈️</div>
+    <div class="plane plane-2">🛩️</div>
+    <div class="particles" id="particles"></div>
+
+    <div class="auth-page">
+        <div class="auth-container" style="max-width: 640px;">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="logo"><span>✈️ SmartTask</span></div>
+                    <h2>Créer un Compte 🚀</h2>
+                    <p>Rejoignez la plateforme SmartTask Manager</p>
+                </div>
+
+                <div id="oauthSignUpContainer" class="d-grid gap-2 mb-4">
+                    <a href="{{ path('connect_google_start') }}" data-turbo="false" id="googleSignUpBtn" class="btn btn-outline" style="justify-content: center;">
+                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 6.168-2.172l-2.908-2.258c-.806.54-1.837.86-3.26.86-2.51 0-4.656-1.696-5.424-4.07H.638v2.331C2.33 15.98 5.5 18 9 18z"/><path fill="#FBBC05" d="M3.576 10.711c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.638C.232 6.46 0 7.988 0 9.5s.232 3.04.638 4.54l2.938-2.258 3.04 2.318z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.5 0 2.33 2.02.638 4.96l2.938 2.258C4.344 5.276 6.49 3.58 9 3.58z"/></svg>
+                        Continue with Google
+                    </a>
+                    <a href="{{ path('connect_github_start') }}" data-turbo="false" id="githubSignUpBtn" class="btn btn-outline" style="justify-content: center;">
+                        <i class="fab fa-github"></i>
+                        Continue with GitHub
+                    </a>
+                </div>
+
+                <div class="auth-divider">ou s'inscrire avec email</div>
+
+                <p class="text-center text-muted mb-0">Cette vue est conservée pour compatibilite des templates. Utilisez la page principale d'inscription si necessaire.</p>
+
+                <div class="auth-footer">
+                    Already have an account? <a href="{{ path('app_login') }}">Sign in here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
 {% block javascripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const roleManager = document.getElementById('roleManager');
-    const roleCollaborator = document.getElementById('roleCollaborator');
-
-    // Handle role selection functions
-    function updateOAuthLinks(role) {
-        const googleBtn = document.getElementById('googleSignUpBtn');
-        const githubBtn = document.getElementById('githubSignUpBtn');
-        const oauthContainer = document.getElementById('oauthSignUpContainer');
-        
-        if (oauthContainer) {
-            if (googleBtn) {
-                const googleBaseUrl = '{{ path('connect_google_start') }}';
-                googleBtn.href = googleBaseUrl + '?role=' + role;
-            }
-            if (githubBtn) {
-                const githubBaseUrl = '{{ path('connect_github_start') }}';
-                githubBtn.href = githubBaseUrl + '?role=' + role;
-            }
-            oauthContainer.style.display = 'block';
-        }
-    }
-
-    if (roleManager && roleCollaborator) {
-        // Initial check
-        if (roleManager.checked) updateOAuthLinks('manager');
-        if (roleCollaborator.checked) updateOAuthLinks('collaborator');
-
-        roleManager.addEventListener('change', function() {
-            if (this.checked) {
-                updateOAuthLinks('manager');
-                submitForm('manager');
-            }
-        });
-
-        roleCollaborator.addEventListener('change', function() {
-            if (this.checked) {
-                updateOAuthLinks('collaborator');
-                submitForm('collaborator');
-            }
-        });
-
-        function submitForm(role) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ path('app_register') }}';
-            const roleInput = document.createElement('input');
-            roleInput.type = 'hidden';
-            roleInput.name = 'role';
-            roleInput.value = role;
-            form.appendChild(roleInput);
-            const csrfToken = document.querySelector('input[name*="_token"]');
-            if (csrfToken) {
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = csrfToken.name;
-                csrfInput.value = csrfToken.value;
-                form.appendChild(csrfInput);
-            }
-            document.body.appendChild(form);
-            form.submit();
-        }
-    }
-
-    // ==========================================
-    // PASSWORD STRENGTH LOGIC - UPDATED
-    // ==========================================
-    const passwordField = document.querySelector('.password-field');
-    const strengthWrapper = document.querySelector('.password-strength-wrapper');
-    const strengthBar = document.getElementById('strengthBar');
-    const strengthLabel = document.getElementById('strengthLabel');
-    const strengthSuggestions = document.getElementById('strengthSuggestions');
-
-    let debounceTimer;
-
-    if (passwordField) {
-        passwordField.addEventListener('input', function() {
-            const password = this.value;
-            
-            clearTimeout(debounceTimer);
-            if (!password) {
-                if (strengthWrapper) {
-                    strengthWrapper.style.display = 'none';
-                }
-                return;
-            }
-
-            if (strengthWrapper) {
-                strengthWrapper.style.display = 'block';
-            }
-            
-            debounceTimer = setTimeout(() => {
-                checkPasswordStrength(password);
-            }, 300);
-        });
-    }
-
-    async function checkPasswordStrength(password) {
-        try {
-            const response = await fetch('{{ path('api_password_strength') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ password: password })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                updateStrengthUI(data);
-            } else {
-                // Handle error gracefully
-                console.warn('Password strength check failed:', response.status);
-                updateStrengthUI({
-                    score: 50,
-                    label: 'medium',
-                    suggestions: ['Unable to check password strength']
-                });
-            }
-        } catch (error) {
-            console.error('Error checking password strength:', error);
-            // Show fallback UI instead of breaking
-            updateStrengthUI({
-                score: 50,
-                label: 'medium',
-                suggestions: ['Password strength check unavailable']
-            });
-        }
-    }
-
-    function updateStrengthUI(data) {
-        if (!strengthBar || !strengthLabel || !strengthSuggestions) {
-            return;
-        }
-
-        // NEW: Handle both old and new API response formats
-        const score = data.score || 0;
-        const label = data.label || 'weak';
-        const suggestions = data.suggestions || [];
-        const confidence = data.confidence || 0;
-        
-        // Calculate progress bar width based on NEW 0-100 scale
-        let width = '0%';
-        let colorClass = 'bg-danger';
-        let textColorClass = 'text-danger';
-        let icon = '🔴';
-        
-        if (score < 40) {
-            // Weak
-            width = '33%';
-            colorClass = 'bg-danger';
-            textColorClass = 'text-danger';
-            icon = '🔴';
-        } else if (score < 70) {
-            // Medium
-            width = '66%';
-            colorClass = 'bg-warning';
-            textColorClass = 'text-warning';
-            icon = '🟡';
-        } else {
-            // Strong
-            width = '100%';
-            colorClass = 'bg-success';
-            textColorClass = 'text-success';
-            icon = '🟢';
-        }
-
-        // Update progress bar
-        strengthBar.style.width = width;
-        strengthBar.className = 'progress-bar ' + colorClass;
-        
-        // Update label with icon and capitalized text
-        const labelText = label.charAt(0).toUpperCase() + label.slice(1);
-        strengthLabel.innerHTML = icon + ' ' + labelText;
-        strengthLabel.className = 'fw-bold ' + textColorClass;
-
-        // Update suggestions
-        if (suggestions && suggestions.length > 0 && label !== 'strong') {
-            strengthSuggestions.innerHTML = '';
-            suggestions.forEach(suggestion => {
-                const li = document.createElement('li');
-                // NEW: Suggestions now include emojis, render as HTML
-                li.innerHTML = suggestion;
-                strengthSuggestions.appendChild(li);
-            });
-            strengthSuggestions.style.display = 'block';
-            strengthSuggestions.className = 'small mt-2 mb-0 ps-3 ' + textColorClass;
-        } else if (label === 'strong') {
-            // Show success message for strong passwords
-            strengthSuggestions.innerHTML = '<li>✅ Password meets all security requirements!</li>';
-            strengthSuggestions.className = 'small text-success mt-2 mb-0 ps-3';
-            strengthSuggestions.style.display = 'block';
-        } else {
-            strengthSuggestions.style.display = 'none';
-        }
-    }
-});
-</script>
+<script src="{{ asset('js/tahwissa-auth.js') }}"></script>
 {% endblock %}
