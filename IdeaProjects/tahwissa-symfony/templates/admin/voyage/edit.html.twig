@@ -1,0 +1,86 @@
+{% extends 'admin/layout.html.twig' %}
+{% block title %}Admin - Modifier Voyage{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+    <div>
+        <h1><i class="fas fa-edit" style="color:var(--primary);margin-right:10px;"></i>Modifier Voyage #{{ voyage.id }}</h1>
+        <p style="color:var(--text-muted);font-size:0.9rem;">{{ voyage.titre }} — {{ voyage.destination }}</p>
+    </div>
+    <a href="{{ path('admin_voyage_index') }}" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Retour</a>
+</div>
+
+<div class="form-card">
+    <h2><i class="fas fa-plane" style="color:var(--primary);"></i> Modifier les Informations</h2>
+    <p class="subtitle">Modifiez les champs nécessaires puis validez.</p>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="form-group {{ form.titre.vars.errors|length > 0 ? 'has-error' : '' }}">
+        {{ form_label(form.titre) }}
+        {{ form_widget(form.titre) }}
+        {% for error in form.titre.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description) }}
+    </div>
+
+    <div class="form-row">
+        <div class="form-group {{ form.destination.vars.errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form.destination) }}
+            {{ form_widget(form.destination) }}
+            {% for error in form.destination.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.categorie) }}
+            {{ form_widget(form.categorie) }}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group {{ form.prixUnitaire.vars.errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form.prixUnitaire) }}
+            {{ form_widget(form.prixUnitaire) }}
+            {% for error in form.prixUnitaire.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+        </div>
+        <div class="form-group {{ form.placesDisponibles.vars.errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form.placesDisponibles) }}
+            {{ form_widget(form.placesDisponibles) }}
+            {% for error in form.placesDisponibles.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group {{ form.dateDepart.vars.errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form.dateDepart) }}
+            {{ form_widget(form.dateDepart) }}
+            {% for error in form.dateDepart.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+        </div>
+        <div class="form-group {{ form.dateRetour.vars.errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form.dateRetour) }}
+            {{ form_widget(form.dateRetour) }}
+            {% for error in form.dateRetour.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            {{ form_label(form.imageUrl) }}
+            {{ form_widget(form.imageUrl) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.statut) }}
+            {{ form_widget(form.statut) }}
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ path('admin_voyage_index') }}" class="btn btn-outline btn-sm">Annuler</a>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save"></i> Enregistrer</button>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

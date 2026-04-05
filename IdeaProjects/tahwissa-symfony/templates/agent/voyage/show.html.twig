@@ -1,0 +1,30 @@
+{% extends 'agent/layout.html.twig' %}
+{% block title %}Agent - Voyage {{ voyage.titre }}{% endblock %}
+{% block content %}
+<div class="top-bar">
+    <div><h1><i class="fas fa-plane" style="color:var(--primary);margin-right:10px;"></i>{{ voyage.titre }}</h1></div>
+    <div class="top-bar-right">
+        <a href="{{ path('agent_voyage_edit', {id: voyage.id}) }}" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i> Modifier</a>
+        <a href="{{ path('agent_voyage_index') }}" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Retour</a>
+    </div>
+</div>
+<div class="detail-card">
+    <div class="detail-header">
+        <div>
+            <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:8px;">{{ voyage.titre }}</h2>
+            <span class="badge badge-primary"><i class="fas fa-map-marker-alt"></i> {{ voyage.destination }}</span>
+            <span class="badge {{ voyage.statut == 'ACTIF' ? 'badge-success' : 'badge-danger' }}">{{ voyage.statut }}</span>
+        </div>
+        <div style="text-align:right;">
+            <div style="font-size:2rem;font-weight:800;color:var(--primary);">{{ voyage.prixUnitaire|number_format(2, ',', ' ') }} TND</div>
+        </div>
+    </div>
+    {% if voyage.description %}<p style="color:#475569;margin-bottom:24px;">{{ voyage.description }}</p>{% endif %}
+    <div class="detail-grid">
+        <div class="detail-item"><div class="label">Date départ</div><div class="value">{{ voyage.dateDepart ? voyage.dateDepart|date('d/m/Y') : '-' }}</div></div>
+        <div class="detail-item"><div class="label">Date retour</div><div class="value">{{ voyage.dateRetour ? voyage.dateRetour|date('d/m/Y') : '-' }}</div></div>
+        <div class="detail-item"><div class="label">Durée</div><div class="value">{{ voyage.duree ? voyage.duree ~ ' jours' : '-' }}</div></div>
+        <div class="detail-item"><div class="label">Places</div><div class="value">{{ voyage.placesDisponibles }}</div></div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'client/layout.html.twig' %}
+{% block title %}Réserver un Voyage{% endblock %}
+
+{% block content %}
+<a href="{{ path('client_voyage_index') }}" style="color:var(--primary);text-decoration:none;font-size:0.9rem;display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;">
+    <i class="fas fa-arrow-left"></i> Retour au catalogue
+</a>
+
+<div class="form-card">
+    <h2><i class="fas fa-ticket-alt" style="color:var(--accent);"></i> Réserver un Voyage</h2>
+    <p class="subtitle">Sélectionnez votre voyage et le nombre de personnes. Le montant total sera calculé automatiquement.</p>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="form-group {{ form.voyage.vars.errors|length > 0 ? 'has-error' : '' }}">
+        {{ form_label(form.voyage) }}
+        {{ form_widget(form.voyage) }}
+        {% for error in form.voyage.vars.errors %}
+            <div class="form-error">{{ error.message }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="form-row">
+        <div class="form-group {{ form.dateReservation.vars.errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form.dateReservation) }}
+            {{ form_widget(form.dateReservation) }}
+            {% for error in form.dateReservation.vars.errors %}
+                <div class="form-error">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+        <div class="form-group {{ form.nbrPersonnes.vars.errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form.nbrPersonnes) }}
+            {{ form_widget(form.nbrPersonnes) }}
+            {% for error in form.nbrPersonnes.vars.errors %}
+                <div class="form-error">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(21,101,192,0.05),rgba(124,77,255,0.05));border-radius:var(--radius-sm);padding:20px;margin:16px 0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <i class="fas fa-calculator" style="color:var(--primary);font-size:1.1rem;"></i>
+            <strong style="font-size:0.95rem;">Calcul automatique</strong>
+        </div>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin:0;">Le montant total = Prix unitaire du voyage × Nombre de personnes. Votre réservation sera en statut "En attente" jusqu'à confirmation par un agent.</p>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ path('client_voyage_index') }}" class="btn btn-outline btn-sm">Annuler</a>
+        <button type="submit" class="btn btn-accent btn-sm"><i class="fas fa-check"></i> Confirmer la Réservation</button>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

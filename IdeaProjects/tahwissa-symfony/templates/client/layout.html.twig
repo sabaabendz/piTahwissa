@@ -1,0 +1,67 @@
+{# Client layout - Front office with top navbar instead of sidebar #}
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+<style>
+    body { background: #f0f4f8; }
+    .client-navbar {
+        background: white;
+        padding: 12px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .client-navbar .brand {
+        display: flex; align-items: center; gap: 10px;
+        text-decoration: none; font-weight: 800; font-size: 1.3rem; color: var(--text-dark);
+    }
+    .client-navbar .brand span {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .client-nav { display: flex; align-items: center; gap: 24px; list-style: none; }
+    .client-nav a {
+        color: #64748b; text-decoration: none; font-weight: 500; font-size: 0.9rem;
+        transition: var(--transition); padding: 8px 16px; border-radius: 50px;
+    }
+    .client-nav a:hover, .client-nav a.active { color: var(--primary); background: rgba(21,101,192,0.06); }
+    .client-main { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+</style>
+{% endblock %}
+
+{% block body %}
+<nav class="client-navbar">
+    <a href="{{ path('app_home') }}" class="brand">
+        <div style="width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">✈️</div>
+        <span>Tahwissa</span>
+    </a>
+    <ul class="client-nav">
+        <li><a href="{{ path('client_voyage_index') }}" class="{{ app.request.attributes.get('_route') starts with 'client_voyage' ? 'active' : '' }}"><i class="fas fa-plane"></i> Voyages</a></li>
+        <li><a href="{{ path('client_reservation_index') }}" class="{{ app.request.attributes.get('_route') starts with 'client_reservation' ? 'active' : '' }}"><i class="fas fa-ticket-alt"></i> Mes Réservations</a></li>
+        <li>
+            <div class="role-switcher">
+                <a href="{{ path('app_switch_role', {role: 'ADMIN'}) }}">👑</a>
+                <a href="{{ path('app_switch_role', {role: 'AGENT'}) }}">🧑‍💼</a>
+                <a href="{{ path('app_switch_role', {role: 'CLIENT'}) }}" class="active-role">🏖️ {{ app.session.get('user_name', 'Client') }}</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<div class="client-main">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                <i class="fas fa-{{ label == 'success' ? 'check-circle' : (label == 'danger' ? 'exclamation-circle' : (label == 'warning' ? 'exclamation-triangle' : 'info-circle')) }}"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'admin/layout.html.twig' %}
+{% block title %}Admin - Nouvelle Réservation{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+    <div>
+        <h1><i class="fas fa-plus-circle" style="color:var(--accent);margin-right:10px;"></i>Nouvelle Réservation</h1>
+        <p style="color:var(--text-muted);font-size:0.9rem;">Créer une réservation pour un client</p>
+    </div>
+    <a href="{{ path('admin_reservation_index') }}" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Retour</a>
+</div>
+
+<div class="form-card">
+    <h2><i class="fas fa-ticket-alt" style="color:var(--accent);"></i> Détails de la Réservation</h2>
+    <p class="subtitle">Remplissez les informations pour créer une nouvelle réservation.</p>
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    {% if form.idUtilisateur is defined %}
+    <div class="form-group {{ form.idUtilisateur.vars.errors|length > 0 ? 'has-error' : '' }}">
+        {{ form_label(form.idUtilisateur) }}
+        {{ form_widget(form.idUtilisateur) }}
+        {% for error in form.idUtilisateur.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-group {{ form.voyage.vars.errors|length > 0 ? 'has-error' : '' }}">
+        {{ form_label(form.voyage) }}
+        {{ form_widget(form.voyage) }}
+        {% for error in form.voyage.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+    </div>
+
+    <div class="form-row">
+        <div class="form-group {{ form.dateReservation.vars.errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form.dateReservation) }}
+            {{ form_widget(form.dateReservation) }}
+            {% for error in form.dateReservation.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+        </div>
+        <div class="form-group {{ form.nbrPersonnes.vars.errors|length > 0 ? 'has-error' : '' }}">
+            {{ form_label(form.nbrPersonnes) }}
+            {{ form_widget(form.nbrPersonnes) }}
+            {% for error in form.nbrPersonnes.vars.errors %}<div class="form-error">{{ error.message }}</div>{% endfor %}
+        </div>
+    </div>
+
+    {% if form.statut is defined %}
+    <div class="form-group">
+        {{ form_label(form.statut) }}
+        {{ form_widget(form.statut) }}
+    </div>
+    {% endif %}
+
+    <div style="background:#f0f4f8;border-radius:var(--radius-sm);padding:16px;margin-top:16px;">
+        <p style="font-size:0.85rem;color:var(--text-muted);"><i class="fas fa-info-circle" style="color:var(--primary);"></i> Le montant total sera calculé automatiquement : Prix unitaire × Nombre de personnes</p>
+    </div>
+
+    <div class="form-actions">
+        <a href="{{ path('admin_reservation_index') }}" class="btn btn-outline btn-sm">Annuler</a>
+        <button type="submit" class="btn btn-accent btn-sm"><i class="fas fa-check"></i> Créer la Réservation</button>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

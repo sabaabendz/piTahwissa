@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body { background: linear-gradient(180deg, #87CEEB 0%, #5BA3E6 30%, #1565C0 70%, #0D47A1 100%); min-height: 100vh; }
+    .navbar {
+        position: fixed; top: 0; left: 0; right: 0;
+        padding: 16px 40px;
+        display: flex; align-items: center; justify-content: space-between;
+        z-index: 1000; background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(20px);
+    }
+    .navbar-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; font-size: 1.5rem; color: white; }
+    .navbar-brand span { background: linear-gradient(135deg, #FFD600, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-links { display: flex; align-items: center; gap: 24px; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: var(--transition); }
+    .nav-links a:hover { color: white; }
+    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 80px; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900; color: white; margin-bottom: 20px; }
+    .hero h1 .highlight { background: linear-gradient(135deg, #FFD600, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.15rem; color: rgba(255,255,255,0.85); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .role-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 900px; margin: 40px auto 0; }
+    .role-card {
+        background: rgba(255,255,255,0.12); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.25);
+        border-radius: var(--radius-lg); padding: 32px; text-align: center; transition: var(--transition); text-decoration: none;
+    }
+    .role-card:hover { background: rgba(255,255,255,0.22); transform: translateY(-5px); }
+    .role-card .icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .role-card h3 { color: white; font-size: 1.2rem; margin-bottom: 8px; }
+    .role-card p { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+    .stats-section { background: rgba(255,255,255,0.08); padding: 60px 40px; margin-top: 60px; border-radius: var(--radius-lg); max-width: 1000px; margin-left: auto; margin-right: auto; backdrop-filter: blur(10px); }
+    .stats-section .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
+    .stats-section .stat-val { font-size: 2.5rem; font-weight: 800; color: white; }
+    .stats-section .stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+</style>
+{% endblock %}
+
+{% block body %}
+<nav class="navbar">
+    <a href="{{ path('app_home') }}" class="navbar-brand">
+        <div style="width:42px;height:42px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:12px;display:flex;align-items:center;justify-content:center;">✈️</div>
+        <span>Tahwissa</span>
+    </a>
+    <ul class="nav-links">
+        <li><a href="#roles">Accès</a></li>
+        <li><a href="#stats">Statistiques</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <div>
+        <h1 class="animate-fade-up">Explorez le Monde avec <span class="highlight">Tahwissa</span></h1>
+        <p class="animate-fade-up" style="animation-delay:0.2s">Plateforme de gestion de réservations de voyages. Connectez-vous selon votre rôle pour commencer.</p>
+
+        <div class="role-cards" id="roles">
+            <a href="{{ path('app_switch_role', {role: 'ADMIN'}) }}" class="role-card animate-fade-up" style="animation-delay:0.3s">
+                <div class="icon">👑</div>
+                <h3>Administrateur</h3>
+                <p>Accès complet : Gérer voyages, réservations, utilisateurs. CRUD complet.</p>
+                <div style="margin-top:16px"><span class="btn btn-accent btn-sm">Accéder</span></div>
+            </a>
+            <a href="{{ path('app_switch_role', {role: 'AGENT'}) }}" class="role-card animate-fade-up" style="animation-delay:0.4s">
+                <div class="icon">🧑‍💼</div>
+                <h3>Agent de Voyage</h3>
+                <p>Gérer les voyages et gérer les réservations des clients.</p>
+                <div style="margin-top:16px"><span class="btn btn-primary btn-sm">Accéder</span></div>
+            </a>
+            <a href="{{ path('app_switch_role', {role: 'CLIENT'}) }}" class="role-card animate-fade-up" style="animation-delay:0.5s">
+                <div class="icon">🏖️</div>
+                <h3>Client</h3>
+                <p>Parcourir le catalogue, réserver des voyages, gérer vos réservations.</p>
+                <div style="margin-top:16px"><span class="btn btn-success btn-sm">Accéder</span></div>
+            </a>
+        </div>
+
+        <div class="stats-section animate-fade-up" style="animation-delay:0.6s" id="stats">
+            <div class="stats">
+                <div><div class="stat-val">{{ stats.total }}</div><div class="stat-label">Réservations</div></div>
+                <div><div class="stat-val">{{ stats.confirmees }}</div><div class="stat-label">Confirmées</div></div>
+                <div><div class="stat-val">{{ voyageStats.total }}</div><div class="stat-label">Voyages</div></div>
+                <div><div class="stat-val">{{ stats.revenu|number_format(0, ',', ' ') }}</div><div class="stat-label">TND Revenue</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

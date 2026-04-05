@@ -1,0 +1,48 @@
+{# Admin layout with sidebar - reusable for all admin pages #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<aside class="sidebar">
+    <a href="{{ path('app_home') }}" class="sidebar-brand">
+        <div class="brand-icon">✈️</div>
+        <div class="brand-text">Tahwissa<small>Panneau Admin</small></div>
+    </a>
+    <ul class="sidebar-nav">
+        <li class="nav-section">Gestion Réservation</li>
+        <li><a href="{{ path('admin_voyage_index') }}" class="{{ app.request.attributes.get('_route') starts with 'admin_voyage' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-plane"></i></span> Voyages
+        </a></li>
+        <li><a href="{{ path('admin_reservation_index') }}" class="{{ app.request.attributes.get('_route') starts with 'admin_reservation' ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-ticket-alt"></i></span> Réservations
+        </a></li>
+        <li class="nav-section">Changer de Rôle</li>
+        <li><a href="{{ path('app_switch_role', {role: 'AGENT'}) }}"><span class="nav-icon"><i class="fas fa-user-tie"></i></span> Agent</a></li>
+        <li><a href="{{ path('app_switch_role', {role: 'CLIENT'}) }}"><span class="nav-icon"><i class="fas fa-user"></i></span> Client</a></li>
+        <li class="nav-section">Système</li>
+        <li><a href="{{ path('app_home') }}"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span> Déconnexion</a></li>
+    </ul>
+</aside>
+
+<div class="main-content">
+    {# Flash messages #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                <i class="fas fa-{{ label == 'success' ? 'check-circle' : (label == 'danger' ? 'exclamation-circle' : 'info-circle') }}"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {# Role indicator #}
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <div class="role-switcher">
+            <a href="{{ path('app_switch_role', {role: 'ADMIN'}) }}" class="active-role">👑 Admin</a>
+            <a href="{{ path('app_switch_role', {role: 'AGENT'}) }}">🧑‍💼 Agent</a>
+            <a href="{{ path('app_switch_role', {role: 'CLIENT'}) }}">🏖️ Client</a>
+        </div>
+    </div>
+
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}

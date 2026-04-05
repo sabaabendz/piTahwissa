@@ -1,0 +1,59 @@
+{% extends 'client/layout.html.twig' %}
+{% block title %}{{ voyage.titre }} - Détails{% endblock %}
+
+{% block content %}
+<a href="{{ path('client_voyage_index') }}" style="color:var(--primary);text-decoration:none;font-size:0.9rem;display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;">
+    <i class="fas fa-arrow-left"></i> Retour au catalogue
+</a>
+
+<div class="detail-card">
+    <div class="detail-header">
+        <div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;margin-bottom:12px;">{{ voyage.titre }}</h2>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <span class="badge badge-primary" style="font-size:0.85rem;"><i class="fas fa-map-marker-alt"></i> {{ voyage.destination }}</span>
+                {% if voyage.categorie %}<span class="badge badge-purple">{{ voyage.categorie }}</span>{% endif %}
+                <span class="badge {{ voyage.statut == 'ACTIF' ? 'badge-success' : 'badge-danger' }}">{{ voyage.statut }}</span>
+            </div>
+        </div>
+        <div style="text-align:right;">
+            <div style="font-size:2.5rem;font-weight:900;color:var(--primary);">{{ voyage.prixUnitaire|number_format(0, ',', ' ') }}</div>
+            <div style="font-size:0.9rem;color:var(--text-muted);">TND / personne</div>
+            {% if voyage.placesDisponibles > 0 %}
+                <a href="{{ path('client_reservation_new', {voyageId: voyage.id}) }}" class="btn btn-accent btn-sm" style="margin-top:12px;"><i class="fas fa-ticket-alt"></i> Réserver maintenant</a>
+            {% else %}
+                <span class="badge badge-danger" style="font-size:0.9rem;margin-top:12px;">Complet</span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if voyage.description %}
+    <div style="padding:20px;background:linear-gradient(135deg,rgba(21,101,192,0.03),rgba(124,77,255,0.03));border-radius:var(--radius-sm);margin-bottom:24px;font-size:0.95rem;line-height:1.8;color:#475569;">
+        {{ voyage.description }}
+    </div>
+    {% endif %}
+
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-calendar-alt"></i> Départ</div>
+            <div class="value">{{ voyage.dateDepart ? voyage.dateDepart|date('l d F Y') : 'Non défini' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-calendar-check"></i> Retour</div>
+            <div class="value">{{ voyage.dateRetour ? voyage.dateRetour|date('l d F Y') : 'Non défini' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-hourglass-half"></i> Durée</div>
+            <div class="value" style="font-size:1.1rem;font-weight:700;">{{ voyage.duree ? voyage.duree ~ ' jours' : 'N/A' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-users"></i> Places restantes</div>
+            <div class="value">
+                <span class="badge {{ voyage.placesDisponibles > 5 ? 'badge-success' : (voyage.placesDisponibles > 0 ? 'badge-warning' : 'badge-danger') }}" style="font-size:0.9rem;padding:6px 14px;">
+                    {{ voyage.placesDisponibles }} places
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

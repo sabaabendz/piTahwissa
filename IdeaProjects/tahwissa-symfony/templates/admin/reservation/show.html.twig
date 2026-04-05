@@ -1,0 +1,73 @@
+{% extends 'admin/layout.html.twig' %}
+{% block title %}Admin - Réservation #{{ reservation.id }}{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+    <div>
+        <h1><i class="fas fa-ticket-alt" style="color:var(--accent);margin-right:10px;"></i>Réservation #{{ reservation.id }}</h1>
+    </div>
+    <div class="top-bar-right">
+        <a href="{{ path('admin_reservation_edit', {id: reservation.id}) }}" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i> Modifier</a>
+        <a href="{{ path('admin_reservation_index') }}" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Retour</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-header">
+        <div>
+            <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:8px;">
+                {% if reservation.voyage %}
+                    {{ reservation.voyage.titre }} — {{ reservation.voyage.destination }}
+                {% else %}
+                    Voyage supprimé
+                {% endif %}
+            </h2>
+            <span class="badge badge-{{ reservation.statutBadgeClass }}" style="font-size:0.9rem;padding:6px 16px;">{{ reservation.statutLabel }}</span>
+        </div>
+        <div style="text-align:right;">
+            <div style="font-size:2rem;font-weight:800;color:var(--accent);">{{ reservation.montantTotal|number_format(2, ',', ' ') }} TND</div>
+            <div style="font-size:0.85rem;color:var(--text-muted);">Montant total</div>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-user"></i> Utilisateur</div>
+            <div class="value">User #{{ reservation.idUtilisateur }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-users"></i> Nombre de personnes</div>
+            <div class="value">{{ reservation.nbrPersonnes }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-calendar-alt"></i> Date de réservation</div>
+            <div class="value">{{ reservation.dateReservation ? reservation.dateReservation|date('d/m/Y H:i') : 'N/A' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-calendar-plus"></i> Date de création</div>
+            <div class="value">{{ reservation.dateCreation ? reservation.dateCreation|date('d/m/Y H:i') : 'N/A' }}</div>
+        </div>
+        {% if reservation.voyage %}
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-tag"></i> Prix unitaire</div>
+            <div class="value">{{ reservation.voyage.prixUnitaire|number_format(2, ',', ' ') }} TND</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-plane"></i> Voyage</div>
+            <div class="value"><a href="{{ path('admin_voyage_show', {id: reservation.voyage.id}) }}" style="color:var(--primary);text-decoration:none;">{{ reservation.voyage.titre }}</a></div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Quick status actions #}
+    <div style="margin-top:32px;padding-top:24px;border-top:2px solid #f1f5f9;">
+        <h3 style="margin-bottom:16px;font-size:1rem;color:var(--text-muted);">Changer le statut :</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="{{ path('admin_reservation_status', {id: reservation.id, statut: 'EN_ATTENTE'}) }}" class="btn btn-warning btn-xs {{ reservation.statut == 'EN_ATTENTE' ? 'btn-outline' : '' }}">🕐 En attente</a>
+            <a href="{{ path('admin_reservation_status', {id: reservation.id, statut: 'CONFIRMEE'}) }}" class="btn btn-success btn-xs {{ reservation.statut == 'CONFIRMEE' ? 'btn-outline' : '' }}">✅ Confirmer</a>
+            <a href="{{ path('admin_reservation_status', {id: reservation.id, statut: 'ANNULEE'}) }}" class="btn btn-danger btn-xs {{ reservation.statut == 'ANNULEE' ? 'btn-outline' : '' }}">❌ Annuler</a>
+            <a href="{{ path('admin_reservation_status', {id: reservation.id, statut: 'TERMINEE'}) }}" class="btn btn-info btn-xs {{ reservation.statut == 'TERMINEE' ? 'btn-outline' : '' }}">🏁 Terminer</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

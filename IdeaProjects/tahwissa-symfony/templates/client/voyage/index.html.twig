@@ -1,0 +1,76 @@
+{% extends 'client/layout.html.twig' %}
+{% block title %}Voyages - Catalogue{% endblock %}
+
+{% block content %}
+<div style="text-align:center;margin-bottom:40px;">
+    <h1 style="font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;margin-bottom:8px;">
+        🌍 Découvrez nos <span style="background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Voyages</span>
+    </h1>
+    <p style="color:var(--text-muted);font-size:1rem;">Trouvez le voyage parfait et réservez en quelques clics</p>
+</div>
+
+{# Search bar #}
+<div style="max-width:500px;margin:0 auto 32px;">
+    <form method="get" action="{{ path('client_voyage_index') }}" class="search-box" style="box-shadow:var(--shadow);">
+        <i class="fas fa-search" style="color:var(--text-muted);"></i>
+        <input type="text" name="search" placeholder="Rechercher par destination, titre..." value="{{ search }}" style="font-size:0.95rem;">
+        <button type="submit" class="btn btn-primary btn-xs">Chercher</button>
+    </form>
+</div>
+
+{% if voyages is empty %}
+    <div class="empty-state">
+        <i class="fas fa-globe"></i>
+        <h3>Aucun voyage disponible</h3>
+        <p>Revenez bientôt pour découvrir de nouvelles offres !</p>
+    </div>
+{% else %}
+    <div class="voyage-grid">
+        {% set gradients = [
+            'linear-gradient(135deg, #1565C0, #42A5F5)',
+            'linear-gradient(135deg, #FF6D00, #FF9100)',
+            'linear-gradient(135deg, #7C4DFF, #B388FF)',
+            'linear-gradient(135deg, #00C853, #00E676)',
+            'linear-gradient(135deg, #FF1744, #FF5252)',
+            'linear-gradient(135deg, #00B0FF, #40C4FF)',
+        ] %}
+        {% set icons = ['🏖️', '🏔️', '🏜️', '🌴', '🗻', '🏝️', '🌊', '⛰️'] %}
+
+        {% for voyage in voyages %}
+        <div class="voyage-card" style="animation-delay:{{ loop.index * 0.1 }}s">
+            <div class="voyage-card-image" style="background:{{ gradients[loop.index0 % 6] }};">
+                <span>{{ icons[loop.index0 % 8] }}</span>
+                {% if voyage.categorie %}
+                    <span class="category-badge badge badge-primary" style="background:rgba(255,255,255,0.2);color:white;backdrop-filter:blur(10px);">{{ voyage.categorie }}</span>
+                {% endif %}
+            </div>
+            <div class="voyage-card-body">
+                <h3>{{ voyage.titre }}</h3>
+                <div class="destination"><i class="fas fa-map-marker-alt" style="color:var(--accent);"></i> {{ voyage.destination }}</div>
+
+                {% if voyage.description %}
+                    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ voyage.description }}</p>
+                {% endif %}
+
+                <div class="info-row">
+                    <span><i class="fas fa-calendar"></i> {{ voyage.dateDepart ? voyage.dateDepart|date('d/m/Y') : '-' }}</span>
+                    <span><i class="fas fa-clock"></i> {{ voyage.duree ? voyage.duree ~ 'j' : '-' }}</span>
+                </div>
+                <div class="info-row">
+                    <span><i class="fas fa-chair"></i> {{ voyage.placesDisponibles }} places</span>
+                    <span class="price">{{ voyage.prixUnitaire|number_format(0, ',', ' ') }} TND</span>
+                </div>
+            </div>
+            <div class="voyage-card-footer">
+                <a href="{{ path('client_voyage_show', {id: voyage.id}) }}" class="btn btn-outline btn-xs"><i class="fas fa-eye"></i> Détails</a>
+                {% if voyage.placesDisponibles > 0 %}
+                    <a href="{{ path('client_reservation_new', {voyageId: voyage.id}) }}" class="btn btn-accent btn-xs"><i class="fas fa-ticket-alt"></i> Réserver</a>
+                {% else %}
+                    <span class="badge badge-danger">Complet</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

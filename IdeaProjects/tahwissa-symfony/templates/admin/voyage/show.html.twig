@@ -1,0 +1,89 @@
+{% extends 'admin/layout.html.twig' %}
+{% block title %}Admin - Voyage {{ voyage.titre }}{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+    <div>
+        <h1><i class="fas fa-plane" style="color:var(--primary);margin-right:10px;"></i>Détail Voyage #{{ voyage.id }}</h1>
+    </div>
+    <div class="top-bar-right">
+        <a href="{{ path('admin_voyage_edit', {id: voyage.id}) }}" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i> Modifier</a>
+        <a href="{{ path('admin_voyage_index') }}" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Retour</a>
+    </div>
+</div>
+
+<div class="detail-card">
+    <div class="detail-header">
+        <div>
+            <h2 style="font-size:1.6rem;font-weight:800;margin-bottom:8px;">{{ voyage.titre }}</h2>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <span class="badge badge-primary"><i class="fas fa-map-marker-alt"></i> {{ voyage.destination }}</span>
+                <span class="badge {{ voyage.categorie ? 'badge-purple' : 'badge-info' }}">{{ voyage.categorie ?? 'Non classé' }}</span>
+                <span class="badge {{ voyage.statut == 'ACTIF' ? 'badge-success' : 'badge-danger' }}">{{ voyage.statut }}</span>
+            </div>
+        </div>
+        <div style="text-align:right;">
+            <div style="font-size:2rem;font-weight:800;color:var(--primary);">{{ voyage.prixUnitaire|number_format(2, ',', ' ') }} TND</div>
+            <div style="font-size:0.85rem;color:var(--text-muted);">par personne</div>
+        </div>
+    </div>
+
+    {% if voyage.description %}
+    <div style="margin-bottom:24px;padding:16px;background:#f8fafc;border-radius:var(--radius-sm);color:#475569;font-size:0.92rem;line-height:1.7;">
+        {{ voyage.description }}
+    </div>
+    {% endif %}
+
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-calendar-alt"></i> Date de départ</div>
+            <div class="value">{{ voyage.dateDepart ? voyage.dateDepart|date('d/m/Y') : 'Non définie' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-calendar-check"></i> Date de retour</div>
+            <div class="value">{{ voyage.dateRetour ? voyage.dateRetour|date('d/m/Y') : 'Non définie' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-clock"></i> Durée</div>
+            <div class="value">{{ voyage.duree ? voyage.duree ~ ' jours' : 'N/A' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-chair"></i> Places disponibles</div>
+            <div class="value">
+                <span class="badge {{ voyage.placesDisponibles > 5 ? 'badge-success' : (voyage.placesDisponibles > 0 ? 'badge-warning' : 'badge-danger') }}" style="font-size:0.9rem;">
+                    {{ voyage.placesDisponibles }} places
+                </span>
+            </div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-image"></i> Image</div>
+            <div class="value">{{ voyage.imageUrl ?? 'Aucune image' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-calendar-plus"></i> Créé le</div>
+            <div class="value">{{ voyage.createdAt ? voyage.createdAt|date('d/m/Y H:i') : 'N/A' }}</div>
+        </div>
+    </div>
+
+    {% if voyage.reservations|length > 0 %}
+    <div style="margin-top:32px;padding-top:24px;border-top:2px solid #f1f5f9;">
+        <h3 style="margin-bottom:16px;font-size:1.1rem;"><i class="fas fa-ticket-alt" style="color:var(--accent);"></i> Réservations ({{ voyage.reservations|length }})</h3>
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Utilisateur</th><th>Personnes</th><th>Montant</th><th>Statut</th><th>Date</th></tr></thead>
+            <tbody>
+                {% for res in voyage.reservations %}
+                <tr>
+                    <td>#{{ res.id }}</td>
+                    <td>User #{{ res.idUtilisateur }}</td>
+                    <td>{{ res.nbrPersonnes }}</td>
+                    <td style="font-weight:700;">{{ res.montantTotal|number_format(2, ',', ' ') }} TND</td>
+                    <td><span class="badge badge-{{ res.statutBadgeClass }}">{{ res.statutLabel }}</span></td>
+                    <td>{{ res.dateReservation ? res.dateReservation|date('d/m/Y') : '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

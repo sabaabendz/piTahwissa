@@ -1,0 +1,65 @@
+{% extends 'client/layout.html.twig' %}
+{% block title %}Réservation #{{ reservation.id }}{% endblock %}
+
+{% block content %}
+<a href="{{ path('client_reservation_index') }}" style="color:var(--primary);text-decoration:none;font-size:0.9rem;display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;">
+    <i class="fas fa-arrow-left"></i> Retour à mes réservations
+</a>
+
+<div class="detail-card">
+    <div class="detail-header">
+        <div>
+            <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:4px;">Réservation #{{ reservation.id }}</div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;margin-bottom:8px;">
+                {% if reservation.voyage %}{{ reservation.voyage.titre }}{% else %}Voyage supprimé{% endif %}
+            </h2>
+            {% if reservation.voyage %}
+                <span class="badge badge-primary"><i class="fas fa-map-marker-alt"></i> {{ reservation.voyage.destination }}</span>
+            {% endif %}
+            <span class="badge badge-{{ reservation.statutBadgeClass }}" style="font-size:0.85rem;">{{ reservation.statutLabel }}</span>
+        </div>
+        <div style="text-align:right;">
+            <div style="font-size:2.5rem;font-weight:900;color:var(--accent);">{{ reservation.montantTotal|number_format(2, ',', ' ') }}</div>
+            <div style="font-size:0.9rem;color:var(--text-muted);">TND Total</div>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-users"></i> Nombre de personnes</div>
+            <div class="value" style="font-size:1.2rem;">{{ reservation.nbrPersonnes }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-tag"></i> Prix unitaire</div>
+            <div class="value">{{ reservation.voyage ? reservation.voyage.prixUnitaire|number_format(2, ',', ' ') ~ ' TND' : 'N/A' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-calendar-alt"></i> Date de réservation</div>
+            <div class="value">{{ reservation.dateReservation ? reservation.dateReservation|date('d/m/Y H:i') : 'N/A' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-calendar-plus"></i> Créée le</div>
+            <div class="value">{{ reservation.dateCreation ? reservation.dateCreation|date('d/m/Y H:i') : 'N/A' }}</div>
+        </div>
+        {% if reservation.voyage %}
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-plane-departure"></i> Départ</div>
+            <div class="value">{{ reservation.voyage.dateDepart ? reservation.voyage.dateDepart|date('d/m/Y') : '-' }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="label"><i class="fas fa-plane-arrival"></i> Retour</div>
+            <div class="value">{{ reservation.voyage.dateRetour ? reservation.voyage.dateRetour|date('d/m/Y') : '-' }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if reservation.statut == 'EN_ATTENTE' %}
+    <div style="margin-top:32px;padding-top:24px;border-top:2px solid #f1f5f9;display:flex;justify-content:flex-end;">
+        <form method="post" action="{{ path('client_reservation_cancel', {id: reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">
+            <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i> Annuler cette réservation</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

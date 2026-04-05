@@ -1,0 +1,53 @@
+{% extends 'agent/layout.html.twig' %}
+{% block title %}Agent - Voyages{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+    <div>
+        <h1><i class="fas fa-plane" style="color:var(--primary);margin-right:10px;"></i>Voyages</h1>
+        <p style="color:var(--text-muted);font-size:0.9rem;">Gérer les voyages (création et modification)</p>
+    </div>
+    <div class="top-bar-right">
+        <form method="get" action="{{ path('agent_voyage_index') }}" class="search-box">
+            <i class="fas fa-search" style="color:var(--text-muted);"></i>
+            <input type="text" name="search" placeholder="Rechercher..." value="{{ search }}">
+        </form>
+        <a href="{{ path('agent_voyage_new') }}" class="btn btn-accent btn-sm"><i class="fas fa-plus"></i> Nouveau</a>
+    </div>
+</div>
+
+<div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card blue"><div class="stat-icon"><i class="fas fa-globe"></i></div><div class="stat-info"><h3>{{ stats.total }}</h3><p>Total</p></div></div>
+    <div class="stat-card green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h3>{{ stats.actifs }}</h3><p>Actifs</p></div></div>
+    <div class="stat-card orange"><div class="stat-icon"><i class="fas fa-chair"></i></div><div class="stat-info"><h3>{{ stats.places }}</h3><p>Places</p></div></div>
+    <div class="stat-card purple"><div class="stat-icon"><i class="fas fa-coins"></i></div><div class="stat-info"><h3>{{ stats.prixMoyen }}</h3><p>Prix Moy.</p></div></div>
+</div>
+
+<div class="dashboard-card">
+    {% if voyages is empty %}
+        <div class="empty-state"><i class="fas fa-plane-slash"></i><h3>Aucun voyage</h3><p>Créez votre premier voyage.</p></div>
+    {% else %}
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Titre</th><th>Destination</th><th>Catégorie</th><th>Prix</th><th>Dates</th><th>Places</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for v in voyages %}
+                <tr>
+                    <td style="font-weight:600;color:var(--text-muted);">#{{ v.id }}</td>
+                    <td style="font-weight:600;">{{ v.titre }}</td>
+                    <td><i class="fas fa-map-marker-alt" style="color:var(--accent);"></i> {{ v.destination }}</td>
+                    <td><span class="badge badge-primary">{{ v.categorie ?? '-' }}</span></td>
+                    <td style="font-weight:700;">{{ v.prixUnitaire|number_format(2, ',', ' ') }} TND</td>
+                    <td style="font-size:0.82rem;">{{ v.dateDepart ? v.dateDepart|date('d/m/Y') : '-' }} → {{ v.dateRetour ? v.dateRetour|date('d/m/Y') : '-' }}</td>
+                    <td>{{ v.placesDisponibles }}</td>
+                    <td><span class="badge {{ v.statut == 'ACTIF' ? 'badge-success' : 'badge-danger' }}">{{ v.statut }}</span></td>
+                    <td>
+                        <a href="{{ path('agent_voyage_show', {id: v.id}) }}" class="action-btn view"><i class="fas fa-eye"></i></a>
+                        <a href="{{ path('agent_voyage_edit', {id: v.id}) }}" class="action-btn edit"><i class="fas fa-pen"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}
