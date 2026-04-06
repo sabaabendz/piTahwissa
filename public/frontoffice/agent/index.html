@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahwissa Agent | Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .sidebar { background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+    .sidebar-nav a.active { background: linear-gradient(135deg, #FF6D00, #FF9100); box-shadow: 0 4px 15px rgba(255,109,0,0.4); }
+    .welcome-banner {
+      background: linear-gradient(135deg, #1565C0, #7C4DFF, #FF6D00);
+      background-size: 200% 200%;
+      animation: gradientShift 6s ease infinite;
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      color: white;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .welcome-banner::before {
+      content: '✈️';
+      position: absolute;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 5rem;
+      opacity: 0.2;
+    }
+    .task-card { transition: var(--transition); cursor: pointer; }
+    .task-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+  </style>
+</head>
+<body class="dashboard-body">
+
+<aside class="sidebar" id="sidebar">
+  <a href="index.html" class="sidebar-brand">
+    <div class="brand-icon" style="background:linear-gradient(135deg,#FF6D00,#FF9100);">✈️</div>
+    <div class="brand-text">Tahwissa<small>Espace Agent</small></div>
+  </a>
+  <ul class="sidebar-nav">
+    <li class="nav-section">Principal</li>
+    <li><a href="index.html" class="active"><span class="nav-icon"><i class="fas fa-th-large"></i></span> Dashboard</a></li>
+    <li class="nav-section">Mon Travail</li>
+    <li><a href="#"><span class="nav-icon"><i class="fas fa-ticket-alt"></i></span> Mes Réservations</a></li>
+    <li><a href="#"><span class="nav-icon"><i class="fas fa-users"></i></span> Mes Clients</a></li>
+    <li><a href="#"><span class="nav-icon"><i class="fas fa-bus"></i></span> Transport</a></li>
+    <li><a href="#"><span class="nav-icon"><i class="fas fa-calendar-alt"></i></span> Événements</a></li>
+    <li><a href="#"><span class="nav-icon"><i class="fas fa-map-marker-alt"></i></span> Points d'Intérêt</a></li>
+    <li class="nav-section">Compte</li>
+    <li><a href="#"><span class="nav-icon"><i class="fas fa-user-circle"></i></span> Mon Profil</a></li>
+    <li><a href="#"><span class="nav-icon"><i class="fas fa-chart-line"></i></span> Performance</a></li>
+    <li><a href="../login.html"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span> Déconnexion</a></li>
+  </ul>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <div>
+      <h1>Dashboard Agent</h1>
+    </div>
+    <div class="top-bar-right">
+      <div class="search-box"><i class="fas fa-search" style="color:var(--text-muted);"></i><input type="text" placeholder="Rechercher..."></div>
+      <button class="notification-btn"><i class="fas fa-bell"></i><span class="notification-badge">3</span></button>
+      <button class="profile-btn" style="background:linear-gradient(135deg,#FF6D00,#FF9100);color:white;font-weight:700;">L</button>
+    </div>
+  </div>
+
+  <!-- Welcome -->
+  <div class="welcome-banner">
+    <h2 style="font-size:1.6rem;font-weight:700;margin-bottom:4px;">Bonjour, Lina ! 👋</h2>
+    <p style="opacity:0.9;font-size:0.95rem;">Vous avez <strong>5 réservations</strong> en attente et <strong>2 événements</strong> cette semaine.</p>
+    <div style="display:flex;gap:12px;margin-top:16px;">
+      <a href="#" class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.3);backdrop-filter:blur(10px);border-radius:50px;"><i class="fas fa-plus"></i> Nouvelle Réservation</a>
+      <a href="#" class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.3);backdrop-filter:blur(10px);border-radius:50px;"><i class="fas fa-calendar"></i> Voir Planning</a>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
+      <div class="stat-info"><h3>128</h3><p>Mes Réservations</p><span class="stat-change up"><i class="fas fa-arrow-up"></i> +15%</span></div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div class="stat-info"><h3>84</h3><p>Mes Clients</p><span class="stat-change up"><i class="fas fa-arrow-up"></i> +8%</span></div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="stat-info"><h3>245K</h3><p>Chiffre d'affaires (DA)</p><span class="stat-change up"><i class="fas fa-arrow-up"></i> +22%</span></div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-icon"><i class="fas fa-star"></i></div>
+      <div class="stat-info"><h3>4.8</h3><p>Note Moyenne</p><span class="stat-change up"><i class="fas fa-arrow-up"></i> +0.2</span></div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- Pending Reservations -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3><i class="fas fa-clock" style="color:var(--accent);margin-right:8px;"></i> Réservations en Attente</h3>
+        <span class="badge badge-warning" style="font-size:0.8rem;">5 en attente</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="task-card" style="background:#f8fafc;border-radius:12px;padding:16px;display:flex;align-items:center;gap:16px;border-left:4px solid var(--accent);">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#42A5F5,#1565C0);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.8rem;">SA</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:0.9rem;">Sami Amrani → Djurdjura</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">05/04/2026 · 2 voyageurs · 5,000 DA</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-sm" style="background:var(--success);color:white;padding:6px 14px;font-size:0.75rem;"><i class="fas fa-check"></i></button>
+            <button class="btn btn-sm" style="background:var(--danger);color:white;padding:6px 14px;font-size:0.75rem;"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+        <div class="task-card" style="background:#f8fafc;border-radius:12px;padding:16px;display:flex;align-items:center;gap:16px;border-left:4px solid var(--secondary);">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#7C4DFF,#B388FF);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.8rem;">KM</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:0.9rem;">Karim Moussa → Tassili</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">10/04/2026 · 1 voyageur · 8,000 DA</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-sm" style="background:var(--success);color:white;padding:6px 14px;font-size:0.75rem;"><i class="fas fa-check"></i></button>
+            <button class="btn btn-sm" style="background:var(--danger);color:white;padding:6px 14px;font-size:0.75rem;"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+        <div class="task-card" style="background:#f8fafc;border-radius:12px;padding:16px;display:flex;align-items:center;gap:16px;border-left:4px solid var(--primary);">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#00C853,#00E676);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.8rem;">NA</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:0.9rem;">Nassim Ait → Jijel</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">12/04/2026 · 3 voyageurs · 10,500 DA</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-sm" style="background:var(--success);color:white;padding:6px 14px;font-size:0.75rem;"><i class="fas fa-check"></i></button>
+            <button class="btn btn-sm" style="background:var(--danger);color:white;padding:6px 14px;font-size:0.75rem;"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Performance -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h3><i class="fas fa-chart-line" style="color:var(--success);margin-right:8px;"></i> Ma Performance</h3>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px;">
+            <span>Objectif mensuel</span><span style="font-weight:700;color:var(--success);">78%</span>
+          </div>
+          <div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden;">
+            <div style="width:78%;height:100%;background:linear-gradient(135deg,var(--success),#00E676);border-radius:4px;transition:width 1s ease;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px;">
+            <span>Satisfaction client</span><span style="font-weight:700;color:var(--primary);">96%</span>
+          </div>
+          <div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden;">
+            <div style="width:96%;height:100%;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:4px;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px;">
+            <span>Taux de conversion</span><span style="font-weight:700;color:var(--accent);">65%</span>
+          </div>
+          <div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden;">
+            <div style="width:65%;height:100%;background:linear-gradient(135deg,var(--accent),#FF9100);border-radius:4px;"></div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid #f1f5f9;padding-top:16px;">
+          <h4 style="font-size:0.9rem;font-weight:600;margin-bottom:12px;">Ce mois-ci</h4>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="text-align:center;background:#f8fafc;border-radius:12px;padding:16px;">
+              <div style="font-size:1.5rem;font-weight:700;color:var(--primary);">32</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">Réservations</div>
+            </div>
+            <div style="text-align:center;background:#f8fafc;border-radius:12px;padding:16px;">
+              <div style="font-size:1.5rem;font-weight:700;color:var(--accent);">67K</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">Revenus (DA)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upcoming Events -->
+  <div class="dashboard-card" style="margin-top:24px;">
+    <div class="card-header">
+      <h3><i class="fas fa-calendar-alt" style="color:var(--secondary);margin-right:8px;"></i> Événements à Gérer</h3>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+      <div style="background:#f8fafc;border-radius:12px;padding:20px;border-left:4px solid var(--accent);transition:var(--transition);" onmouseenter="this.style.transform='translateX(4px)'" onmouseleave="this.style.transform=''">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:700;font-size:0.95rem;">Festival du Sahara</span>
+          <span class="badge badge-success">Actif</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;"><i class="fas fa-map-marker-alt"></i> Ghardaïa · 15 Avril</p>
+        <div style="display:flex;justify-content:space-between;font-size:0.8rem;">
+          <span><i class="fas fa-users" style="color:var(--primary);"></i> 48/100</span>
+          <span style="font-weight:600;color:var(--accent);">3,500 DA</span>
+        </div>
+      </div>
+      <div style="background:#f8fafc;border-radius:12px;padding:20px;border-left:4px solid var(--success);transition:var(--transition);" onmouseenter="this.style.transform='translateX(4px)'" onmouseleave="this.style.transform=''">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:700;font-size:0.95rem;">Randonnée Chréa</span>
+          <span class="badge badge-warning">Bientôt complet</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;"><i class="fas fa-map-marker-alt"></i> Blida · 22 Avril</p>
+        <div style="display:flex;justify-content:space-between;font-size:0.8rem;">
+          <span><i class="fas fa-users" style="color:var(--primary);"></i> 27/30</span>
+          <span style="font-weight:600;color:var(--accent);">1,800 DA</span>
+        </div>
+      </div>
+      <div style="background:#f8fafc;border-radius:12px;padding:20px;border-left:4px solid var(--secondary);transition:var(--transition);" onmouseenter="this.style.transform='translateX(4px)'" onmouseleave="this.style.transform=''">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:700;font-size:0.95rem;">Nuit des Étoiles</span>
+          <span class="badge badge-primary">Ouvert</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;"><i class="fas fa-map-marker-alt"></i> Tamanrasset · 05 Mai</p>
+        <div style="display:flex;justify-content:space-between;font-size:0.8rem;">
+          <span><i class="fas fa-users" style="color:var(--primary);"></i> 5/20</span>
+          <span style="font-weight:600;color:var(--accent);">5,000 DA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+</body>
+</html>

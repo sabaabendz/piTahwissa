@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahwissa | Connexion</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="sky-bg">
+  <div class="sun"></div>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+  <div class="cloud cloud-4"></div>
+  <div class="plane plane-1">✈️</div>
+  <div class="plane plane-2">🛩️</div>
+  <div class="particles" id="particles"></div>
+
+  <div class="auth-page">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="logo">
+            <span>✈️ Tahwissa</span>
+          </div>
+          <h2>Bon Retour ! 👋</h2>
+          <p>Connectez-vous pour continuer votre aventure</p>
+        </div>
+
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div style="position:relative;">
+              <i class="fas fa-envelope form-icon" style="top:50%;transform:translateY(-50%);"></i>
+              <input type="email" id="email" class="form-input" placeholder="votre@email.com" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div style="position:relative;">
+              <i class="fas fa-lock form-icon" style="top:50%;transform:translateY(-50%);"></i>
+              <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+              <button type="button" class="password-toggle" onclick="togglePassword('password', this)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <a href="forgot-password.html" class="forgot-link">Mot de passe oublié ?</a>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;">
+            <i class="fas fa-sign-in-alt"></i> Se Connecter
+          </button>
+        </form>
+
+        <div class="auth-divider">ou continuer avec</div>
+
+        <div class="social-login">
+          <button class="social-btn" title="Google"><i class="fab fa-google" style="color:#DB4437;"></i></button>
+          <button class="social-btn" title="Facebook"><i class="fab fa-facebook-f" style="color:#4267B2;"></i></button>
+          <button class="social-btn" title="Apple"><i class="fab fa-apple" style="color:#000;"></i></button>
+        </div>
+
+        <div class="auth-footer">
+          Pas encore de compte ? <a href="signup.html">S'inscrire</a>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;">
+        <a href="index.html" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.9rem;">
+          <i class="fas fa-arrow-left"></i> Retour à l'accueil
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+function togglePassword(id, btn) {
+  const input = document.getElementById(id);
+  const icon = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.replace('fa-eye', 'fa-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.replace('fa-eye-slash', 'fa-eye');
+  }
+}
+function handleLogin(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.innerHTML = '<i class="fas fa-check"></i> Connecté !';
+    btn.style.background = 'linear-gradient(135deg, #00C853, #00E676)';
+    setTimeout(() => { window.location.href = 'index.html'; }, 800);
+  }, 1500);
+  return false;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tahwissa - Votre plateforme de voyage et loisirs. Découvrez des destinations incroyables, réservez vos transports et explorez des événements uniques.">
+  <title>Tahwissa | Voyage & Loisirs</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="navbar-brand">
+    <div style="width:42px;height:42px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">✈️</div>
+    <span>Tahwissa</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#home">Accueil</a></li>
+    <li><a href="#features">Services</a></li>
+    <li><a href="#destinations">Destinations</a></li>
+    <li><a href="#events">Événements</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="login.html" class="btn btn-accent btn-sm">Connexion</a></li>
+  </ul>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">
+    <i class="fas fa-bars"></i>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="sky-bg" id="home">
+  <div class="sun"></div>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+  <div class="cloud cloud-4"></div>
+  <div class="plane plane-1">✈️</div>
+  <div class="plane plane-2">🛩️</div>
+  <div class="plane plane-3">✈️</div>
+  <div class="particles" id="particles"></div>
+
+  <div class="hero">
+    <div class="hero-content">
+      <h1 class="animate-fade-up">Explorez le Monde avec <span class="highlight">Tahwissa</span></h1>
+      <p class="animate-fade-up delay-2">Découvrez des destinations extraordinaires, réservez vos transports en un clic et vivez des expériences inoubliables avec notre plateforme de voyage et loisirs.</p>
+      <div class="hero-buttons animate-fade-up delay-3">
+        <a href="#destinations" class="btn btn-accent btn-lg">
+          <i class="fas fa-compass"></i> Explorer
+        </a>
+        <a href="signup.html" class="btn btn-glass btn-lg">
+          <i class="fas fa-user-plus"></i> S'inscrire
+        </a>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="glass-card animate-fade-up delay-4" style="margin-top:48px;padding:24px 32px;max-width:700px;margin-left:auto;margin-right:auto;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+          <div style="flex:1;min-width:180px;">
+            <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.7);font-size:0.85rem;margin-bottom:6px;"><i class="fas fa-map-marker-alt"></i> Destination</div>
+            <input type="text" placeholder="Où voulez-vous aller?" class="form-input form-input-glass" style="padding:10px 14px;">
+          </div>
+          <div style="flex:0.6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.7);font-size:0.85rem;margin-bottom:6px;"><i class="fas fa-calendar"></i> Date</div>
+            <input type="date" class="form-input form-input-glass" style="padding:10px 14px;">
+          </div>
+          <div style="flex:0.4;min-width:100px;">
+            <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.7);font-size:0.85rem;margin-bottom:6px;"><i class="fas fa-users"></i> Voyageurs</div>
+            <select class="form-input form-input-glass" style="padding:10px 14px;">
+              <option>1</option><option>2</option><option>3</option><option>4+</option>
+            </select>
+          </div>
+          <button class="btn btn-accent" style="margin-top:22px;padding:12px 24px;">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wave -->
+  <div class="wave-separator" style="position:absolute;bottom:0;left:0;right:0;">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,80 1440,60 L1440,120 L0,120Z" fill="#ffffff"/>
+    </svg>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features" style="background:#fff;">
+  <div class="section-title">
+    <h2>Nos Services</h2>
+    <p>Tout ce dont vous avez besoin pour un voyage parfait</p>
+    <div class="underline"></div>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card animate-fade-up">
+      <div class="icon">🎫</div>
+      <h3>Réservations</h3>
+      <p>Réservez vos voyages facilement avec notre système de réservation intelligent et sécurisé.</p>
+    </div>
+    <div class="feature-card animate-fade-up delay-1">
+      <div class="icon">🚌</div>
+      <h3>Transport</h3>
+      <p>Bus, trains, avions — trouvez le transport idéal pour chaque destination.</p>
+    </div>
+    <div class="feature-card animate-fade-up delay-2">
+      <div class="icon">🎉</div>
+      <h3>Événements</h3>
+      <p>Accédez à des événements exclusifs et des activités de loisirs uniques.</p>
+    </div>
+    <div class="feature-card animate-fade-up delay-3">
+      <div class="icon">📍</div>
+      <h3>Points d'Intérêt</h3>
+      <p>Explorez les lieux incontournables recommandés par notre communauté.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DESTINATIONS -->
+<section class="section" id="destinations" style="background:#f8fafc;">
+  <div class="section-title">
+    <h2>Destinations Populaires</h2>
+    <p>Les destinations les plus prisées par nos voyageurs</p>
+    <div class="underline"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:1200px;margin:0 auto;">
+    <div class="destination-card animate-fade-up" style="position:relative;border-radius:var(--radius);overflow:hidden;height:380px;cursor:pointer;box-shadow:var(--shadow);">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1565C0,#0D47A1);display:flex;align-items:center;justify-content:center;font-size:5rem;">🏔️</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:30px;background:linear-gradient(transparent,rgba(0,0,0,0.8));color:white;">
+        <h3 style="font-size:1.4rem;font-weight:700;">Djurdjura</h3>
+        <p style="font-size:0.9rem;opacity:0.85;margin:4px 0 12px;">Kabylie, Algérie</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:1.2rem;font-weight:700;color:var(--accent-light);">2,500 DA</span>
+          <span class="badge badge-success">⭐ 4.8</span>
+        </div>
+      </div>
+    </div>
+    <div class="destination-card animate-fade-up delay-1" style="position:relative;border-radius:var(--radius);overflow:hidden;height:380px;cursor:pointer;box-shadow:var(--shadow);">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#FF6D00,#FF9100);display:flex;align-items:center;justify-content:center;font-size:5rem;">🏜️</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:30px;background:linear-gradient(transparent,rgba(0,0,0,0.8));color:white;">
+        <h3 style="font-size:1.4rem;font-weight:700;">Sahara Tassili</h3>
+        <p style="font-size:0.9rem;opacity:0.85;margin:4px 0 12px;">Djanet, Algérie</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:1.2rem;font-weight:700;color:var(--accent-light);">8,000 DA</span>
+          <span class="badge badge-success">⭐ 4.9</span>
+        </div>
+      </div>
+    </div>
+    <div class="destination-card animate-fade-up delay-2" style="position:relative;border-radius:var(--radius);overflow:hidden;height:380px;cursor:pointer;box-shadow:var(--shadow);">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#42A5F5,#1565C0);display:flex;align-items:center;justify-content:center;font-size:5rem;">🏖️</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:30px;background:linear-gradient(transparent,rgba(0,0,0,0.8));color:white;">
+        <h3 style="font-size:1.4rem;font-weight:700;">Plage Turquoise</h3>
+        <p style="font-size:0.9rem;opacity:0.85;margin:4px 0 12px;">Jijel, Algérie</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:1.2rem;font-weight:700;color:var(--accent-light);">3,500 DA</span>
+          <span class="badge badge-success">⭐ 4.7</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section class="section" id="events" style="background:white;">
+  <div class="section-title">
+    <h2>Événements à Venir</h2>
+    <p>Ne manquez pas ces expériences uniques</p>
+    <div class="underline"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:1100px;margin:0 auto;">
+    <div class="feature-card animate-fade-up" style="text-align:left;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--accent),#FF9100);border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.85rem;flex-direction:column;line-height:1.2;">
+          <span style="font-size:1.2rem;">15</span><span style="font-size:0.65rem;">AVR</span>
+        </div>
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:2px;">Festival du Sahara</h3>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0;"><i class="fas fa-map-marker-alt"></i> Ghardaïa</p>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-muted);">Un festival culturel avec musique traditionnelle, danse et gastronomie saharienne.</p>
+      <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
+        <span class="badge badge-primary">🎵 Culture</span>
+        <a href="#" style="color:var(--primary);font-weight:600;font-size:0.85rem;text-decoration:none;">Détails →</a>
+      </div>
+    </div>
+    <div class="feature-card animate-fade-up delay-1" style="text-align:left;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--success),#00E676);border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.85rem;flex-direction:column;line-height:1.2;">
+          <span style="font-size:1.2rem;">22</span><span style="font-size:0.65rem;">AVR</span>
+        </div>
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:2px;">Randonnée Chréa</h3>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0;"><i class="fas fa-map-marker-alt"></i> Blida</p>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-muted);">Randonnée guidée dans le parc national avec vues panoramiques incroyables.</p>
+      <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
+        <span class="badge badge-success">🥾 Aventure</span>
+        <a href="#" style="color:var(--primary);font-weight:600;font-size:0.85rem;text-decoration:none;">Détails →</a>
+      </div>
+    </div>
+    <div class="feature-card animate-fade-up delay-2" style="text-align:left;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--secondary),#B388FF);border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.85rem;flex-direction:column;line-height:1.2;">
+          <span style="font-size:1.2rem;">05</span><span style="font-size:0.65rem;">MAI</span>
+        </div>
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:2px;">Nuit des Étoiles</h3>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0;"><i class="fas fa-map-marker-alt"></i> Tamanrasset</p>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-muted);">Observation astronomique dans le désert avec des guides spécialisés.</p>
+      <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
+        <span class="badge badge-purple">🌌 Nuit</span>
+        <a href="#" style="color:var(--primary);font-weight:600;font-size:0.85rem;text-decoration:none;">Détails →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS COUNTER -->
+<section style="background:linear-gradient(135deg,var(--primary-dark),var(--secondary));padding:80px 40px;color:white;text-align:center;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;max-width:1000px;margin:0 auto;">
+    <div class="animate-fade-up">
+      <div style="font-size:3rem;font-weight:800;" class="counter" data-target="5280">0</div>
+      <p style="opacity:0.8;font-size:0.95rem;">Voyageurs Satisfaits</p>
+    </div>
+    <div class="animate-fade-up delay-1">
+      <div style="font-size:3rem;font-weight:800;" class="counter" data-target="120">0</div>
+      <p style="opacity:0.8;font-size:0.95rem;">Destinations</p>
+    </div>
+    <div class="animate-fade-up delay-2">
+      <div style="font-size:3rem;font-weight:800;" class="counter" data-target="350">0</div>
+      <p style="opacity:0.8;font-size:0.95rem;">Événements Organisés</p>
+    </div>
+    <div class="animate-fade-up delay-3">
+      <div style="font-size:3rem;font-weight:800;" class="counter" data-target="98">0</div>
+      <p style="opacity:0.8;font-size:0.95rem;">% Satisfaction</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="contact">
+  <div class="footer-grid">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="width:42px;height:42px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">✈️</div>
+        <span style="font-weight:700;font-size:1.2rem;color:white;">Tahwissa</span>
+      </div>
+      <p style="font-size:0.9rem;line-height:1.8;">Votre compagnon de voyage pour découvrir les plus belles destinations et vivre des expériences uniques.</p>
+    </div>
+    <div>
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="#home">Accueil</a></li>
+        <li><a href="#features">Services</a></li>
+        <li><a href="#destinations">Destinations</a></li>
+        <li><a href="#events">Événements</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">Réservations</a></li>
+        <li><a href="#">Transport</a></li>
+        <li><a href="#">Points d'Intérêt</a></li>
+        <li><a href="#">Support</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Suivez-nous</h4>
+      <div style="display:flex;gap:12px;margin-top:12px;">
+        <a href="#" style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;transition:var(--transition);">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;transition:var(--transition);">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="#" style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;transition:var(--transition);">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Tahwissa. Tous droits réservés. Fait avec ❤️ pour les voyageurs.</p>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>

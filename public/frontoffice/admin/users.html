@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahwissa Admin | Utilisateurs</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+
+<aside class="sidebar">
+  <a href="index.html" class="sidebar-brand">
+    <div class="brand-icon">✈️</div>
+    <div class="brand-text">Tahwissa<small>Panneau Admin</small></div>
+  </a>
+  <ul class="sidebar-nav">
+    <li class="nav-section">Principal</li>
+    <li><a href="index.html"><span class="nav-icon"><i class="fas fa-th-large"></i></span> Dashboard</a></li>
+    <li class="nav-section">Gestion</li>
+    <li><a href="users.html" class="active"><span class="nav-icon"><i class="fas fa-users"></i></span> Utilisateurs</a></li>
+    <li><a href="reservations.html"><span class="nav-icon"><i class="fas fa-ticket-alt"></i></span> Réservations</a></li>
+    <li><a href="transport.html"><span class="nav-icon"><i class="fas fa-bus"></i></span> Transport</a></li>
+    <li><a href="events.html"><span class="nav-icon"><i class="fas fa-calendar-star"></i></span> Événements</a></li>
+    <li><a href="poi.html"><span class="nav-icon"><i class="fas fa-map-marker-alt"></i></span> Points d'Intérêt</a></li>
+    <li class="nav-section">Système</li>
+    <li><a href="#"><span class="nav-icon"><i class="fas fa-cog"></i></span> Paramètres</a></li>
+    <li><a href="../login.html"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span> Déconnexion</a></li>
+  </ul>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <div>
+      <h1><i class="fas fa-users" style="color:var(--primary);margin-right:10px;"></i>Utilisateurs</h1>
+      <p style="color:var(--text-muted);font-size:0.9rem;">Gérer les comptes utilisateurs de la plateforme</p>
+    </div>
+    <div class="top-bar-right">
+      <div class="search-box">
+        <i class="fas fa-search" style="color:var(--text-muted);"></i>
+        <input type="text" placeholder="Rechercher un utilisateur..." id="searchUsers" oninput="filterTable(this.value)">
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('addModal')">
+        <i class="fas fa-user-plus"></i> Ajouter
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="dashboard-card" style="margin-bottom:24px;padding:16px 24px;">
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <span style="font-weight:600;font-size:0.9rem;color:var(--text-muted);"><i class="fas fa-filter"></i> Filtres:</span>
+      <button class="btn btn-sm" style="background:var(--primary);color:white;padding:6px 16px;font-size:0.8rem;">Tous (1,284)</button>
+      <button class="btn btn-sm" style="background:#f1f5f9;color:var(--text-dark);padding:6px 16px;font-size:0.8rem;">Clients (1,120)</button>
+      <button class="btn btn-sm" style="background:#f1f5f9;color:var(--text-dark);padding:6px 16px;font-size:0.8rem;">Agents (142)</button>
+      <button class="btn btn-sm" style="background:#f1f5f9;color:var(--text-dark);padding:6px 16px;font-size:0.8rem;">Admins (22)</button>
+      <button class="btn btn-sm" style="background:rgba(255,23,68,0.1);color:var(--danger);padding:6px 16px;font-size:0.8rem;">Bloqués (8)</button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="dashboard-card">
+    <table class="data-table" id="usersTable">
+      <thead>
+        <tr>
+          <th><input type="checkbox" style="accent-color:var(--primary);"></th>
+          <th>Utilisateur</th>
+          <th>Rôle</th>
+          <th>Téléphone</th>
+          <th>Inscription</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="checkbox" style="accent-color:var(--primary);"></td>
+          <td><div class="user-cell"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#42A5F5,#1565C0);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.85rem;">SA</div><div><div class="name">Sami Amrani</div><div class="email">sami.amrani@email.com</div></div></div></td>
+          <td><span class="badge badge-primary">Client</span></td>
+          <td>+213 555 123 456</td>
+          <td>15/03/2026</td>
+          <td><span class="badge badge-success">Actif</span></td>
+          <td>
+            <button class="action-btn edit" title="Modifier"><i class="fas fa-pen"></i></button>
+            <button class="action-btn" title="Voir"><i class="fas fa-eye"></i></button>
+            <button class="action-btn delete" title="Supprimer"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" style="accent-color:var(--primary);"></td>
+          <td><div class="user-cell"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FF6D00,#FF9100);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.85rem;">LB</div><div><div class="name">Lina Benali</div><div class="email">lina.benali@email.com</div></div></div></td>
+          <td><span class="badge badge-purple">Agent</span></td>
+          <td>+213 555 789 012</td>
+          <td>10/02/2026</td>
+          <td><span class="badge badge-success">Actif</span></td>
+          <td>
+            <button class="action-btn edit"><i class="fas fa-pen"></i></button>
+            <button class="action-btn"><i class="fas fa-eye"></i></button>
+            <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" style="accent-color:var(--primary);"></td>
+          <td><div class="user-cell"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7C4DFF,#B388FF);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.85rem;">KM</div><div><div class="name">Karim Moussa</div><div class="email">karim.moussa@email.com</div></div></div></td>
+          <td><span class="badge badge-primary">Client</span></td>
+          <td>+213 555 345 678</td>
+          <td>28/01/2026</td>
+          <td><span class="badge badge-danger">Bloqué</span></td>
+          <td>
+            <button class="action-btn edit"><i class="fas fa-pen"></i></button>
+            <button class="action-btn"><i class="fas fa-eye"></i></button>
+            <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" style="accent-color:var(--primary);"></td>
+          <td><div class="user-cell"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#00C853,#00E676);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.85rem;">FZ</div><div><div class="name">Fatima Zerhouni</div><div class="email">fatima.z@email.com</div></div></div></td>
+          <td><span class="badge badge-warning" style="color:#d4a000;">Admin</span></td>
+          <td>+213 555 901 234</td>
+          <td>05/01/2026</td>
+          <td><span class="badge badge-success">Actif</span></td>
+          <td>
+            <button class="action-btn edit"><i class="fas fa-pen"></i></button>
+            <button class="action-btn"><i class="fas fa-eye"></i></button>
+            <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" style="accent-color:var(--primary);"></td>
+          <td><div class="user-cell"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FF1744,#FF5252);display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.85rem;">YA</div><div><div class="name">Yacine Aït</div><div class="email">yacine.ait@email.com</div></div></div></td>
+          <td><span class="badge badge-primary">Client</span></td>
+          <td>+213 555 567 890</td>
+          <td>20/12/2025</td>
+          <td><span class="badge badge-success">Actif</span></td>
+          <td>
+            <button class="action-btn edit"><i class="fas fa-pen"></i></button>
+            <button class="action-btn"><i class="fas fa-eye"></i></button>
+            <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid #f1f5f9;">
+      <span style="font-size:0.85rem;color:var(--text-muted);">Affichage 1-5 sur 1,284</span>
+      <div style="display:flex;gap:6px;">
+        <button class="action-btn" style="width:36px;height:36px;border:1px solid #e2e8f0;border-radius:8px;"><i class="fas fa-chevron-left"></i></button>
+        <button class="action-btn" style="width:36px;height:36px;background:var(--primary);color:white;border-radius:8px;font-weight:600;">1</button>
+        <button class="action-btn" style="width:36px;height:36px;border:1px solid #e2e8f0;border-radius:8px;">2</button>
+        <button class="action-btn" style="width:36px;height:36px;border:1px solid #e2e8f0;border-radius:8px;">3</button>
+        <button class="action-btn" style="width:36px;height:36px;border:1px solid #e2e8f0;border-radius:8px;"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div id="addModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+  <div style="background:white;border-radius:var(--radius-lg);padding:36px;max-width:500px;width:90%;animation:scaleIn 0.3s ease-out;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+      <h2 style="font-size:1.3rem;font-weight:700;"><i class="fas fa-user-plus" style="color:var(--primary);margin-right:8px;"></i>Nouvel Utilisateur</h2>
+      <button onclick="closeModal('addModal')" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);"><i class="fas fa-times"></i></button>
+    </div>
+    <form>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group"><label>Prénom</label><input type="text" class="form-input" style="padding-left:14px;" placeholder="Prénom"></div>
+        <div class="form-group"><label>Nom</label><input type="text" class="form-input" style="padding-left:14px;" placeholder="Nom"></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" class="form-input" style="padding-left:14px;" placeholder="email@example.com"></div>
+      <div class="form-group"><label>Téléphone</label><input type="tel" class="form-input" style="padding-left:14px;" placeholder="+213 XXX XXX XXX"></div>
+      <div class="form-group"><label>Rôle</label><select class="form-input" style="padding-left:14px;"><option>Client</option><option>Agent</option><option>Admin</option></select></div>
+      <div class="form-group"><label>Mot de passe</label><input type="password" class="form-input" style="padding-left:14px;" placeholder="Min. 8 caractères"></div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+        <button type="button" onclick="closeModal('addModal')" class="btn btn-outline btn-sm">Annuler</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-check"></i> Créer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function filterTable(q) {
+  const rows = document.querySelectorAll('#usersTable tbody tr');
+  rows.forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none'; });
+}
+</script>
+</body>
+</html>

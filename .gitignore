@@ -35,6 +35,7 @@
 Thumbs.db
 
 # ML Service
+/ml-service/
 ml-service/ml-env/
 ml-service/__pycache__/
 ml-service/*.pyc

@@ -1,8 +1,8 @@
-# SmartTask – Task Management Application
+# Tahwissa – Task Management Application
 
 ## Overview
 
-SmartTask is a task management web application designed to help teams organize their work, assign tasks, and track project progress efficiently.
+Tahwissa is a task management web application designed to help teams organize their work, assign tasks, and track project progress efficiently.
 
 This project was developed as part of the **PIDEV – 3rd Year Engineering Program at Esprit School of Engineering (Academic Year 2025–2026).**
 
@@ -99,5 +99,5 @@ This project was created as part of the academic curriculum to strengthen skills
 Clone the repository
 
 ```bash
-git clone https://github.com/mohsennabli/Esprit_PI_3A55_2025_2026_Smarttask
+git clone https://github.com/mohsennabli/Esprit_PI_3A55_2025_2026_Tahwissa
 ```

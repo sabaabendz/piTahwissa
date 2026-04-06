@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahwissa | Inscription</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="sky-bg">
+  <div class="sun"></div>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+  <div class="cloud cloud-4"></div>
+  <div class="plane plane-1">✈️</div>
+  <div class="plane plane-2">🛩️</div>
+  <div class="particles" id="particles"></div>
+
+  <div class="auth-page">
+    <div class="auth-container" style="max-width:500px;">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="logo"><span>✈️ Tahwissa</span></div>
+          <h2>Créer un Compte 🚀</h2>
+          <p>Rejoignez la communauté des voyageurs</p>
+        </div>
+
+        <form id="signupForm" onsubmit="return handleSignup(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label for="firstName">Prénom</label>
+              <div style="position:relative;">
+                <i class="fas fa-user form-icon" style="top:50%;transform:translateY(-50%);"></i>
+                <input type="text" id="firstName" class="form-input" placeholder="Prénom" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Nom</label>
+              <div style="position:relative;">
+                <i class="fas fa-user form-icon" style="top:50%;transform:translateY(-50%);"></i>
+                <input type="text" id="lastName" class="form-input" placeholder="Nom" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div style="position:relative;">
+              <i class="fas fa-envelope form-icon" style="top:50%;transform:translateY(-50%);"></i>
+              <input type="email" id="email" class="form-input" placeholder="votre@email.com" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Téléphone</label>
+            <div style="position:relative;">
+              <i class="fas fa-phone form-icon" style="top:50%;transform:translateY(-50%);"></i>
+              <input type="tel" id="phone" class="form-input" placeholder="+213 XX XXX XXXX">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div style="position:relative;">
+              <i class="fas fa-lock form-icon" style="top:50%;transform:translateY(-50%);"></i>
+              <input type="password" id="password" class="form-input" placeholder="Min. 8 caractères" required minlength="8" oninput="checkPasswordStrength(this.value)">
+              <button type="button" class="password-toggle" onclick="togglePassword('password', this)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <div id="passwordStrength" style="display:flex;gap:4px;margin-top:8px;">
+              <div style="flex:1;height:4px;border-radius:2px;background:#e2e8f0;transition:all 0.3s;" class="str-bar"></div>
+              <div style="flex:1;height:4px;border-radius:2px;background:#e2e8f0;transition:all 0.3s;" class="str-bar"></div>
+              <div style="flex:1;height:4px;border-radius:2px;background:#e2e8f0;transition:all 0.3s;" class="str-bar"></div>
+              <div style="flex:1;height:4px;border-radius:2px;background:#e2e8f0;transition:all 0.3s;" class="str-bar"></div>
+            </div>
+            <span id="strengthText" style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;display:block;"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirmer le mot de passe</label>
+            <div style="position:relative;">
+              <i class="fas fa-shield-alt form-icon" style="top:50%;transform:translateY(-50%);"></i>
+              <input type="password" id="confirmPassword" class="form-input" placeholder="Retapez le mot de passe" required>
+            </div>
+          </div>
+
+          <div style="margin-bottom:24px;display:flex;align-items:flex-start;gap:10px;">
+            <input type="checkbox" id="terms" required style="margin-top:4px;accent-color:var(--primary);width:18px;height:18px;cursor:pointer;">
+            <label for="terms" style="font-size:0.85rem;color:var(--text-muted);cursor:pointer;">
+              J'accepte les <a href="#" style="color:var(--primary);text-decoration:none;font-weight:600;">Conditions d'utilisation</a> et la <a href="#" style="color:var(--primary);text-decoration:none;font-weight:600;">Politique de confidentialité</a>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;">
+            <i class="fas fa-user-plus"></i> Créer mon Compte
+          </button>
+        </form>
+
+        <div class="auth-divider">ou s'inscrire avec</div>
+
+        <div class="social-login">
+          <button class="social-btn" title="Google"><i class="fab fa-google" style="color:#DB4437;"></i></button>
+          <button class="social-btn" title="Facebook"><i class="fab fa-facebook-f" style="color:#4267B2;"></i></button>
+          <button class="social-btn" title="Apple"><i class="fab fa-apple" style="color:#000;"></i></button>
+        </div>
+
+        <div class="auth-footer">
+          Déjà inscrit ? <a href="login.html">Se connecter</a>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;">
+        <a href="index.html" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.9rem;">
+          <i class="fas fa-arrow-left"></i> Retour à l'accueil
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+function togglePassword(id, btn) {
+  const input = document.getElementById(id);
+  const icon = btn.querySelector('i');
+  if (input.type === 'password') { input.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); }
+  else { input.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
+}
+
+function checkPasswordStrength(pw) {
+  const bars = document.querySelectorAll('.str-bar');
+  const txt = document.getElementById('strengthText');
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const colors = ['#FF1744', '#FF9100', '#FFD600', '#00C853'];
+  const labels = ['Faible', 'Moyen', 'Bon', 'Excellent'];
+  bars.forEach((b, i) => { b.style.background = i < score ? colors[score - 1] : '#e2e8f0'; });
+  txt.textContent = score > 0 ? labels[score - 1] : '';
+  txt.style.color = score > 0 ? colors[score - 1] : 'var(--text-muted)';
+}
+
+function handleSignup(e) {
+  e.preventDefault();
+  const pw = document.getElementById('password').value;
+  const cpw = document.getElementById('confirmPassword').value;
+  if (pw !== cpw) { alert('Les mots de passe ne correspondent pas !'); return false; }
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Création...';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.innerHTML = '<i class="fas fa-check"></i> Compte créé !';
+    btn.style.background = 'linear-gradient(135deg, #00C853, #00E676)';
+    setTimeout(() => { window.location.href = 'login.html'; }, 800);
+  }, 1500);
+  return false;
+}
+</script>
+</body>
+</html>

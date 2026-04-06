@@ -48,22 +48,60 @@
 <div class="row g-4">
     <div class="col-lg-12">
         <div class="card shadow h-100">
-            <div class="card-header border-bottom d-flex justify-content-between align-items-center p-4">
-                <h5 class="card-header-title mb-0">Latest Users</h5>
-                <a href="{{ path('app_admin_users_index') }}" class="btn btn-link p-0 mb-0">View all</a>
+            <div class="card-header border-bottom p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h5 class="card-header-title mb-0">Latest Users</h5>
+                        <small class="text-muted">Search and sort by name, date, or status.</small>
+                    </div>
+                    <a href="{{ path('app_admin_users_index') }}" class="btn btn-link p-0 mb-0">View all</a>
+                </div>
+                <div class="row g-2 mt-2" id="dashboard-user-controls">
+                    <div class="col-md-7">
+                        <label for="dashboard-user-search" class="visually-hidden">Search users</label>
+                        <input
+                            id="dashboard-user-search"
+                            type="search"
+                            class="form-control"
+                            placeholder="Search by name, email, or status"
+                        >
+                    </div>
+                    <div class="col-md-5">
+                        <label for="dashboard-user-sort" class="visually-hidden">Sort users</label>
+                        <select id="dashboard-user-sort" class="form-select">
+                            <option value="date_desc">Sort: Newest first</option>
+                            <option value="date_asc">Sort: Oldest first</option>
+                            <option value="name_asc">Sort: Name A-Z</option>
+                            <option value="name_desc">Sort: Name Z-A</option>
+                            <option value="status_asc">Sort: Status (Disabled first)</option>
+                            <option value="status_desc">Sort: Status (Enabled first)</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="card-body p-4">
                 {% if users is empty %}
                     <p class="mb-0">No users found.</p>
                 {% else %}
-                    <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush" id="dashboard-user-list">
                         {% for user in users %}
-                            <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
-                                <span>{{ (user.firstName ?: '') ~ ' ' ~ (user.lastName ?: '')|trim ?: user.email }} <small class="text-muted">({{ user.email }})</small></span>
+                            {% set displayName = ((user.firstName ?: '') ~ ' ' ~ (user.lastName ?: ''))|trim ?: user.email %}
+                            <li
+                                class="list-group-item px-0 d-flex justify-content-between align-items-center gap-3"
+                                data-name="{{ displayName|lower }}"
+                                data-email="{{ user.email|lower }}"
+                                data-status="{{ user.isActive ? 'enabled' : 'disabled' }}"
+                                data-created="{{ user.createdAt ? user.createdAt|date('U') : 0 }}"
+                            >
+                                <div>
+                                    <span>{{ displayName }} <small class="text-muted">({{ user.email }})</small></span>
+                                    <div class="small text-muted">Joined: {{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : 'N/A' }}</div>
+                                </div>
                                 <span class="badge bg-{{ user.isActive ? 'success' : 'secondary' }}">{{ user.isActive ? 'Enabled' : 'Disabled' }}</span>
                             </li>
                         {% endfor %}
                     </ul>
+                    <p id="dashboard-user-empty" class="mb-0 mt-3 text-muted" style="display:none;">No users match your search.</p>
                 {% endif %}
             </div>
         </div>
@@ -71,4 +109,72 @@
 </div>
 {% endblock %}
 
-{% block javascripts %}{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        (() => {
+            const searchInput = document.getElementById('dashboard-user-search');
+            const sortSelect = document.getElementById('dashboard-user-sort');
+            const list = document.getElementById('dashboard-user-list');
+            const emptyState = document.getElementById('dashboard-user-empty');
+
+            if (!searchInput || !sortSelect || !list) {
+                return;
+            }
+
+            const getItems = () => Array.from(list.querySelectorAll('li'));
+
+            const compareBySortMode = (a, b, sortMode) => {
+                const nameA = a.dataset.name || '';
+                const nameB = b.dataset.name || '';
+                const statusA = a.dataset.status || '';
+                const statusB = b.dataset.status || '';
+                const createdA = Number(a.dataset.created || 0);
+                const createdB = Number(b.dataset.created || 0);
+
+                switch (sortMode) {
+                    case 'name_asc':
+                        return nameA.localeCompare(nameB);
+                    case 'name_desc':
+                        return nameB.localeCompare(nameA);
+                    case 'status_asc':
+                        return statusA.localeCompare(statusB) || nameA.localeCompare(nameB);
+                    case 'status_desc':
+                        return statusB.localeCompare(statusA) || nameA.localeCompare(nameB);
+                    case 'date_asc':
+                        return createdA - createdB;
+                    case 'date_desc':
+                    default:
+                        return createdB - createdA;
+                }
+            };
+
+            const render = () => {
+                const query = searchInput.value.trim().toLowerCase();
+                const sortMode = sortSelect.value;
+                const allItems = getItems();
+
+                allItems.sort((a, b) => compareBySortMode(a, b, sortMode));
+                allItems.forEach((item) => list.appendChild(item));
+
+                let visibleCount = 0;
+                allItems.forEach((item) => {
+                    const text = `${item.dataset.name || ''} ${item.dataset.email || ''} ${item.dataset.status || ''}`;
+                    const isVisible = query === '' || text.includes(query);
+                    item.style.display = isVisible ? '' : 'none';
+                    if (isVisible) {
+                        visibleCount += 1;
+                    }
+                });
+
+                if (emptyState) {
+                    emptyState.style.display = visibleCount === 0 ? '' : 'none';
+                }
+            };
+
+            searchInput.addEventListener('input', render);
+            sortSelect.addEventListener('change', render);
+            render();
+        })();
+    </script>
+{% endblock %}
