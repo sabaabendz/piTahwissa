@@ -35,6 +35,13 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $email = (string) $request->request->get('email', '');
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
 
+        // ── Human verification gate ─────────────────────────────────────────
+        if (!$request->getSession()->get('human_verified', false)) {
+            throw new CustomUserMessageAuthenticationException(
+                'Veuillez d\'abord vérifier que vous êtes humain'
+            );
+        }
+
         // Only verify reCAPTCHA if it's configured (secret key is set)
         if ($this->recaptchaVerifier->isEnabled()) {
             $captchaResponse = (string) ($request->request->get('g-recaptcha-response') ?: $request->request->get('captcha', ''));
@@ -43,11 +50,14 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             }
         }
 
+        $csrfToken = $request->request->get('_csrf_token');
+        $csrfTokenValue = is_string($csrfToken) ? $csrfToken : null;
+
         return new Passport(
             new UserBadge($email),
             new PasswordCredentials((string) $request->request->get('password', '')),
             [
-                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+                new CsrfTokenBadge('authenticate', $csrfTokenValue),
                 new RememberMeBadge(),
             ]
         );
@@ -58,6 +68,9 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         /** @var \App\Entity\User $user */
         $user = $token->getUser();
         $session = $request->getSession();
+
+        // Clear the human verification flag so it must be re-done next login
+        $session->remove('human_verified');
 
         // Bridge: populate session variables used by existing controllers
         $session->set('user_id', $user->getId());
@@ -81,7 +94,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             'ADMIN' => $this->urlGenerator->generate('admin_reservation_index'),
             'AGENT' => $this->urlGenerator->generate('agent_reservation_index'),
             'CLIENT' => $this->urlGenerator->generate('client_voyage_index'),
-            default => $this->urlGenerator->generate('app_home'),
         });
     }
 

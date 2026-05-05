@@ -10,6 +10,7 @@ use League\OAuth2\Client\Provider\GoogleUser;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -56,7 +57,8 @@ class GoogleAuthenticator extends OAuth2Authenticator
                 $user->setPassword($this->passwordHasher->hashPassword($user, bin2hex(random_bytes(32))));
                 $user->setIsActive(true);
                 $user->setIsVerified(true);
-                $user->setName((string) ($googleUser->getName() ?? $email));
+                $name = (string) $googleUser->getName();
+                $user->setName($name !== '' ? $name : $email);
                 $this->entityManager->persist($user);
             }
 
@@ -74,7 +76,10 @@ class GoogleAuthenticator extends OAuth2Authenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $request->getSession()->getFlashBag()->add('error', $exception->getMessage());
+        $session = $request->getSession();
+        if ($session instanceof Session) {
+            $session->getFlashBag()->add('error', $exception->getMessage());
+        }
 
         return new RedirectResponse($this->urlGenerator->generate('app_login'));
     }

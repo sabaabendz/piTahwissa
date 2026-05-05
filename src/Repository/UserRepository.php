@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -39,6 +40,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult();
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findActiveUsers(): array
     {
         return $this->createQueryBuilder('u')
@@ -49,6 +53,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findByRole(string $roleName): array
     {
         return $this->createQueryBuilder('u')
@@ -60,6 +67,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    /**
+     * @return array<int, User>
+     */
     public function findByRoleAndSearch(string $roleName, ?string $searchQuery = null): array
     {
         $qb = $this->createQueryBuilder('u')
@@ -92,8 +102,94 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $users = $this->findAll();
         $indexed = [];
         foreach ($users as $user) {
-            $indexed[$user->getId()] = $user;
+            $id = $user->getId();
+            if ($id === null) {
+                continue;
+            }
+            $indexed[$id] = $user;
         }
         return $indexed;
+    }
+
+    /**
+     * @return array{total:int,active:int,inactive:int,byRole:array{USER:int,AGENT:int,ADMIN:int,UNASSIGNED:int}}
+     */
+    public function getGlobalStatistics(): array
+    {
+        $total = (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $active = (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.isActive = :active')
+            ->setParameter('active', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return [
+            'total' => $total,
+            'active' => $active,
+            'inactive' => max(0, $total - $active),
+            'byRole' => $this->getCountsByRole(),
+        ];
+    }
+
+    /**
+     * @return array{USER:int,AGENT:int,ADMIN:int,UNASSIGNED:int}
+     */
+    public function getCountsByRole(): array
+    {
+        $distribution = [
+            'USER' => 0,
+            'AGENT' => 0,
+            'ADMIN' => 0,
+            'UNASSIGNED' => 0,
+        ];
+
+        $rows = $this->createQueryBuilder('u')
+            ->select('COALESCE(r.name, :unassigned) AS roleName, COUNT(u.id) AS total')
+            ->leftJoin('u.role', 'r')
+            ->groupBy('roleName')
+            ->setParameter('unassigned', 'UNASSIGNED')
+            ->getQuery()
+            ->getArrayResult();
+
+        foreach ($rows as $row) {
+            $roleName = strtoupper((string) ($row['roleName'] ?? 'UNASSIGNED'));
+            if (!array_key_exists($roleName, $distribution)) {
+                $roleName = 'UNASSIGNED';
+            }
+            $distribution[$roleName] = (int) ($row['total'] ?? 0);
+        }
+
+        return $distribution;
+    }
+
+    /**
+     * @return array<int, User>
+     */
+    public function findLatestRegisteredUsers(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('u')
+            ->orderBy('u.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countInactiveForMoreThanDays(int $days = 30): int
+    {
+        $threshold = new DateTimeImmutable(sprintf('-%d days', $days));
+
+        return (int) $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->andWhere('u.isActive = :inactive')
+            ->andWhere('u.updatedAt <= :threshold')
+            ->setParameter('inactive', false)
+            ->setParameter('threshold', $threshold)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

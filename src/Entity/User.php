@@ -18,6 +18,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id', type: 'integer')]
+    /** @phpstan-ignore-next-line Doctrine assigns the ID at runtime. */
     private ?int $id = null;
 
     #[ORM\Column(name: 'email', type: 'string', length: 100, unique: true)]
@@ -185,6 +186,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function getAvatarUrl(): ?string
+    {
+        if ($this->avatarUrl === null || $this->avatarUrl === '') {
+            return null;
+        }
+
+        if (str_starts_with($this->avatarUrl, '/')) {
+            return $this->avatarUrl;
+        }
+
+        return '/uploads/avatars/' . ltrim($this->avatarUrl, '/');
+    }
+
+    public function getAvatarPath(): ?string
     {
         return $this->avatarUrl;
     }
