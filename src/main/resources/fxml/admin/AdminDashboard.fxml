@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.tahwissa.controllers.admin.AdminDashboardController"
+            fitToWidth="true" styleClass="edge-to-edge"
+            stylesheets="@/css/tahwissa-style.css">
+    <VBox spacing="20" styleClass="content-area">
+        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+        <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" />
+
+        <!-- Header with DatePicker -->
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Button text="⬅ Retour" onAction="#handleBack" styleClass="btn-secondary"/>
+            <Label text="📊 Admin Dashboard" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Date range:"/>
+            <DatePicker fx:id="startDatePicker" promptText="From"/>
+            <Label text="–"/>
+            <DatePicker fx:id="endDatePicker" promptText="To"/>
+            <Button text="Apply Filter" onAction="#handleFilter"/>
+        </HBox>
+
+        <!-- Statistics Cards -->
+        <GridPane hgap="20" vgap="20">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+            </columnConstraints>
+            <VBox styleClass="stat-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label text="Total Reservations" styleClass="stat-label"/>
+                <Label fx:id="totalReservationsLabel" text="0" styleClass="stat-value"/>
+            </VBox>
+            <VBox styleClass="stat-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <Label text="Total Revenue" styleClass="stat-label"/>
+                <Label fx:id="totalRevenueLabel" text="0 DT" styleClass="stat-value"/>
+            </VBox>
+            <VBox styleClass="stat-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                <Label text="Avg. per Reservation" styleClass="stat-label"/>
+                <Label fx:id="avgRevenueLabel" text="0 DT" styleClass="stat-value"/>
+            </VBox>
+            <VBox styleClass="stat-card" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                <Label text="Active Voyages" styleClass="stat-label"/>
+                <Label fx:id="activeVoyagesLabel" text="0" styleClass="stat-value"/>
+            </VBox>
+        </GridPane>
+
+        <!-- Voyage Management Card -->
+        <VBox styleClass="card">
+            <VBox styleClass="card-header">
+                <Label text="Gestion des Voyages" styleClass="card-title"/>
+            </VBox>
+            <TableView fx:id="voyagesTable" VBox.vgrow="ALWAYS" prefHeight="250">
+                <columns>
+                    <TableColumn text="ID" fx:id="voyageIdCol" prefWidth="50"/>
+                    <TableColumn text="Titre" fx:id="titreCol" prefWidth="150"/>
+                    <TableColumn text="Destination" fx:id="destinationCol" prefWidth="120"/>
+                    <TableColumn text="Catégorie" fx:id="categorieCol" prefWidth="100"/>
+                    <TableColumn text="Prix" fx:id="prixCol" prefWidth="80"/>
+                    <TableColumn text="Départ" fx:id="departCol" prefWidth="100"/>
+                    <TableColumn text="Retour" fx:id="retourCol" prefWidth="100"/>
+                    <TableColumn text="Places" fx:id="placesCol" prefWidth="60"/>
+                    <TableColumn text="Statut" fx:id="statutCol" prefWidth="80"/>
+                </columns>
+            </TableView>
+            <HBox spacing="10" styleClass="card-footer">
+                <Button text="➕ Ajouter" fx:id="addBtn" styleClass="btn-primary" onAction="#handleAddVoyage"/>
+                <Button text="✏️ Modifier" fx:id="editBtn" styleClass="btn-secondary" onAction="#handleEditVoyage"/>
+                <Button text="🗑️ Supprimer" fx:id="deleteBtn" styleClass="btn-secondary" onAction="#handleDeleteVoyage"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="📄 PDF" onAction="#handleExportPDF" styleClass="btn-primary"/>
+                <Button text="🔄 Actualiser" fx:id="refreshBtn" styleClass="btn-secondary" onAction="#handleRefreshVoyages"/>
+            </HBox>
+        </VBox>
+
+        <!-- Charts TabPane (limited height) -->
+        <TabPane tabClosingPolicy="UNAVAILABLE" maxHeight="300">
+            <Tab text="Reservations by Status">
+                <PieChart fx:id="statusPieChart" title="Reservations by Status" />
+            </Tab>
+            <Tab text="Reservations Over Time">
+                <VBox spacing="10">
+                    <LineChart fx:id="timeLineChart" title="Reservations Over Time">
+                        <xAxis><NumberAxis label="Week"/></xAxis>
+                        <yAxis><NumberAxis label="Count"/></yAxis>
+                    </LineChart>
+                </VBox>
+            </Tab>
+            <Tab text="Top Destinations">
+                <BarChart fx:id="destinationsBarChart" title="Top Destinations">
+                    <xAxis><CategoryAxis label="Destination"/></xAxis>
+                    <yAxis><NumberAxis label="Number of Reservations"/></yAxis>
+                </BarChart>
+            </Tab>
+        </TabPane>
+
+        <!-- Recent Reservations Card -->
+        <VBox styleClass="card">
+            <VBox styleClass="card-header">
+                <Label text="Réservations récentes" styleClass="card-title"/>
+            </VBox>
+            <TableView fx:id="recentReservationsTable" VBox.vgrow="ALWAYS" prefHeight="200">
+                <columns>
+                    <TableColumn text="ID" fx:id="reservationIdCol" prefWidth="50"/>
+                    <TableColumn text="Client" fx:id="clientCol" prefWidth="100"/>
+                    <TableColumn text="Destination" fx:id="destCol" prefWidth="150"/>
+                    <TableColumn text="Date" fx:id="dateCol" prefWidth="100"/>
+                    <TableColumn text="Status" fx:id="statusCol" prefWidth="100"/>
+                </columns>
+            </TableView>
+            <HBox spacing="10" styleClass="card-footer">
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="🔄 Actualiser" onAction="#refreshRecentReservations"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

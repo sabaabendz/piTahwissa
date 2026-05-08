@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.tahwissa.controllers.agent.GestionReservationsController"
+      styleClass="content-area" spacing="20">
+
+    <!-- Top Bar -->
+    <HBox styleClass="top-bar" spacing="15" alignment="CENTER_LEFT">
+        <Button text="📋 Liste" styleClass="btn-primary"/>
+
+
+        <Button text="➕ Créer" styleClass="btn-secondary" fx:id="nouveauBtn" />
+        <Button text="🔄 Actualiser" styleClass="btn-secondary" fx:id="refreshBtn"/>
+        <Button text="📄 Exporter PDF" onAction="#handleExportPDF" styleClass="btn-primary"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField promptText="🔍 Rechercher..." styleClass="search-field" fx:id="searchField" prefWidth="300"/>
+        <ComboBox fx:id="statutFilter" prefWidth="150"/>
+        <Button text="🔽 Filter" styleClass="btn-secondary" fx:id="filterBtn"/>
+    </HBox>
+
+    <!-- Card Container for Table -->
+    <VBox styleClass="card" VBox.vgrow="ALWAYS">
+        <VBox styleClass="card-header" spacing="5">
+            <Label text="Liste des Réservations" styleClass="card-title"/>
+            <Label fx:id="statsLabel" text="Total: 0 réservations" styleClass="card-subtitle"/>
+        </VBox>
+
+        <!-- Table View -->
+        <TableView fx:id="reservationsTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn text="ID" prefWidth="50" fx:id="idCol"/>
+
+                <TableColumn text="CLIENT" prefWidth="100" fx:id="clientCol"/>
+                <TableColumn text="DESTINATION" prefWidth="140" fx:id="destinationCol"/>
+                <TableColumn text="PERSONNES" prefWidth="100" fx:id="personnesCol"/>
+                <TableColumn text="MONTANT" prefWidth="120" fx:id="montantCol"/>
+                <TableColumn text="STATUT" prefWidth="130" fx:id="statutCol"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" style="-fx-padding: 10;">
+        <Button text="✏️ Modifier" fx:id="modifierBtn" style="-fx-padding: 8 16; "/>
+        <Button text="🗑️ Supprimer" fx:id="supprimerBtn" style="-fx-padding: 8 16;"/>
+        <Button text="↻ Reset Filters" fx:id="resetBtn" style="-fx-padding: 8 16;"/>
+
+
+
+    </HBox>
+</VBox>

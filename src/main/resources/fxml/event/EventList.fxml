@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.tahwissa.controllers.event.EventListController"
+      spacing="20" stylesheets="@../../css/styles.css"
+      style="-fx-padding: 24px;" VBox.vgrow="ALWAYS">
+    <!-- Header Section -->
+    <VBox spacing="16">
+        <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" />
+
+        <Label text="Événements" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: -fx-text-primary;"/>
+
+        <!-- Action Bar -->
+        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-wrap-text: true;">
+            <Button fx:id="btnCreate" text="+ Nouvel Événement" styleClass="btn, btn-primary" onAction="#handleCreate"
+                   style="-fx-min-width: 160px;"/>
+            <Button fx:id="btnEdit" text="Modifier" styleClass="btn, btn-tertiary" onAction="#handleEdit"
+                   disable="true" style="-fx-min-width: 110px;"/>
+            <Button fx:id="btnDelete" text="Supprimer" styleClass="btn, btn-danger" onAction="#handleDelete"
+                   disable="true" style="-fx-min-width: 110px;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <HBox spacing="8" alignment="CENTER_RIGHT">
+                <TextField fx:id="txtSearch" promptText="Rechercher des événements..."
+                          styleClass="form-field" style="-fx-min-width: 250px;"/>
+                <Button text="Rechercher" styleClass="btn, btn-secondary" onAction="#handleSearch"
+                       style="-fx-min-width: 120px;"/>
+                <Button fx:id="btnRefresh" text="Actualiser" styleClass="btn, btn-outline" onAction="#handleRefresh"
+                       style="-fx-min-width: 110px;"/>
+            </HBox>
+        </HBox>
+    </VBox>
+
+    <!-- Events as Cards - populated by controller -->
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" styleClass="event-list-scroll"
+                style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 0;">
+        <FlowPane fx:id="eventsCardContainer" styleClass="event-cards-container"
+                  hgap="20" vgap="20" style="-fx-padding: 8px;"/>
+    </ScrollPane>
+</VBox>

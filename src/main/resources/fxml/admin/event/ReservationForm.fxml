@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="tn.esprit.tahwissa.controllers.event.ReservationFormController"
+            stylesheets="@styles.css">
+           fitToWidth="true" style="-fx-background-color: -fx-background;">
+    
+    <VBox spacing="24" style="-fx-padding: 24px;">
+
+        <!-- Header Section -->
+        <VBox spacing="12">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Button text="← Retour" styleClass="btn " onAction="#handleBackToList"
+                       style="-fx-font-size: 13px;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+            </HBox>
+            <Label fx:id="formTitle" text="Créer une nouvelle réservation" 
+                  style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: -fx-text-primary;"/>
+            <Label text="Réservez votre place pour un événement" 
+                  styleClass="subtitle-text"/>
+        </VBox>
+
+        <!-- Card avec le formulaire -->
+        <VBox styleClass="card" spacing="24">
+
+            <!-- Message Label -->
+            <Label fx:id="messageLabel" visible="false" wrapText="true" maxWidth="Infinity"
+                  style="-fx-padding: 12; -fx-background-radius: 10;"/>
+
+            <!-- Formulaire Grid -->
+            <GridPane hgap="20" vgap="18">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="100" minWidth="250"/>
+                </columnConstraints>
+
+                <!-- Row 0: Événement -->
+                <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <Label text="🎟️ Événement *" styleClass="form-label"/>
+                    <ComboBox fx:id="cmbEvenement" promptText="Sélectionner un événement"
+                             styleClass="form-field" maxWidth="Infinity" style="-fx-font-size: 14px;"/>
+                </VBox>
+
+                <!-- Row 1: Places -->
+                <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Label text="👥 Nombre de places à réserver *" styleClass="form-label"/>
+                    <Label fx:id="lblPlacesDisponibles" styleClass="subtitle-text" style="-fx-font-size: 12px;"/>
+                    <Spinner fx:id="spnPlaces" styleClass="form-field" maxWidth="Infinity" 
+                            editable="true" style="-fx-font-size: 14px;"/>
+                </VBox>
+
+                <!-- Row 2 (Admin only) -->
+                <VBox fx:id="statutBox" spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="2" 
+                      visible="false" managed="false">
+                    <Label text="✓ Statut de la réservation *" styleClass="form-label"/>
+                    <ComboBox fx:id="cmbStatut" promptText="Sélectionner un statut"
+                             styleClass="form-field" maxWidth="Infinity" style="-fx-font-size: 14px;"/>
+                </VBox>
+            </GridPane>
+
+            <Separator/>
+
+            <!-- Boutons d'action -->
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button text="Annuler" styleClass="btn, btn-outline" onAction="#handleCancel"
+                       style="-fx-min-width: 120px;"/>
+                <Button fx:id="btnSubmit" text="✓ Réserver la place" styleClass="btn, btn-primary" 
+                       onAction="#handleSave" style="-fx-min-width: 180px;"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.esprit.tahwissa.controllers.event.EventMapController"
+      stylesheets="@styles.css"
+      style="-fx-padding: 24px;" VBox.vgrow="ALWAYS">
+
+    <VBox spacing="12">
+        <Label text="Carte des événements" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -fx-text-primary;"/>
+        <Label text="Chargement des lieux et affichage sur la carte…" style="-fx-text-fill: -fx-text-secondary; -fx-font-size: 13px;"/>
+    </VBox>
+
+    <StackPane fx:id="mapStack" VBox.vgrow="ALWAYS" style="-fx-min-height: 400px;">
+        <ProgressIndicator fx:id="progressIndicator" visible="true" style="-fx-pref-width: 48px; -fx-pref-height: 48px;"/>
+    </StackPane>
+</VBox>

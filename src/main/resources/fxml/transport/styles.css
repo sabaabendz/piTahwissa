@@ -1,0 +1,734 @@
+/* Couleurs principales */
+.root {
+    -fx-primary-color: #2C3E50;
+    -fx-secondary-color: #3498DB;
+    -fx-accent-color: #E74C3C;
+    -fx-light-color: #ECF0F1;
+    -fx-dark-color: #34495E;
+    -fx-success-color: #27AE60;
+}
+
+/* Barre de Navigation */
+.navbar {
+    -fx-background-color: linear-gradient(to bottom, #2C3E50, #34495E);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+}
+
+.header {
+    -fx-background-color: transparent;
+}
+
+.logo {
+    -fx-text-fill: #3498DB;
+}
+
+.app-title {
+    -fx-text-fill: white;
+}
+
+.user-label {
+    -fx-text-fill: #ECF0F1;
+    -fx-padding: 5 15 5 15;
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 15;
+}
+
+.nav-menu {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10 20 10 20;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 3 0;
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: #3498DB;
+}
+
+.nav-button.active {
+    -fx-background-color: rgba(52, 152, 219, 0.2);
+    -fx-border-color: #3498DB;
+    -fx-font-weight: bold;
+}
+
+/* Zone de Contenu */
+.content-area {
+    -fx-background-color: linear-gradient(to bottom, #ECF0F1, #BDC3C7);
+}
+
+.welcome-section {
+    -fx-padding: 20;
+}
+
+.main-title {
+    -fx-text-fill: #2C3E50;
+}
+
+.subtitle {
+    -fx-text-fill: #7F8C8D;
+}
+
+/* Cartes de Fonctionnalités */
+.feature-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 3);
+    -fx-cursor: hand;
+}
+
+.feature-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.4), 15, 0, 0, 5);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+.feature-icon {
+    -fx-text-fill: #3498DB;
+}
+
+.feature-title {
+    -fx-text-fill: #2C3E50;
+}
+
+.feature-description {
+    -fx-text-fill: #7F8C8D;
+}
+
+.feature-button {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8 25 8 25;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+}
+
+.feature-button:hover {
+    -fx-background-color: #2980B9;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* Section Statistiques */
+.stats-section {
+    -fx-padding: 20 0 0 0;
+}
+
+.stat-box {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+}
+
+.stat-number {
+    -fx-text-fill: #3498DB;
+}
+
+.stat-label {
+    -fx-text-fill: #7F8C8D;
+}
+
+/* Pied de page */
+.footer {
+    -fx-background-color: #2C3E50;
+    -fx-border-color: #34495E;
+    -fx-border-width: 1 0 0 0;
+}
+
+.footer-text {
+    -fx-text-fill: #BDC3C7;
+}
+
+/* Animations et Transitions */
+.nav-button,
+.feature-button,
+.feature-card {
+    -fx-transition: all 0.3s ease;
+}
+
+/* === PAGES ET CONTENEURS === */
+.transport-container,
+.form-container,
+.view-container {
+    -fx-background-color: white;
+}
+
+.page-header {
+    -fx-padding: 0 0 15 0;
+    -fx-border-color: #ECF0F1;
+    -fx-border-width: 0 0 2 0;
+}
+
+.page-title {
+    -fx-text-fill: #2C3E50;
+}
+
+/* === BOUTONS === */
+.primary-button {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 20;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 5, 0, 0, 2);
+}
+
+.primary-button:hover {
+    -fx-background-color: #2980B9;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.secondary-button {
+    -fx-background-color: #95A5A6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 20;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #7F8C8D;
+}
+
+.action-button {
+    -fx-background-color: transparent;
+    -fx-font-size: 16px;
+    -fx-padding: 5 10 5 10;
+    -fx-cursor: hand;
+    -fx-background-radius: 3;
+}
+
+.action-button:hover {
+    -fx-background-color: rgba(52, 152, 219, 0.1);
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* === BARRE DE RECHERCHE === */
+.search-bar {
+    -fx-background-color: #ECF0F1;
+    -fx-padding: 10 15 10 15;
+    -fx-background-radius: 5;
+}
+
+.search-icon {
+    -fx-text-fill: #7F8C8D;
+}
+
+.search-field {
+    -fx-background-color: white;
+    -fx-padding: 8 12 8 12;
+    -fx-background-radius: 3;
+    -fx-border-color: #BDC3C7;
+    -fx-border-radius: 3;
+    -fx-border-width: 1;
+}
+
+.search-field:focused {
+    -fx-border-color: #3498DB;
+}
+
+/* === TABLEAU === */
+.transport-table {
+    -fx-background-color: white;
+    -fx-border-color: #BDC3C7;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+.transport-table .table-view {
+    -fx-background-color: white;
+}
+
+.transport-table .column-header {
+    -fx-background-color: #34495E;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
+}
+
+.transport-table .column-header-background {
+    -fx-background-color: #34495E;
+}
+
+.transport-table .table-cell {
+    -fx-padding: 8;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.transport-table .table-row-cell:selected {
+    -fx-background-color: #D6EAF8;
+}
+
+.transport-table .table-row-cell:hover {
+    -fx-background-color: #EBF5FB;
+}
+
+.table-column {
+    -fx-alignment: CENTER;
+}
+
+/* === FORMULAIRES === */
+.form-title {
+    -fx-text-fill: #2C3E50;
+}
+
+.form-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.form-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.form-label {
+    -fx-text-fill: #2C3E50;
+}
+
+.form-input {
+    -fx-background-color: white;
+    -fx-border-color: #BDC3C7;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-padding: 8 12 8 12;
+}
+
+.form-input:focused {
+    -fx-border-color: #3498DB;
+    -fx-border-width: 2;
+}
+
+.combo-box {
+    -fx-background-color: white;
+}
+
+.date-picker {
+    -fx-background-color: white;
+}
+
+.spinner {
+    -fx-background-color: white;
+}
+
+.spinner .text-field {
+    -fx-background-color: white;
+}
+
+/* === VUE DÉTAILS === */
+.view-icon {
+    -fx-text-fill: #3498DB;
+}
+
+.view-title {
+    -fx-text-fill: #2C3E50;
+}
+
+.detail-row {
+    -fx-background-color: #F8F9FA;
+    -fx-padding: 12 15 12 15;
+    -fx-background-radius: 5;
+}
+
+.detail-label {
+    -fx-text-fill: #7F8C8D;
+}
+
+.detail-value {
+    -fx-text-fill: #2C3E50;
+}
+
+.detail-value-highlight {
+    -fx-text-fill: #27AE60;
+}
+
+/* === CATALOG VIEW === */
+.catalog-container {
+    -fx-background-color: #F5F7FA;
+}
+
+.catalog-header {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+}
+
+.catalog-title {
+    -fx-text-fill: #2C3E50;
+}
+
+.catalog-subtitle {
+    -fx-text-fill: #7F8C8D;
+}
+
+.filter-bar {
+    -fx-background-color: white;
+    -fx-padding: 15 20 15 20;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 5, 0, 0, 1);
+}
+
+.catalog-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.transport-grid {
+    -fx-padding: 10;
+}
+
+.transport-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-cursor: hand;
+}
+
+.transport-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 5);
+    -fx-scale-y: 1.02;
+    -fx-scale-x: 1.02;
+}
+
+.type-badge {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: #1976D2;
+    -fx-padding: 5 12 5 12;
+    -fx-background-radius: 15;
+}
+
+.route-label {
+    -fx-text-fill: #2C3E50;
+}
+
+.reserve-button {
+    -fx-background-color: linear-gradient(to bottom, #3498DB, #2980B9);
+    -fx-text-fill: white;
+    -fx-padding: 10 20 10 20;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.4), 8, 0, 0, 2);
+}
+
+.reserve-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #2980B9, #21618C);
+    -fx-scale-y: 1.05;
+    -fx-scale-x: 1.05;
+}
+
+.reserve-button:pressed {
+    -fx-background-color: #1F5F8B;
+}
+
+/* === FRONT OFFICE STYLES === */
+
+/* Navbar Front Office */
+.frontoffice-navbar {
+    -fx-background-color: linear-gradient(to right, #667EEA, #764BA2);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0, 0, 3);
+}
+
+.frontoffice-header {
+    -fx-background-color: transparent;
+}
+
+.frontoffice-logo {
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+}
+
+.frontoffice-title {
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+}
+
+.frontoffice-slogan {
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+}
+
+.frontoffice-user {
+    -fx-text-fill: white;
+}
+
+.frontoffice-tagline {
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+}
+
+/* Navigation Menu Front Office */
+.frontoffice-nav-menu {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.frontoffice-nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-padding: 12 25 12 25;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 3 0;
+    -fx-cursor: hand;
+}
+
+.frontoffice-nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-border-color: white;
+}
+
+.frontoffice-nav-button.active {
+    -fx-background-color: rgba(255, 255, 255, 0.25);
+    -fx-border-color: white;
+    -fx-font-weight: bold;
+}
+
+.frontoffice-content {
+    -fx-background-color: linear-gradient(to bottom, #F8F9FA, #E9ECEF);
+}
+
+.frontoffice-footer {
+    -fx-background-color: #2C3E50;
+}
+
+.footer-text {
+    -fx-text-fill: #BDC3C7;
+}
+
+/* Catalog Front Office */
+.frontoffice-catalog-container {
+    -fx-background-color: transparent;
+}
+
+.frontoffice-catalog-header {
+    -fx-background-color: white;
+    -fx-padding: 30;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);
+}
+
+.frontoffice-catalog-title {
+    -fx-text-fill: #2C3E50;
+    background: linear-gradient(to right, #667EEA, #764BA2);
+    -fx-background-clip: text;
+}
+
+.frontoffice-catalog-subtitle {
+    -fx-text-fill: #7F8C8D;
+}
+
+.frontoffice-filter-bar {
+    -fx-background-color: #F8F9FA;
+    -fx-padding: 20;
+    -fx-background-radius: 10;
+}
+
+.frontoffice-search-bar {
+    -fx-background-color: white;
+    -fx-padding: 12 18 12 18;
+    -fx-background-radius: 25;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+}
+
+.frontoffice-search-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.frontoffice-search-field:focused {
+    -fx-border-color: transparent;
+}
+
+.filter-label {
+    -fx-text-fill: #7F8C8D;
+}
+
+.frontoffice-combo {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+}
+
+.frontoffice-catalog-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.frontoffice-transport-grid {
+    -fx-padding: 15;
+}
+
+.frontoffice-transport-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 2);
+    -fx-cursor: hand;
+}
+
+.frontoffice-transport-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.3), 25, 0, 0, 6);
+    -fx-translate-y: -3;
+}
+
+.card-image-header {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #667eea, #764ba2);
+    -fx-background-radius: 12 12 0 0;
+}
+
+.minimalist-badge {
+    -fx-background-color: rgba(0, 0, 0, 0.6);
+    -fx-text-fill: white;
+    -fx-padding: 6 14 6 14;
+    -fx-background-radius: 20;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.minimalist-button {
+    -fx-background-color: linear-gradient(to right, #667EEA, #764BA2);
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.minimalist-button:hover {
+    -fx-background-color: linear-gradient(to right, #5568d3, #6a3d91);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.frontoffice-type-badge {
+    -fx-background-color: linear-gradient(to right, #667EEA, #764BA2);
+    -fx-text-fill: white;
+    -fx-padding: 6 15 6 15;
+    -fx-background-radius: 20;
+}
+
+.frontoffice-route-label {
+    -fx-text-fill: #2C3E50;
+}
+
+.frontoffice-details-box {
+    -fx-background-color: #F8F9FA;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+}
+
+.frontoffice-reserve-button {
+    -fx-background-color: linear-gradient(to right, #667EEA, #764BA2);
+    -fx-text-fill: white;
+    -fx-padding: 12 24 12 24;
+    -fx-background-radius: 25;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.5), 10, 0, 0, 3);
+}
+
+.frontoffice-reserve-button:hover {
+    -fx-background-color: linear-gradient(to right, #764BA2, #667EEA);
+    -fx-scale-y: 1.08;
+    -fx-scale-x: 1.08;
+}
+
+/* Reservation Form Front Office */
+.frontoffice-reservation-form {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 20, 0, 0, 5);
+}
+
+.frontoffice-form-title {
+    -fx-text-fill: #2C3E50;
+}
+
+.frontoffice-form-subtitle {
+    -fx-text-fill: #7F8C8D;
+}
+
+.frontoffice-form-label {
+    -fx-text-fill: #2C3E50;
+}
+
+.form-hint {
+    -fx-text-fill: #95A5A6;
+}
+
+.frontoffice-spinner {
+    -fx-background-color: white;
+    -fx-border-color: #BDC3C7;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.info-box {
+    -fx-background-color: #E8F5E9;
+    -fx-background-radius: 10;
+    -fx-border-color: #27AE60;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+}
+
+.info-title {
+    -fx-text-fill: #27AE60;
+}
+
+.frontoffice-primary-button {
+    -fx-background-color: linear-gradient(to right, #667EEA, #764BA2);
+    -fx-text-fill: black;
+    -fx-background-radius: 25;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(102, 126, 234, 0.5), 12, 0, 0, 4);
+}
+
+.frontoffice-primary-button:hover {
+    -fx-background-color: linear-gradient(to right, #764BA2, #667EEA);
+    -fx-scale-y: 1.05;
+    -fx-scale-x: 1.05;
+}
+
+.frontoffice-secondary-button {
+    -fx-background-color: white;
+    -fx-text-fill: #667EEA;
+    -fx-border-color: #667EEA;
+    -fx-border-width: 2;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-cursor: hand;
+}
+
+.frontoffice-secondary-button:hover {
+    -fx-background-color: #F8F9FA;
+    -fx-scale-y: 1.05;
+    -fx-scale-x: 1.05;
+}
+
+/* Reservations Page */
+.frontoffice-page-title {
+    -fx-text-fill: #2C3E50;
+}
+
+.frontoffice-page-subtitle {
+    -fx-text-fill: #7F8C8D;
+}
+
+.frontoffice-reservation-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0, 0, 4);
+}
+
+.frontoffice-reservation-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 15, 0, 0, 6);
+}
+
+
+
